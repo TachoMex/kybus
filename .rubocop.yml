@@ -1,2 +1,2 @@
-Metrics:
-  MethodLength: 15
+Metrics/MethodLength:
+  Max: 15
