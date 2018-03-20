@@ -12,16 +12,28 @@ module Ant
         end
       end
 
+      HTTP_CODES = {
+        success: 200, fail: 400, error: 500, fatal: 500
+      }.freeze
+
+      def self.extract_http_code(exception, level)
+        default = HTTP_CODES[level] || 500
+        exception.respond_to?(:http_code) ? exception.http_code : default
+      end
+
       def self.configure_handlers(base)
         Server::Response.resources(:exceptions).each do |exception_class, level|
           base.rescue_from(exception_class) do |ex|
             response = Ant::Server::GrapeDecorator.handler.call(env, level, ex)
-            error!(response, 400)
+            http_code = Ant::Server::GrapeDecorator.extract_http_code(ex, level)
+            error!(response, http_code)
           end
         end
         base.rescue_from(:all) do |ex|
-          response = Ant::Server::GrapeDecorator.handler.call(env, :fatal, ex)
-          error!(response, 400)
+          level = :fatal
+          response = Ant::Server::GrapeDecorator.handler.call(env, level, ex)
+          http_code = Ant::Server::GrapeDecorator.extract_http_code(ex, level)
+          error!(response, http_code)
         end
       end
 
