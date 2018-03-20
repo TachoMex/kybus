@@ -3,6 +3,7 @@ require 'minitest/test'
 require 'minitest/autorun'
 require 'rack-minitest/test'
 require 'rdoc'
+require 'webmock/minitest'
 
 SimpleCov.minimum_coverage 100
 SimpleCov.start
