@@ -39,11 +39,11 @@ module Ant
         end
       end
 
-      def exception_handler(ex)
+      def exception_handler(exception)
         Server::Response.resources(:exceptions).each do |klass, recover|
-          return recover if ex.is_a?(klass)
+          return recover if exception.is_a?(klass)
         end
-        ex.is_a?(StandardError) ? :fatal : nil
+        exception.is_a?(StandardError) ? :fatal : nil
       end
 
       def handle(resolver, data)
@@ -52,7 +52,7 @@ module Ant
           Server::Response.format.send(resolver, data)
         else
           Server::Response.logger.fatal(data)
-          raise(data[:exception])
+          raise(data.exception)
         end
       end
 
@@ -75,5 +75,5 @@ module Ant
   end
 end
 
-# Allow backwards compatibility 
+# Allow backwards compatibility
 Ant::Server::Response.configure_defaults!
