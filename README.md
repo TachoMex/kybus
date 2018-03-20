@@ -1,41 +1,20 @@
-# Ruby::Ant
+# Ruby Ants Framework
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ruby/ant`. To experiment with that code, run `bin/console` for an interactive prompt.
+Ruby ants aims to be a framework for building microservices-based
+applications. Also, we expect that this framework will be very flexible so
+it will be possible to use small components without loading all the features.
 
-TODO: Delete this and the text above, and describe your gem
+You can have:
+- Some cool stuff for general purposes.
+  - Resource injection module.
+  - A basic and very general daemon.
+- HTTP client powered by HTTParty, but trying to be object based so you can easily manage session, parsing, cookies, auth, etc.
+- HTTP servers with either sinatra or grape.
+  - One problem I often found is the consistency while writing rest services. This allows you to have all the same look in all the endpoints by implementing a JSend specification.
+  - Log all the request on a basic way. Log an access log when a successful request was performed. Log a message when the client made a mistake. Log a full detail stack trace and params when the api crashes.
+  - But if you don't like anything you should be capable of modifying it and use it the way you prefer.
+- Want to use kafka or a distribuited queue service to build pipelines? you can have daemons listening to queues and processing the messages.
+- Do you have a system that is so trivial that it would be a waste to write? We introduce *nanoservices*. This will give a shipping-ready API with CRUD operations (the ones you need), connected to a database via sequel. All this can be done using a yaml file describing the data models.
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'ruby-ant'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install ruby-ant
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/ruby-ant.
-
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
+This is not yet finished and is very likely that you can not find something yet,
+but we are working to have an amazing framework that we can rely on.
