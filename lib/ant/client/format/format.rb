@@ -1,5 +1,4 @@
 require_relative 'json_format'
-require_relative 'xml_format'
 require_relative 'url_encoded'
 
 module Ant
