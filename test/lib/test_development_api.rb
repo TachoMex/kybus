@@ -29,6 +29,10 @@ class TestDevelopmentAPI < Minitest::Test
     response = last_json_response
 
     assert_equal(response['status'], status)
+    if code.nil?
+      assert_nil(response['code'])
+      return
+    end
     assert_equal(response['code'], code)
   end
 
