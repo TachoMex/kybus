@@ -1,15 +1,13 @@
-require_relative 'exceptions'
+require_relative 'repository'
 
 module Ant
   module Server
     module Nanoservice
       module Datasource
-        class JSONRepository
-          include Exceptions
+        class JSONRepository < Repository
           def initialize(folder, id, id_generator)
             @path = folder
-            @id = id
-            @id_generator = id_generator
+            super(id, id_generator)
           end
 
           def get(id)
@@ -20,7 +18,7 @@ module Ant
           end
 
           def create(id = nil)
-            data = { @id => @id_generator.call(id, @id) }
+            data = create_initial_object(id)
             store(data)
             data
           end

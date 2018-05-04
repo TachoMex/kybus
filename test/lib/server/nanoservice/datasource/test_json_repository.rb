@@ -23,7 +23,7 @@ class TestJSONRepository < Minitest::Test
 
   def test_create
     repository.create(object)
-    assert_file(PATH, key: 'hello')
+    assert_file(PATH, object)
   end
 
   def test_store
