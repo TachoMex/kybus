@@ -1,48 +1,12 @@
-require 'sequel'
-
 class TestFactory < Minitest::Test
-  include Ant::Server::Nanoservice
-  include Datasource
-  include Exceptions
+  include DevelopmentAPI::FactoryHelpers
 
   ADAPTERS = %i[json sequel].freeze
 
-  class Tuple < Model
-    def run_validations!; end
-  end
-
-  def json_repository
-    @json_repository ||= JSONRepository.new(
-      'storage/tuples',
-      :key,
-      IDGenerators[:id]
-    )
-  end
-
-  def sequel_repository
-    @sequel_repository ||= begin
-      db = ::Sequel.sqlite('storage/tuples.db')
-      db.drop_table(:tuple) if db.table_exists?(:tuple)
-      db.create_table :tuple do
-        column :key, :text, size: 40, primary_key: true
-        column :value, :text, size: 40
-      end
-      Sequel.new(
-        db[:tuple],
-        :key,
-        IDGenerators[:id]
-      )
-    end
-  end
-
-  def factory
-    @factory ||= begin
-      factory = Factory.new(Tuple)
-      factory.register(:json, json_repository)
-      factory.register(:sequel, sequel_repository)
-      factory.register(:default, :sequel)
-      factory
-    end
+  def setup
+    path = 'storage/tuples/hello.json'
+    File.delete(path) if File.file?(path)
+    sequel_repository.connection.truncate
   end
 
   def object
@@ -53,6 +17,13 @@ class TestFactory < Minitest::Test
     ADAPTERS.each do |adapter|
       factory.create(object, adapter)
       assert_equal(factory.get(object[:key], adapter).data, object)
+    end
+  end
+
+  def test_overwriting
+    test_create
+    ADAPTERS.each do |adapter|
+      assert_raises(ObjectAlreadyExists) { factory.create(object, adapter) }
     end
   end
 
