@@ -1,4 +1,4 @@
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'ant/version'
 
@@ -14,16 +14,21 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/KueskiEngineering/ruby-ant-server'
   spec.license       = 'MIT'
 
-  spec.files = spec.files = Dir['lib/**/*.rb']
+  spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'cute_logger', '~> 0.1'
 
   spec.add_development_dependency 'bundler', '~> 1.11'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'pry', '~> 0.10'
-  spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'grape'
+  spec.add_development_dependency 'httparty'
+  spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'pry', '~> 0.10'
   spec.add_development_dependency 'puma'
   spec.add_development_dependency 'rack'
+  spec.add_development_dependency 'rack-minitest'
+  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rdoc'
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'webmock'
 end
