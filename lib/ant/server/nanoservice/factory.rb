@@ -8,14 +8,14 @@ module Ant
           @model = model
         end
 
-        def create(source, data)
+        def create(data, source = resource(:default))
           repository = resource(source)
           model = @model.new(data, repository)
           model.create
           model
         end
 
-        def get(source, id)
+        def get(id, source = resource(:default))
           repository = resource(source)
           model = repository.get(id)
           @model.new(model, repository)

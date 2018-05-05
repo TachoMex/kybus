@@ -40,6 +40,7 @@ class TestFactory < Minitest::Test
       factory = Factory.new(Tuple)
       factory.register(:json, json_repository)
       factory.register(:sequel, sequel_repository)
+      factory.register(:default, :sequel)
       factory
     end
   end
@@ -50,25 +51,32 @@ class TestFactory < Minitest::Test
 
   def test_create
     ADAPTERS.each do |adapter|
-      factory.create(adapter, object)
-      assert_equal(factory.get(adapter, object[:key]).data, object)
+      factory.create(object, adapter)
+      assert_equal(factory.get(object[:key], adapter).data, object)
     end
   end
 
   def test_store
     test_create
     ADAPTERS.each do |adapter|
-      tuple = factory.get(adapter, object[:key])
+      tuple = factory.get(object[:key], adapter)
       tuple.data[:value] = 'modified'
       tuple.store
-      assert_equal(tuple.data, factory.get(adapter, object[:key]).data)
+      assert_equal(tuple.data, factory.get(object[:key], adapter).data)
     end
   end
 
   def test_not_found
     ADAPTERS.each do |adapter|
-      ex = assert_raises(ObjectNotFound) { factory.get(adapter, 'nothing') }
+      ex = assert_raises(ObjectNotFound) { factory.get('nothing', adapter) }
       assert_equal(ex.message, 'Object nothing does not exist')
     end
+  end
+
+  def test_default_adapter
+    object = { key: 'default', value: 'works' }
+    factory.create(object)
+    assert_equal(factory.get('default', :sequel).data, object)
+    assert_raises(ObjectNotFound) { factory.get('default', :json) }
   end
 end
