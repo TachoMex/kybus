@@ -25,6 +25,10 @@ module Ant
             @data = data
             @repository = repository || default_repository
           end
+
+          def to_json(options)
+            @data.to_json(options)
+          end
         end
       end
     end
