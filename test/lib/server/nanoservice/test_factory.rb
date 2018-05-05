@@ -1,10 +1,15 @@
 require 'sequel'
 
-class TestModel < Minitest::Test
-  include Ant::Server::Nanoservice::Datasource
+class TestFactory < Minitest::Test
+  include Ant::Server::Nanoservice
+  include Datasource
   include Exceptions
 
   ADAPTERS = %i[json sequel].freeze
+
+  class Tuple < Model
+    def run_validations!; end
+  end
 
   def json_repository
     @json_repository ||= JSONRepository.new(
@@ -30,11 +35,13 @@ class TestModel < Minitest::Test
     end
   end
 
-  def repositories
-    @repositories ||= {
-      json: json_repository,
-      sequel: sequel_repository
-    }
+  def factory
+    @factory ||= begin
+      factory = Factory.new(Tuple)
+      factory.register(:json, json_repository)
+      factory.register(:sequel, sequel_repository)
+      factory
+    end
   end
 
   def object
@@ -43,34 +50,24 @@ class TestModel < Minitest::Test
 
   def test_create
     ADAPTERS.each do |adapter|
-      repository = repositories[adapter]
-      repository.create(object)
-      assert_equal(repository.get(object[:key]), object)
+      factory.create(adapter, object)
+      assert_equal(factory.get(adapter, object[:key]).data, object)
     end
   end
 
   def test_store
     test_create
     ADAPTERS.each do |adapter|
-      repository = repositories[adapter]
-      repository.store(object)
-      assert_equal(repository.get(object[:key]), object)
-    end
-  end
-
-  def test_get
-    test_store
-    ADAPTERS.each do |adapter|
-      repository = repositories[adapter]
-      loaded = repository.get('hello')
-      assert_equal(object, loaded)
+      tuple = factory.get(adapter, object[:key])
+      tuple.data[:value] = 'modified'
+      tuple.store
+      assert_equal(tuple.data, factory.get(adapter, object[:key]).data)
     end
   end
 
   def test_not_found
     ADAPTERS.each do |adapter|
-      repository = repositories[adapter]
-      ex = assert_raises(ObjectNotFound) { repository.get('nothing') }
+      ex = assert_raises(ObjectNotFound) { factory.get(adapter, 'nothing') }
       assert_equal(ex.message, 'Object nothing does not exist')
     end
   end
