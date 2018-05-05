@@ -29,6 +29,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rack-minitest'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rdoc'
+  spec.add_development_dependency 'sequel'
   spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'webmock'
 end
