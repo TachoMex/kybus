@@ -17,8 +17,7 @@ module Ant
             JSON.parse(contents, symbolize_names: true)
           end
 
-          def create(id = nil)
-            data = create_initial_object(id)
+          def create_(data)
             store(data)
             data
           end

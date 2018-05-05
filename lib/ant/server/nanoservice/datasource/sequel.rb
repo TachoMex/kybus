@@ -16,16 +16,20 @@ module Ant
             result
           end
 
-          def create(id = nil)
-            data = create_initial_object(id)
+          def create_(data)
             id = @sequel.insert(data)
             data[@id] ||= id
+            data
           end
 
           def store(data)
             data2 = data.dup
             data2.delete(@id)
             @sequel.where(@id => data[@id]).update(data2)
+          end
+
+          def connection
+            @sequel
           end
         end
       end

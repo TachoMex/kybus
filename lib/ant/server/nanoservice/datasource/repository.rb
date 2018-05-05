@@ -16,6 +16,19 @@ module Ant
             object.merge!(id) if id.is_a?(Hash)
             object
           end
+
+          def create(id = nil)
+            data = create_initial_object(id)
+            raise(ObjectAlreadyExists, data[@id]) if exist?(data[@id])
+            create_(data)
+          end
+
+          def exist?(id)
+            get(id)
+            true
+          rescue ObjectNotFound
+            false
+          end
         end
       end
     end
