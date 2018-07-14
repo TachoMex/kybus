@@ -30,6 +30,7 @@ module Ant
         end
 
         def configure_defaults!
+          recover_from!(Exceptions::AntSuccess, :success)
           recover_from!(Exceptions::AntFail, :fail)
           recover_from!(Exceptions::AntError, :error)
           register(:loggers, :cute_logger, Server::CuteLogger.new)
