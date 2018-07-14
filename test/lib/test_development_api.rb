@@ -27,7 +27,6 @@ class TestDevelopmentAPI < Minitest::Test
     get('/api/secret', {}, headers)
     assert_equal(http_code, last_response.status)
     response = last_json_response
-
     assert_equal(response['status'], status)
     if code.nil?
       assert_nil(response['code'])
@@ -37,7 +36,7 @@ class TestDevelopmentAPI < Minitest::Test
   end
 
   def test_basic_auth
-    basic_auth_test('success', nil, 200,
+    basic_auth_test('success', nil, 202,
                     'HTTP_AUTHORIZATION' => 'Basic dGVzdDpzZWNyZXQ=')
   end
 
