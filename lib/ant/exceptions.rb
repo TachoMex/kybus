@@ -22,6 +22,15 @@ module Ant
     end
 
     ##
+    # Is used to express a success with the client's request.
+    class AntSuccess < AntBaseException
+      def initialize(message, code = nil, data = {})
+        code ||= self.class.name.split('::').last
+        super(message, code, data)
+      end
+    end
+
+    ##
     # Is used to express a problem with the client's request.
     class AntFail < AntBaseException
       def initialize(message, code = nil, data = {})
