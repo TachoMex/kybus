@@ -13,7 +13,7 @@ module Ant
       # success means there were no errors during the execution of the request
       # it sends the result in the data field.
       def success(response)
-        { status: :success, data: response.result }
+        { status: :success, data: response.result || response.data }
       end
 
       ##
