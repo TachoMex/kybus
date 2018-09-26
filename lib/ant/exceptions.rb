@@ -35,6 +35,7 @@ module Ant
     class AntFail < AntBaseException
       def initialize(message, code = nil, data = {})
         code ||= self.class.name.split('::').last
+        code = 'BadRequest' if code == 'AntFail'
         super(message, code, data)
       end
     end
@@ -46,6 +47,7 @@ module Ant
     class AntError < AntBaseException
       def initialize(message, code = nil, data = {})
         code ||= self.class.name.split('::').last
+        code = 'ServerError' if code == 'AntError'
         super(message, code, data)
       end
     end
