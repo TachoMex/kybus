@@ -5,9 +5,16 @@ module Ant
         module Exceptions
           class ObjectAlreadyExists < Ant::Exceptions::AntFail
             attr_reader :id
-            def initialize(id)
+            def initialize(id, object)
               @id = id
-              super("Object #{id} already exists", nil, id: id)
+              super("Object #{id} already exists", nil, object)
+            end
+          end
+
+          class ValidationErrors < Ant::Exceptions::AntFail
+            def initialize(data)
+              @id = id
+              super('Error while validating object', 'ValidationErrors', data)
             end
           end
 

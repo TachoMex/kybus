@@ -21,10 +21,11 @@ module Ant
             @repository.create(@data)
           end
 
-          def initialize(data, repository = nil)
+          def initialize(data)
             @data = data
-            @repository = repository || default_repository
           end
+
+          attr_writer :repository
 
           def to_json(options)
             @data.to_json(options)
