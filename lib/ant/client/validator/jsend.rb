@@ -1,4 +1,3 @@
-require 'ant'
 module Ant
   module Client
     module Validator
