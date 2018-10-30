@@ -50,11 +50,11 @@ class TestDevelopmentAPI < Minitest::Test
   end
 
   def test_fail
-    jsend_test('fail', 'AntFail', 'Wrong Value', 400)
+    jsend_test('fail', 'BadRequest', 'Wrong Value', 400)
   end
 
   def test_error
-    jsend_test('error', 'AntError', 'The system crashed', 500)
+    jsend_test('error', 'ServerError', 'The system crashed', 500)
   end
 
   def test_fatal

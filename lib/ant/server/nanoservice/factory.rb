@@ -10,15 +10,18 @@ module Ant
 
         def create(data, source = resource(:default))
           repository = resource(source)
-          model = @model.new(data, repository)
+          model = @model.new(data)
+          model.repository = repository
           model.create
           model
         end
 
         def get(id, source = resource(:default))
           repository = resource(source)
-          model = repository.get(id)
-          @model.new(model, repository)
+          data = repository.get(id)
+          model = @model.new(data)
+          model.repository = repository
+          model
         end
       end
     end

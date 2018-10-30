@@ -19,15 +19,15 @@ module Ant
 
           def create(id = nil)
             data = create_initial_object(id)
-            raise(ObjectAlreadyExists, data[@id]) if exist?(data[@id])
+            existent = exist?(data[@id])
+            raise(ObjectAlreadyExists.new(data[@id], existent)) if existent
             create_(data)
           end
 
           def exist?(id)
             get(id)
-            true
           rescue ObjectNotFound
-            false
+            nil
           end
         end
       end

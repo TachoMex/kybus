@@ -37,7 +37,7 @@ module Ant
           .to_return(body: body.to_json)
         ex = assert_raises(klass) { @client.send(verb, path) }
         assert_equal(ex.message, body[:message] || message)
-        assert_equal(ex.code, body[:code] || 'AntError')
+        assert_equal(ex.code, body[:code] || 'ServerError')
       end
 
       def test_jsend_fail
