@@ -41,12 +41,12 @@ class TestDevelopmentAPI < Minitest::Test
   end
 
   def test_basic_auth_wrong_keys
-    basic_auth_test('fail', 'AuthenticationError', 401,
+    basic_auth_test('fail', 'Unauthorized', 401,
                     'HTTP_AUTHORIZATION' => 'Basic OnNlY3JldA==')
   end
 
   def test_basic_auth_no_keys
-    basic_auth_test('fail', 'AuthenticationError', 401, {})
+    basic_auth_test('fail', 'Unauthorized', 401, {})
   end
 
   def test_fail
