@@ -1,32 +1,18 @@
 class BasicAuthRoutes < Grape::API
-  class AuthenticationError < Ant::Exceptions::AntFail
-    def initialize
-      super('Unauthorized. Please provide proper keys')
-    end
-
-    def http_code
-      401
-    end
-  end
-
-  class AuthenticationSuccess < Ant::Exceptions::AntSuccess
-    def initialize(message, user)
-      super(message, nil, user)
-    end
-
-    def http_code
-      202
-    end
-  end
-
   module AuthHelper
     def current_user!
       token = env['HTTP_AUTHORIZATION']
-      raise(AuthenticationError) unless token && /^Basic .*/.match(token)
+      unless token && /^Basic .*/.match(token)
+        raise Exceptions::HTTP::Unauthorized, 'Invalid token'
+      end
+
       data = token.tr('Basic ', '')
       user, pass = Base64.decode64(data).split(':')
-      raise(AuthenticationError) unless user == 'test' && pass == 'secret'
-      raise(AuthenticationSuccess.new('Authorized User', user))
+      unless user == 'test' && pass == 'secret'
+        raise Exceptions::HTTP::Unauthorized, 'Credentials are not correct'
+      end
+
+      raise Exceptions::HTTP::Accepted.new('Authorized User', user)
     end
   end
 
