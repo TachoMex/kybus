@@ -37,7 +37,7 @@ module Exceptions
       { code_name: 'Ok', code: 200, type: :success },
       { code_name: 'Created', code: 201, type: :success },
       { code_name: 'Accepted', code: 202, type: :success },
-      { code_name: 'NoContent', code: 203, type: :success },
+      { code_name: 'NoContent', code: 204, type: :success },
       { code_name: 'BadRequest', code: 400, type: :fail },
       { code_name: 'Unauthorized', code: 401, type: :fail },
       { code_name: 'Forbidden', code: 403, type: :fail },
