@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './lib/ant/exceptions'
+require_relative '../exceptions'
 
 module Exceptions
   module HTTP
