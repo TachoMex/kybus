@@ -3,16 +3,16 @@ class BasicAuthRoutes < Grape::API
     def current_user!
       token = env['HTTP_AUTHORIZATION']
       unless token && /^Basic .*/.match(token)
-        raise Exceptions::HTTP::Unauthorized, 'Invalid token'
+        raise Ant::Exceptions::HTTP::Unauthorized, 'Invalid token'
       end
 
       data = token.tr('Basic ', '')
       user, pass = Base64.decode64(data).split(':')
       unless user == 'test' && pass == 'secret'
-        raise Exceptions::HTTP::Unauthorized, 'Credentials are not correct'
+        raise Ant::Exceptions::HTTP::Unauthorized, 'Credentials are not correct'
       end
 
-      raise Exceptions::HTTP::Accepted.new('Authorized User', user)
+      raise Ant::Exceptions::HTTP::Accepted.new('Authorized User', user)
     end
   end
 
