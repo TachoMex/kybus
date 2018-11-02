@@ -4,7 +4,7 @@ require 'sequel'
 require_relative 'lib/ant'
 require_relative 'lib/ant/nanoservice'
 require_relative 'lib/ant/server/grape'
-require_relative 'lib/ant/server/http_exceptions'
+require_relative 'lib/ant/http_exceptions'
 
 require_relative 'helpers/factory_helpers'
 
