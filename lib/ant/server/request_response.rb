@@ -1,11 +1,12 @@
 module Ant
   module Server
     class RequestResponse
-      attr_reader :params, :exception, :result
-      attr_writer :exception, :result
+      attr_reader :params, :exception, :result, :start_timestamp
+      attr_writer :exception, :result, :start_timestamp
       def initialize(request:, params:)
         @request = request
         @params = params
+        @start_timestamp = Time.now
       end
 
       def data
@@ -29,7 +30,7 @@ module Ant
       end
 
       def path
-        @request.url
+        @request.env['PATH_INFO']
       end
     end
   end

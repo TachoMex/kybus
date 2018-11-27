@@ -54,6 +54,9 @@ module Ant
       end
 
       def self.configure_logger(base)
+        base.before do
+          params[:__init_time] = Time.now
+        end
         base.after do
           params = env['api.endpoint'].params
           request = env['api.endpoint'].request

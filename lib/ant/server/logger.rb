@@ -6,7 +6,8 @@ module Ant
         {
           path: response.path,
           ip: response.ip,
-          verb: response.verb
+          verb: response.verb,
+          processing_time: (Time.now - response.params[:__init_time]).to_f * 1000
         }
       end
 

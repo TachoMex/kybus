@@ -20,4 +20,9 @@ class BasicRoutes < Grape::API
   get :error do
     raise(Ant::Exceptions::AntError, 'The system crashed')
   end
+
+  get :slow do
+    sleep(2)
+    'Sorry for the delay!'
+  end
 end
