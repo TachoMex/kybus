@@ -35,12 +35,27 @@ module Ant
         perform_request(:patch, path, data)
       end
 
+      def raw_get(path, data = {})
+        perform_raw_request(:get, path, data)
+      end
+
       private
 
-      def perform_request(method, path, data)
+      def perform_raw_request(method, path, data)
         log_debug('Performing request', method: method, path: path, data: data)
+        init_time = Time.now
         result = @session.perform_request(method, "#{@endpoint}#{path}",
                                           @format.pack(data))
+        log_info('Request perfomed',
+                 path: path,
+                 server: @endpoint,
+                 verb: method,
+                 processing_time: (Time.now - init_time).to_f * 1000)
+        result
+      end
+
+      def perform_request(method, path, data)
+        result = perform_raw_request(method, path, data)
         unpacked = @format.unpack(result)
         @validator.validate(unpacked)
       end
