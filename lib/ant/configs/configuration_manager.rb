@@ -1,6 +1,7 @@
 require 'ant/dry/resource_injector'
 require_relative 'utils'
 require_relative 'loaders/yaml'
+require_relative 'loaders/env'
 
 module Ant
   module Configuration
@@ -19,6 +20,7 @@ module Ant
         @env_prefix = env_prefix
         @accept_default_keys = accept_default_keys
         @configs = {}
+        @env_vars = env_vars
         @config_files = env_files
       end
 
@@ -32,17 +34,21 @@ module Ant
       # private
 
       def env_files
-        files = ENV["#{@env_prefix}_FILES"]
-        files.nil? || files == '' ? [] : split_env_string(files)
+        array_wrap(@env_vars['files'])
       end
 
       def to_h
         @configs
       end
 
+      def env_vars
+        Loaders::Env.new(@env_prefix, self).load!
+      end
+
       def load_configs
         load_default_files
         load_config_files
+        @configs = recursive_merge(@configs, @env_vars)
       end
 
       def load_default_files
