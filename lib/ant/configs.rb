@@ -1,0 +1,1 @@
+require_relative 'configs/configuration_manager'
