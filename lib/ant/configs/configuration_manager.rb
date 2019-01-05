@@ -19,6 +19,7 @@ module Ant
         @env_prefix = env_prefix
         @accept_default_keys = accept_default_keys
         @configs = {}
+        @config_files = env_files
       end
 
       def load_configs!
@@ -30,15 +31,30 @@ module Ant
       # TODO: set private methods
       # private
 
+      def env_files
+        files = ENV["#{@env_prefix}_FILES"]
+        files.nil? || files == '' ? [] : split_env_string(files)
+      end
+
       def to_h
         @configs
       end
 
       def load_configs
+        load_default_files
+        load_config_files
       end
 
       def load_default_files
-        @default_files.each do |file|
+        load_files(@default_files)
+      end
+
+      def load_config_files
+        load_files(@config_files)
+      end
+
+      def load_files(files)
+        files.each do |file|
           config = Loaders::YAML.new(file, self).load!
           @configs = recursive_merge(@configs, config)
         end
