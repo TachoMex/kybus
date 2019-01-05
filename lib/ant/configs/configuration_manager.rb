@@ -2,6 +2,7 @@ require 'ant/dry/resource_injector'
 require_relative 'utils'
 require_relative 'loaders/yaml'
 require_relative 'loaders/env'
+require_relative 'loaders/arg'
 
 module Ant
   module Configuration
@@ -45,10 +46,15 @@ module Ant
         Loaders::Env.new(@env_prefix, self).load!
       end
 
+      def arg_vars
+        Loaders::Arg.new(@env_prefix, self).load!
+      end
+
       def load_configs
         load_default_files
         load_config_files
         @configs = recursive_merge(@configs, @env_vars)
+        @configs = recursive_merge(@configs, arg_vars)
       end
 
       def load_default_files
