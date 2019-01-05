@@ -33,7 +33,6 @@ module Ant
         def configure_request(request)
           basic_auth(request, @config[:basic_auth]) if @config[:basic_auth]
           request[:verify] = @config[:verify] if @config.key?(:verify)
-
         end
 
         def perform_request(method, endpoint, data)

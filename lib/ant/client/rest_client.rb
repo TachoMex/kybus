@@ -39,12 +39,17 @@ module Ant
         perform_raw_request(:get, path, data)
       end
 
+      def raw_post(path, data = {})
+        perform_raw_request(:post, path, data)
+      end
+
       private
 
       def perform_raw_request(method, path, data)
         log_debug('Performing request', method: method, path: path, data: data)
         init_time = Time.now
-        result = @session.perform_request(method, "#{@endpoint}#{path}",
+        uri = (path.start_with?('http') ? path : "#{@endpoint}#{path}")
+        result = @session.perform_request(method, uri,
                                           @format.pack(data))
         log_info('Request perfomed',
                  path: path,
