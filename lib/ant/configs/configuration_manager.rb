@@ -48,13 +48,31 @@ module Ant
         @config_files = env_files
       end
 
+      # Loads the configurations from all the possible sources. It will raise an
+      # exception when it is required to validate that no default placeholder
+      # is present on the configs.
       def load_configs!
-        # TODO: Implement this
+        load_configs
+        missing_keys = missing_configs
+        return if missing_keys.empty? || @accept_default_keys
+
+        raise MissingConfigs, missing_keys
       end
 
-      def pretty_load_configs!
+      # Use this when you require the application to do not start when something
+      # is missing and the error message should be displayed in stdout.
+      # This is helpful when you are launching your app and you need to trace
+      # any misconfiguration problem.
+      def pretty_load_configs!(terminate = true)
         load_configs!
-        # TODO: Implement this. Call load_configs! and display pretty error
+      rescue MissingConfigs => ex
+        puts 'You are missing some configs!'
+        puts 'Add them to a file and export the config env var:'
+        puts "$ export #{@env_prefix}_FILES='#{Dir.pwd}'/config/config.yaml"
+        puts 'Maybe you just need to add them to your existing files'
+        puts 'Missing configs:'
+        ex.keys.each { |k| puts "- \"#{k}\"" }
+        exit(1) if terminate
       end
 
       # returns the object as a hash
@@ -67,8 +85,20 @@ module Ant
         @configs[key]
       end
 
-      # TODO: set private methods
-      # private
+      private
+
+      # Looks for keys having the default placeholder, which are meant to be
+      # missing configurations
+      def missing_configs(hash = @configs, path = [])
+        case hash
+        when Hash
+          hash.map { |k, v| missing_configs(v, path + [k]) }.flatten
+        when Array
+          hash.map.with_index { |e, i| missing_configs(e, path + [i]) }.flatten
+        else
+          hash == @default_placeholder ? [path.join('.')] : []
+        end
+      end
 
       # Path to config files
       def env_files
@@ -108,6 +138,17 @@ module Ant
         files.each do |file|
           config = Loaders::YAML.new(file, self).load!
           @configs = recursive_merge(@configs, config)
+        end
+      end
+
+      # Exception raised when a configuration was not set
+      class MissingConfigs < StandardError
+        # Keys that were not loaded correctly
+        attr_reader :keys
+
+        def initialize(keys)
+          @keys = keys
+          super('There are keys missing to be configured')
         end
       end
     end
