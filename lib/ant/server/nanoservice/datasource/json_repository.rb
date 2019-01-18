@@ -13,6 +13,7 @@ module Ant
           def get(id)
             path = full_path(id)
             raise(ObjectNotFound, id) unless File.file?(path)
+
             contents = File.read(path)
             JSON.parse(contents, symbolize_names: true)
           end

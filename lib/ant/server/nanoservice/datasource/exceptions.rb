@@ -1,3 +1,4 @@
+require 'ant/exceptions'
 module Ant
   module Server
     module Nanoservice

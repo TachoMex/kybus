@@ -1,4 +1,5 @@
 require_relative 'id_generators'
+require 'json'
 module Ant
   module Server
     module Nanoservice
@@ -27,7 +28,7 @@ module Ant
 
           attr_writer :repository
 
-          def to_json(options)
+          def to_json(options = nil)
             @data.to_json(options)
           end
         end
