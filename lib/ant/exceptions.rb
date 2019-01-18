@@ -19,6 +19,19 @@ module Ant
         @code = code
         @data = data
       end
+
+      def to_log_format
+        to_h.merge(class: self.class.name)
+      end
+
+      def to_h
+        {
+          message: message,
+          code: code,
+          data: data,
+          backtrace: backtrace
+        }
+      end
     end
 
     ##
