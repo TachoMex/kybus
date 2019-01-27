@@ -32,6 +32,17 @@ module Ant
         end
       end
 
+      def test_raw_request
+        %i[get post].each do |verb|
+          stub_request(verb, 'http://api.test/api/users')
+            .with(body: { name: 'test', code: '1234' })
+            .to_return(body: 'Hellow world')
+          result = @client.send("raw_#{verb}", '/api/users', name: 'test', code: '1234')
+          assert_equal(result.body, 'Hellow world')
+        end
+      end
+
+
       def jsend_test(body, verb, path, klass, message = nil)
         stub_request(verb, [CONFS[:endpoint], path].join)
           .to_return(body: body.to_json)
