@@ -10,3 +10,6 @@
 *.gem
 Gemfile.lock
 application.log
+/storage/
+dev.rb
+develop.rb
