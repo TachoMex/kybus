@@ -8,9 +8,11 @@ module Ant
           attr_reader :data
           attr_writer :data
 
+          # :nocov: #
           def run_validations!
             puts 'WARN: model with no validations'
           end
+          # :nocov: #
 
           def store
             run_validations!

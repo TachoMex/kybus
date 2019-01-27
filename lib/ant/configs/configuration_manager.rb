@@ -63,6 +63,7 @@ module Ant
       # is missing and the error message should be displayed in stdout.
       # This is helpful when you are launching your app and you need to trace
       # any misconfiguration problem.
+      # :nocov: #
       def pretty_load_configs!(terminate = true)
         load_configs!
       rescue MissingConfigs => ex
@@ -74,11 +75,14 @@ module Ant
         ex.keys.each { |k| puts "- \"#{k}\"" }
         exit(1) if terminate
       end
+      # :nocov: #
 
       # returns the object as a hash
+      # :nocov: #
       def to_h
         @configs
       end
+      # :nocov: #
 
       # provide a method for accessing configs
       def [](key)

@@ -29,12 +29,14 @@ module Ant
             error!(response, http_code)
           end
         end
+        # :nocov: #
         base.rescue_from(Grape::Exceptions::Base) do |ex|
           ant_ex = Ant::Exceptions::AntFail.new(ex.message)
           response = Ant::Server::GrapeDecorator
                      .handler.call(env, :fail, ant_ex)
           error!(response, 400)
         end
+        # :nocov: #
         base.rescue_from(:all) do |ex|
           level = :fatal
           response = Ant::Server::GrapeDecorator.handler.call(env, level, ex)
