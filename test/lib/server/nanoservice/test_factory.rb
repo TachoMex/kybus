@@ -1,7 +1,7 @@
 class TestFactory < Minitest::Test
   include DevelopmentAPI::FactoryHelpers
 
-  ADAPTERS = %i[json].freeze
+  ADAPTERS = %i[json sequel].freeze
 
   def setup
     path = 'storage/tuples/hello.json'
@@ -12,13 +12,13 @@ class TestFactory < Minitest::Test
   end
 
   def object
-    { 'key' => 'hello', 'value' => 'world' }
+    { key: 'hello', value: 'world' }
   end
 
   def test_create
     ADAPTERS.each do |adapter|
       factory.create(object, adapter)
-      assert_equal(factory.get(object['key'], adapter).data, object)
+      assert_equal(factory.get(object[:key], adapter).data, object)
     end
   end
 
@@ -32,10 +32,10 @@ class TestFactory < Minitest::Test
   def test_store
     test_create
     ADAPTERS.each do |adapter|
-      tuple = factory.get(object['key'], adapter)
-      tuple.data['value'] = 'modified'
+      tuple = factory.get(object[:key], adapter)
+      tuple.data[:value] = 'modified'
       tuple.store
-      assert_equal(tuple.data, factory.get(object['key'], adapter).data)
+      assert_equal(tuple.data, factory.get(object[:key], adapter).data)
     end
   end
 
@@ -47,7 +47,7 @@ class TestFactory < Minitest::Test
   end
 
   def test_default_adapter
-    object = { 'key' => 'default', 'value' => 'works' }
+    object = { key: 'default', value: 'works' }
     factory.create(object)
     assert_equal(factory.get('default', :json).data, object)
     assert_raises(ObjectNotFound) { factory.get('default', :sequel) }

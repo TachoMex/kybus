@@ -11,7 +11,7 @@ module Ant
           end
 
           def get(id)
-            result = @sequel.where(@id => id).first
+            result = @sequel.where(@id.to_sym => id).first
             raise(ObjectNotFound, id) if result.nil?
             result
           end

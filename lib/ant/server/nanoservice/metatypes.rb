@@ -10,11 +10,21 @@ module Ant
 
         def self.build(name, fields)
           validations = fields.each_with_object({}) do |(field, plugins), obj|
-            obj[field] = plugins.map { |plug, conf| Validator.validator(plug).curry.call(conf) }
+            obj[field.to_sym] = plugins.map { |plug, conf| Validator.validator(plug).curry.call(conf) }
           end
           klass = Class.new(Ant::Server::Nanoservice::Datasource::Model) do
             def initialize(data)
-              @data = data.select { |key, _| self.class::VALIDATIONS.key?(key) }
+              @data = {}
+              data.each do |key, val|
+                case key
+                when Symbol
+                  @data[key] = val if self.class::VALIDATIONS.key?(key)
+                when String
+                  if self.class::VALIDATIONS.keys.map(&:to_s).include?(key)
+                    @data[key.to_sym] = val
+                  end
+                end
+              end
             end
 
             def validation_errors
@@ -28,7 +38,7 @@ module Ant
 
             def run_validations!
               errors = validation_errors
-              raise Ant::Exceptions::AntFail.new('Errors found on validation', 'INVALID_DATA', errors) unless errors.empty?
+              raise Ant::Server::Nanoservice::Datasource::Exceptions::ValidationErrors, errors unless errors.empty?
             end
           end
 
@@ -36,7 +46,7 @@ module Ant
           klass.const_set('VALIDATIONS', validations)
           klass.const_set('NAME', name)
           pkey = fields.select { |_, conf| conf['keys'] && conf['keys']['primary'] }.keys.first
-          klass.const_set('PRIMARY_KEY', pkey)
+          klass.const_set('PRIMARY_KEY', pkey&.to_sym)
           klass
         end
       end

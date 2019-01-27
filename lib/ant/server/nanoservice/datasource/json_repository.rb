@@ -20,7 +20,7 @@ module Ant
             raise(ObjectNotFound, id) unless File.file?(path)
 
             contents = File.read(path)
-            JSON.parse(contents, symbolize_names: false)
+            JSON.parse(contents, symbolize_names: true)
           end
 
           def create_(data)

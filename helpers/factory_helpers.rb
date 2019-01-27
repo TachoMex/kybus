@@ -6,14 +6,14 @@ class DevelopmentAPI < Grape::API
 
     class Tuple < Model
       def run_validations!
-        raise(Ant::Exceptions::AntFail, 'nil value') if @data['value'].nil?
+        raise(Ant::Exceptions::AntFail, 'nil value') if @data[:value].nil?
       end
     end
 
     def json_repository
       @json_repository ||= JSONRepository.new(
         'storage/tuples',
-        'key',
+        :key,
         IDGenerators[:id]
       )
     end
@@ -27,7 +27,7 @@ class DevelopmentAPI < Grape::API
         end
         Sequel.new(
           db[:tuple],
-          'key',
+          :key,
           IDGenerators[:id]
         )
       end
