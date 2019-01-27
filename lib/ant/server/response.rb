@@ -58,6 +58,7 @@ module Ant
       end
 
       def process_request
+        params[:__init_time] = Time.now
         data = RequestResponse.new(request: request, params: params)
         resolver = :success
         Server::Response.logger.access(data)

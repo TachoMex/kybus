@@ -11,7 +11,8 @@ class BasicAuthRoutes < Grape::API
       unless user == 'test' && pass == 'secret'
         raise Ant::Exceptions::HTTP::Unauthorized, 'Credentials are not correct'
       end
-      
+
+      status 202
       user
     end
   end
