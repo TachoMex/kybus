@@ -5,6 +5,11 @@ module Ant
     module Nanoservice
       module Datasource
         class JSONRepository < Repository
+          def self.from_config(conf)
+            folder = conf['storage'].gsub('$name', conf['schema']::NAME)
+            new(folder, conf['schema']::PRIMARY_KEY, IDGenerators[:id])
+          end
+
           def initialize(folder, id, id_generator)
             @path = folder
             super(id, id_generator)
@@ -15,7 +20,7 @@ module Ant
             raise(ObjectNotFound, id) unless File.file?(path)
 
             contents = File.read(path)
-            JSON.parse(contents, symbolize_names: true)
+            JSON.parse(contents, symbolize_names: false)
           end
 
           def create_(data)
