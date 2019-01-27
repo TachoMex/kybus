@@ -10,9 +10,12 @@ module Ant
 
         def self.build(name, fields)
           validations = fields.each_with_object({}) do |(field, plugins), obj|
-            obj[field.to_sym] = plugins.map { |plug, conf| Validator.validator(plug).curry.call(conf) }
+            obj[field] = plugins.map { |plug, conf| Validator.validator(plug).curry.call(conf) }
           end
           klass = Class.new(Ant::Server::Nanoservice::Datasource::Model) do
+            def initialize(data)
+              @data = data.select { |key, _| self.class::VALIDATIONS.key?(key) }
+            end
 
             def validation_errors
               result = {}
@@ -31,6 +34,9 @@ module Ant
 
           MetaTypes.const_set(name.split('_').collect(&:capitalize).join, klass)
           klass.const_set('VALIDATIONS', validations)
+          klass.const_set('NAME', name)
+          pkey = fields.select { |_, conf| conf['keys'] && conf['keys']['primary'] }.keys.first
+          klass.const_set('PRIMARY_KEY', pkey)
           klass
         end
       end
