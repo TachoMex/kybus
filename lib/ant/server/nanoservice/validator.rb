@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Ant
   module Server
     module Nanoservice
       module Validator
         extend Ant::DRY::ResourceInjector
         def self.register_plugin(name)
-          block = proc { |value, conf| yield(value, conf) ? nil : "#{name} failed!" }
+          block = ->(value, conf) { yield(value, conf) ? nil : "#{name} failed!" }
           register(:validators, name, block)
         end
 
@@ -48,7 +50,7 @@ module Ant
         validator_alias('size', 'length')
 
         register_plugin('pattern') do |regex, val|
-          val.nil? || regex.match?(val)
+          val.nil? || Regexp.new(regex).match?(val)
         end
         validator_alias('pattern', 'regex')
 
