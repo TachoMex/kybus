@@ -16,7 +16,7 @@ module Ant
       # it too. This is applied recursively
       # ==== Examples
       #   a = { a: 1, b: { c: 2 } }
-      #   b = { b: { { d: 3 } }, e: 4}
+      #   b = { b: { d: 3 }, e: 4}
       #   recursive_merge(a, b) => { a: 1, b: { c: 2, d: 3 }, e: 4}
       def recursive_merge(receiver, sender)
         return receiver if sender.nil?
