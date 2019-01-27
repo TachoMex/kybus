@@ -14,7 +14,6 @@ module Ant
 
           class ValidationErrors < Ant::Exceptions::AntFail
             def initialize(data)
-              @id = id
               super('Error while validating object', 'ValidationErrors', data)
             end
           end

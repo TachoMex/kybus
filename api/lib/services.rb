@@ -1,9 +1,5 @@
 module Services
   class << self
-    def load_configs!
-      configs
-    end
-
     def configs
       @configs ||= begin
         configs = Ant::Configuration::ConfigurationManager.new(
