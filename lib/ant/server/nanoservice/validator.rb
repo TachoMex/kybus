@@ -27,8 +27,12 @@ module Ant
           resource(:validators, name)
         end
 
+        register_plugin('keys') do |_conf, _val|
+          true
+        end
+
         register_plugin('range') do |conf, val|
-          (conf['min']..conf['max']).cover?(val)
+          val.nil? || (conf['min']..conf['max']).cover?(val)
         end
 
         register_plugin('not_nil') do |_conf, val|
@@ -38,19 +42,19 @@ module Ant
         validator_alias('not_nil', 'not_null')
 
         register_plugin('size') do |size, val|
-          val.size <= size
+          val.nil? || val.size <= size
         end
 
         validator_alias('size', 'length')
 
         register_plugin('pattern') do |regex, val|
-          regex.match?(val)
+          val.nil? || regex.match?(val)
         end
         validator_alias('pattern', 'regex')
 
         register_plugin('type') do |type, val|
           type_validator = resource(:types, type)
-          type_validator.call(val)
+          val.nil? || type_validator.call(val)
         end
 
         register_type('numeric') { |val| val.is_a?(Numeric) }
