@@ -13,7 +13,7 @@ module Ant
         end
 
         def unpack(data)
-          unformat(data.body)
+          unformat(data)
         end
 
         def unformat(msg)

@@ -60,7 +60,7 @@ module Ant
       end
 
       def perform_request(method, path, data)
-        result = perform_raw_request(method, path, data)
+        result = perform_raw_request(method, path, data).body
         unpacked = @format.unpack(result)
         @validator.validate(unpacked)
       end
