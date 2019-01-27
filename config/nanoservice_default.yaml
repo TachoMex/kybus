@@ -21,7 +21,7 @@ schema:
         type: string
         size: 64
         not_null:
-        # regex: ^.*$
+        regex: '\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z'
         # index: true
       mobile:
         type: string
