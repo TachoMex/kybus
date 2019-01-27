@@ -21,6 +21,10 @@ class BasicRoutes < Grape::API
     raise(Ant::Exceptions::AntError, 'The system crashed')
   end
 
+  get :success do
+    raise(Ant::Exceptions::AntSuccess, 'U scare bro?')
+  end
+
   get :slow do
     sleep(2)
     'Sorry for the delay!'

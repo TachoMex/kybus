@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './test/test_helper'
 
 class TestDevelopmentAPI < Minitest::Test
@@ -53,8 +55,19 @@ class TestDevelopmentAPI < Minitest::Test
     jsend_test('fail', 'BadRequest', 'Wrong Value', 400)
   end
 
+  def test_slow
+    get('/api/slow')
+    assert_equal(200, last_response.status)
+    response = last_json_response
+    assert_equal(response['status'], 'success')
+  end
+
   def test_error
     jsend_test('error', 'ServerError', 'The system crashed', 500)
+  end
+
+  def test_success
+    jsend_test('success', nil, nil, 200)
   end
 
   def test_fatal
