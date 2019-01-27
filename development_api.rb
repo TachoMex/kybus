@@ -5,12 +5,16 @@ require_relative 'lib/ant'
 require_relative 'lib/ant/nanoservice'
 require_relative 'lib/ant/server/grape'
 require_relative 'lib/ant/http_exceptions'
+require './lib/ant/configs'
+
 
 require_relative 'helpers/factory_helpers'
+require_relative 'api/lib/services'
 
 require_relative 'routes/basic_auth_routes'
 require_relative 'routes/basic_routes'
 require_relative 'routes/nanoservice'
+require_relative 'routes/user'
 
 class DevelopmentAPI < Grape::API
   include Ant::Server::GrapeDecorator
@@ -25,4 +29,5 @@ class DevelopmentAPI < Grape::API
   mount Nanoservice
   mount BasicRoutes
   mount BasicAuthRoutes
+  mount UserRoutes
 end
