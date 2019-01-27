@@ -102,7 +102,7 @@ module Ant
 
       # Path to config files
       def env_files
-        array_wrap(@env_vars['files'])
+        @env_vars['files'] && array_wrap(@env_vars['files'])
       end
 
       # Extract vars from env
@@ -130,7 +130,7 @@ module Ant
 
       # Helper method for loading config files
       def load_config_files
-        load_files(@config_files)
+        @config_files && load_files(@config_files)
       end
 
       # Helper method for loading files into configurations
