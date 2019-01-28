@@ -1,4 +1,4 @@
-# Ruby Ants Framework
+# Ruby Ants Framework [![Build Status](https://travis-ci.com/TachoMex/ant.svg?token=mByHJndryoQGoBVujqw2&branch=develop)](https://travis-ci.com/TachoMex/ant)
 
 Ruby ants aims to be a framework for building microservices-based
 applications. Also, we expect that this framework will be very flexible so
