@@ -11,7 +11,7 @@ SimpleCov.minimum_coverage 100
 SimpleCov.start
 
 class TestGenerateDocs < Minitest::Test
-  DOC_COVERAGE = 90
+  DOC_COVERAGE = 30
   def test_run
     doc = RDoc::RDoc.new
     doc.document ['lib']

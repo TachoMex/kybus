@@ -23,18 +23,22 @@ module Ant
           register_ca
         end
 
+        # :nocov: #
         def register_certificate
           return unless @config[:client_certificate]
 
           cert = File.read(@config[:client_certificate])
           self.class.pkcs12(cert, @config[:client_certificate_pass])
         end
+        # :nocov: #
 
+        # :nocov: #
         def register_ca
           return unless @config[:ca_validate]
 
           self.class.ssl_ca_file(@config[:ca_validate])
         end
+        # :nocov: #
 
         def configure_request(request)
           basic_auth(request, @config[:basic_auth]) if @config[:basic_auth]

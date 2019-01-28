@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'repository'
+require 'fileutils'
 
 module Ant
   module Server
@@ -16,6 +17,7 @@ module Ant
 
           def initialize(folder, id, id_generator)
             @path = folder
+            FileUtils.mkdir_p folder
             super(id, id_generator)
           end
 
