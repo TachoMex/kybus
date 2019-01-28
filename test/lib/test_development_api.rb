@@ -16,13 +16,21 @@ class TestDevelopmentAPI < Minitest::Test
     assert_equal(response['status'], 'success')
   end
 
+  def assert_with_nil(val_a, val_b)
+    if val_b.nil?
+      assert_nil(val_a)
+    else
+      assert_equal(val_a, val_b)
+    end
+  end
+
   def jsend_test(status, code, message, http_code, headers = {})
     get("/api/#{status}", headers: headers)
     assert_equal(http_code, last_response.status)
     response = last_json_response
     assert_equal(response['status'], status)
-    assert_equal(response['code'], code)
-    assert_equal(response['message'], message)
+    assert_with_nil(response['code'], code)
+    assert_with_nil(response['message'], message)
   end
 
   def basic_auth_test(status, code, http_code, headers)
