@@ -1,5 +1,12 @@
+# frozen_string_literal: true
+
 module Ant
   module Server
+    # Descorator for using grape with ant.
+    # This will implement:
+    # - exception handling
+    # - logs
+    # - JSend format
     module GrapeDecorator
       def self.handler
         lambda do |env, level, ex|
@@ -21,7 +28,7 @@ module Ant
         exception.respond_to?(:http_code) ? exception.http_code : default
       end
 
-      def self.configure_handlers(base)
+      def self.configure_custom_exceptions(base)
         Server::Response.resources(:exceptions).each do |exception_class, level|
           base.rescue_from(exception_class) do |ex|
             response = Ant::Server::GrapeDecorator.handler.call(env, level, ex)
@@ -29,20 +36,32 @@ module Ant
             error!(response, http_code)
           end
         end
-        # :nocov: #
+      end
+
+      # :nocov: #
+      def self.configure_grape_exceptions(base)
         base.rescue_from(Grape::Exceptions::Base) do |ex|
           ant_ex = Ant::Exceptions::AntFail.new(ex.message)
           response = Ant::Server::GrapeDecorator
                      .handler.call(env, :fail, ant_ex)
           error!(response, 400)
         end
-        # :nocov: #
+      end
+      # :nocov: #
+
+      def self.configure_global_exception_handler(base)
         base.rescue_from(:all) do |ex|
           level = :fatal
           response = Ant::Server::GrapeDecorator.handler.call(env, level, ex)
           http_code = Ant::Server::GrapeDecorator.extract_http_code(ex, level)
           error!(response, http_code)
         end
+      end
+
+      def self.configure_handlers(base)
+        configure_custom_exceptions(base)
+        configure_grape_exceptions(base)
+        configure_global_exception_handler(base)
       end
 
       def self.included(base)

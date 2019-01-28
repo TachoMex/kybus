@@ -3,10 +3,16 @@
 module Ant
   module Server
     module Nanoservice
+      # This module is a singleton that stores all the validator plugins
+      # A validator plugin is introduced into metatypes and used to validate
+      # that types are properly validated.
+      # See more on the validators documentations.
       module Validator
         extend Ant::DRY::ResourceInjector
         def self.register_plugin(name)
-          block = ->(value, conf) { yield(value, conf) ? nil : "#{name} failed!" }
+          block = lambda do |value, conf|
+            yield(value, conf) ? nil : "#{name} failed!"
+          end
           register(:validators, name, block)
         end
 

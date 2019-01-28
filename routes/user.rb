@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# Provides API for testing schema, factory and models together.
+# Currently allows to play with user registration
 class UserRoutes < Grape::API
   Services.schema.mount_grape_helpers(UserRoutes, 'users')
 

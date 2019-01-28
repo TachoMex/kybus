@@ -1,9 +1,15 @@
+# frozen_string_literal: true
+
 require_relative 'exceptions'
 
 module Ant
   module Server
     module Nanoservice
       module Datasource
+        # Base class for repositories. The ID generator might get deprecated.
+        # It provides the interface for storing objects inside any persistance
+        # provider implemented.
+        # TODO: Find a better strategy for primary key handling.
         class Repository
           include Exceptions
           def initialize(id, id_generator)
@@ -21,6 +27,7 @@ module Ant
             data = create_initial_object(id)
             existent = exist?(data[@id])
             raise(ObjectAlreadyExists.new(data[@id], existent)) if existent
+
             create_(data)
           end
 

@@ -1,9 +1,14 @@
+# frozen_string_literal: true
+
 require_relative 'id_generators'
 require 'json'
 module Ant
   module Server
     module Nanoservice
       module Datasource
+        # Wraps an object inside a model, this will allow to validate that
+        # values are inside the restrictions. It dependes on a repository
+        # for storing values.
         class Model
           attr_reader :data
           attr_writer :data

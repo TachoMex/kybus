@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'json'
 
 module Ant
   module Client
     module Format
+      # Implements JSON format for http clients.
       class JSONFormat
         def pack(data)
           {

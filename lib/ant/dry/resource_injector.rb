@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ant
   module DRY
     ##
@@ -56,6 +58,7 @@ module Ant
         end
         res = resources(key)[subkey]
         raise("Resource `#{key}::#{subkey}` Not Found") if res.nil?
+
         res
       end
     end

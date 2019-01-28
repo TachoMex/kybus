@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'simplecov'
 require 'minitest/test'
 require 'minitest/autorun'
@@ -17,6 +19,7 @@ class TestGenerateDocs < Minitest::Test
     covered = doc.stats.percent_doc
 
     return if covered >= DOC_COVERAGE
+
     puts "Doc Coverage #{covered}%/#{DOC_COVERAGE}% was not covered."
     raise('LowCoverageError')
   end

@@ -1,9 +1,13 @@
+# frozen_string_literal: true
+
 require_relative 'repository'
 
 module Ant
   module Server
     module Nanoservice
       module Datasource
+        # Stores objects as a plain json file inside the specified folder.
+        # Uses this for testing purpouse.
         class JSONRepository < Repository
           def self.from_config(conf)
             folder = conf['storage'].gsub('$name', conf['schema']::NAME)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'httparty'
 
 require_relative 'session/base'
@@ -6,6 +8,8 @@ require_relative 'validator'
 
 module Ant
   module Client
+    # HTTP client using HTTParty as support. This implementation makes it easier
+    # to integrate with other backends.
     class RESTClient
       def initialize(configs)
         @session = Session.build(configs)

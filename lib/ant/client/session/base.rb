@@ -1,13 +1,18 @@
+# frozen_string_literal: true
+
 require 'httparty'
 require_relative 'basic_auth'
 
 module Ant
   module Client
+    # Provides session handling on http requests
     module Session
       def self.build(config)
         Base.new(config)
       end
 
+      # Used on http clients. It modifies the requests in order to implement
+      # credentials and other mechanism for session.
       class Base
         include HTTParty
         include BasicAuth

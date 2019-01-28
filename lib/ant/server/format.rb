@@ -7,8 +7,8 @@ module Ant
     # This will wrap a json object into a standard format, where the response
     # will contain some metadata about the status of the request
     class Format
-      INTERNAL_SERVER_ERROR_CODE = 'INTERNAL_SERVER_ERROR'.freeze
-      INTERNAL_SERVER_ERROR_MESSAGE = 'Unexpected error ocurred!'.freeze
+      INTERNAL_SERVER_ERROR_CODE = 'INTERNAL_SERVER_ERROR'
+      INTERNAL_SERVER_ERROR_MESSAGE = 'Unexpected error ocurred!'
       ##
       # success means there were no errors during the execution of the request
       # it sends the result in the data field.

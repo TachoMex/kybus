@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'server/nanoservice/datasource/model'
 require_relative 'server/nanoservice/factory'
 require_relative 'server/nanoservice/schema'

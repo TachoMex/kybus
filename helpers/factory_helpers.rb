@@ -1,9 +1,15 @@
+# frozen_string_literal: true
+
 class DevelopmentAPI < Grape::API
+  # implements an obsolete way of helpers. See Schema#mount_grape_helpers.
+  # Provides some helpers that will allow the tuple api to access a factory.
+  # This tuple API would help to develop the repositories components.
   module FactoryHelpers
     include Ant::Server::Nanoservice
     include Datasource
     include Exceptions
 
+    # Models a single tuple as a key => value object.
     class Tuple < Model
       def run_validations!
         raise(Ant::Exceptions::AntFail, 'nil value') if @data[:value].nil?

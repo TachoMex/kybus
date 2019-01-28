@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
+# API for thesting the integration with BasicAuth
 class BasicAuthRoutes < Grape::API
+  # Provides helpers to take credentials from front end
   module AuthHelper
     def current_user!
       token = env['HTTP_AUTHORIZATION']

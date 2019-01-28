@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'configuration'
 require_relative 'certificate'
 require_relative 'revocation_list'
@@ -6,6 +8,11 @@ require 'fileutils'
 
 module Ant
   module SSL
+    # This provides a full inventory of PKI.
+    # It is composed of:
+    # - Authorities
+    # - Clients
+    # - Servers
     class Inventory
       attr_reader :defaults
 
@@ -22,6 +29,7 @@ module Ant
         [@authorities, @clients, @servers].each(&:create_certificates!)
       end
 
+      # TODO: Implement validation of inventories
       def validate_inventories!
         true
       end
@@ -35,6 +43,8 @@ module Ant
       end
     end
 
+    # Implements a single inventory. It creates certificates using similar
+    # configurations.
     class SubInventory
       def initialize(configs, inventory)
         defaults = configs['defaults']

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../exceptions'
 require_relative '../dry/resource_injector'
 require_relative 'format'
@@ -64,6 +66,7 @@ module Ant
         Server::Response.logger.access(data)
         begin
           raise(AntError, 'No implementation given') unless block_given?
+
           data.result = yield
           # rubocop: disable RescueException
         rescue Exception => ex

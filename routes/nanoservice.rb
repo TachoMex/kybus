@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# API for tuples. Provides endpoints for testing repository and factory
+# components
 class Nanoservice < Grape::API
   namespace :nanoservice do
     route_param :repository do

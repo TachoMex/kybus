@@ -4,6 +4,7 @@ require_relative 'exceptions'
 
 module Ant
   module Exceptions
+    # Provides basic execptions for http common errors.
     module HTTP
       class << self
         EXCEPTION_TYPES = {

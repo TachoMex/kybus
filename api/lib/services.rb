@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+# Services module provides configurations and a singleton context for grape API.
+# It is not the best practice but since Grape uses singleton this is required
+# to allow an smooth integration with it.
+# Before adding something here you should evaluate adding the ServiceManager.
 module Services
   class << self
     def configs

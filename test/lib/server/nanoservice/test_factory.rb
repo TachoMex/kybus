@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TestFactory < Minitest::Test
   include DevelopmentAPI::FactoryHelpers
 
@@ -15,10 +17,14 @@ class TestFactory < Minitest::Test
     { key: 'hello', value: 'world' }
   end
 
+  def fetch_tuple(adapter, key = object[:key])
+    factory.get(key, adapter)
+  end
+
   def test_create
     ADAPTERS.each do |adapter|
       factory.create(object, adapter)
-      assert_equal(factory.get(object[:key], adapter).data, object)
+      assert_equal(fetch_tuple(adapter).data, object)
     end
   end
 
@@ -32,10 +38,10 @@ class TestFactory < Minitest::Test
   def test_store
     test_create
     ADAPTERS.each do |adapter|
-      tuple = factory.get(object[:key], adapter)
+      tuple = fetch_tuple(adapter)
       tuple.data[:value] = 'modified'
       tuple.store
-      assert_equal(tuple.data, factory.get(object[:key], adapter).data)
+      assert_equal(tuple.data, fetch_tuple(adapter).data)
     end
   end
 

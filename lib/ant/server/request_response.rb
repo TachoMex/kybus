@@ -1,5 +1,10 @@
+# frozen_string_literal: true
+
 module Ant
   module Server
+    # Wraps the request and the response into an object so it is easier
+    # to track monitoring logs and format the response after the endpoint was
+    # executed
     class RequestResponse
       attr_reader :params, :exception, :result, :start_timestamp
       attr_writer :exception, :result, :start_timestamp

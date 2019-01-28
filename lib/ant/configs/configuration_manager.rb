@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ant/dry/resource_injector'
 require_relative 'utils'
 require_relative 'loaders/yaml'

@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require 'openssl'
 
 module Ant
   module SSL
+    # Stores a X509 certificate.
     class Certificate
       attr_reader :cert, :key
 
@@ -16,7 +19,8 @@ module Ant
       end
 
       def create!
-        # return if File.file?(@config.key_path)
+        return if File.file?(@config.key_path)
+
         @ca = @inventory.ca(@config['parent'])
         configure_details!
         configure_extensions!

@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'json'
 
 module Ant
   module Client
     module Validator
+      # Implement the empty validator for http client responses.
       class NoValidator
         def validate(response)
           response

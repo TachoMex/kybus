@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 module Ant
   module Client
     module Validator
+      # Implements JSend specification on another backend calls
       class JSend
         include Ant::Exceptions
         EXCEPTION_LIST = {

@@ -9,7 +9,9 @@ module Ant
         conf = ConfigurationManager.new(
           default_files: './config/configs_test.defaults.yaml'
         )
-        assert_raises(ConfigurationManager::MissingConfigs) { conf.load_configs! }
+        assert_raises(ConfigurationManager::MissingConfigs) do
+          conf.load_configs!
+        end
       end
     end
   end

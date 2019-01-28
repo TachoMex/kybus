@@ -12,7 +12,9 @@ module Ant
         end
 
         def test_range_validator
-          validator = Validator.validator('range').curry.call('min' => 10, 'max' => 20)
+          validator = Validator.validator('range')
+                               .curry
+                               .call('min' => 10, 'max' => 20)
           assert_nil(validator.call(15))
           refute_nil(validator.call(1))
           assert_nil(validator.call(nil))

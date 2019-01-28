@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module Ant
   module SSL
+    # Stores a configuration for a certificate
     class Configuration
       ONE_YEAR = 60 * 60 * 24 * 365
 

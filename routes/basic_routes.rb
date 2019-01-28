@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# This API provides routes to test JSend formats.
 class BasicRoutes < Grape::API
   get :status do
     log_info('Requesting status for server')

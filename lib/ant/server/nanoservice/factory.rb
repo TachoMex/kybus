@@ -1,6 +1,10 @@
+# frozen_string_literal: true
+
 module Ant
   module Server
     module Nanoservice
+      # Binds together a model and a repository. This will be the tier in
+      # charge of sending objects into storage and fetching also from them.
       class Factory
         include Ant::DRY::ResourceInjector
 

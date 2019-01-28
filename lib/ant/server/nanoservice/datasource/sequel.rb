@@ -1,9 +1,13 @@
+# frozen_string_literal: true
+
 require_relative 'repository'
 
 module Ant
   module Server
     module Nanoservice
       module Datasource
+        # Repository that fetch and store objects using a sequel connection
+        # as resource.
         class Sequel < Repository
           def initialize(sequel_object, id, id_generator)
             @sequel = sequel_object
@@ -13,6 +17,7 @@ module Ant
           def get(id)
             result = @sequel.where(@id.to_sym => id).first
             raise(ObjectNotFound, id) if result.nil?
+
             result
           end
 
