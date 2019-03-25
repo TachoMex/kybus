@@ -52,15 +52,20 @@ module Ant
           DebugMessage.new(@pending_messages.shift, @name)
         end
 
+        def send_data(message)
+          return unless @echo
+
+          puts "Sending message to channel: #{@name}"
+          puts message
+        end
+
+        def echo=(toogle)
+          @echo = toogle
+        end
+
         # receives the answer from the bot
         def answer(message)
-          if @echo
-            # :nocov: #
-            puts "Sending message to channel: #{@name}"
-            puts message
-            # :nocov: #
-          end
-
+          send_data(message)
           @state = :open
         end
       end
@@ -103,24 +108,34 @@ module Ant
           end
         end
 
+        # removes prefix from channel id
+        def channel(name)
+          @channels[name.gsub('debug_message__', '')]
+        end
+
         # interface for sending messages
-        def send_message(channel, contents)
-          @channels[channel.gsub('debug_message__', '')].answer(contents)
+        def send_message(channel_name, contents)
+          channel(channel_name).answer(contents)
         end
 
         # interface for sending video
-        def send_video(_channel, _video_url)
-          raise
+        def send_video(channel_name, video_url)
+          channel(channel_name).answer("VIDEO: #{video_url}")
         end
 
         # interface for sending uadio
-        def send_audio(_channel, _audio_url)
-          raise
+        def send_audio(channel_name, audio_url)
+          channel(channel_name).answer("AUDIO: #{audio_url}")
         end
 
         # interface for sending image
-        def send_image(_channel, _image_url)
-          raise
+        def send_image(channel_name, image_url)
+          channel(channel_name).answer("IMG: #{image_url}")
+        end
+
+        # changes echo config
+        def echo=(toogle)
+          @channels.each { |_, channel| channel.echo = toogle }
         end
       end
 
