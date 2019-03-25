@@ -6,12 +6,13 @@ require 'minitest/autorun'
 require 'rack-minitest/test'
 require 'rdoc'
 require 'webmock/minitest'
+require 'mocha/minitest'
 
 SimpleCov.minimum_coverage 100
 SimpleCov.start
 
 class TestGenerateDocs < Minitest::Test
-  DOC_COVERAGE = 30
+  DOC_COVERAGE = 44
   def test_run
     doc = RDoc::RDoc.new
     doc.document ['lib']
