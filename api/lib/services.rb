@@ -9,7 +9,10 @@ module Services
     def configs
       @configs ||= begin
         configs = Ant::Configuration::ConfigurationManager.new(
-          default_files: './config/nanoservice_default.yaml'
+          default_files: [
+            './config/nanoservice_default.yaml',
+            './config/bot_default.yaml'
+          ]
         )
         configs.load_configs!
         configs
