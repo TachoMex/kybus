@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'repository'
+require_relative 'id_generators'
+require_relative 'model'
 require 'fileutils'
 
 module Ant
@@ -11,8 +13,14 @@ module Ant
         # Uses this for testing purpouse.
         class JSONRepository < Repository
           def self.from_config(conf)
-            folder = conf['storage'].gsub('$name', conf['schema']::NAME)
-            new(folder, conf['schema']::PRIMARY_KEY, IDGenerators[:id])
+            folder = conf['storage'].gsub('$name', conf['schema_name'])
+            if conf['schema'].nil?
+              # TODO: decouple use of classes
+              new(folder, conf['primary_key'].to_sym,
+                  IDGenerators[:id])
+            else
+              new(folder, conf['schema']::PRIMARY_KEY, IDGenerators[:id])
+            end
           end
 
           def initialize(folder, id, id_generator)

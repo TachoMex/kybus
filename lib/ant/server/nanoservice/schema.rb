@@ -16,20 +16,32 @@ module Ant
         attr_reader :schema, :repositories
 
         def initialize(schema)
-          models = schema['models']
-          @schema = models.each_with_object({}) do |(name, columns), obj|
-            obj[name] = MetaTypes.build(name, columns)
+          build_schemas(schema['models'])
+          build_repositories(schema['models'], schema['repositories'])
+        end
+
+        private
+
+        def build_schemas(models)
+          @schema_configs = {}
+          @schema = models.each_with_object({}) do |(name, configs), obj|
+            columns = configs['fields']
+            @schema_configs[name] = configs
+            configs['configs']['schema_name'] = name
+            obj[name] = MetaTypes.build(name, columns, configs)
           end
+        end
 
-          repository_conf = schema['repositories']
-
+        def build_repositories(models, repository_conf)
           @repositories = models.each_with_object({}) do |(name, _), obj|
             obj[name] = Ant::Server::Nanoservice::Repository
                         .from_config(@schema[name],
-                                     repository_conf[name],
+                                     @schema_configs[name]['configs'],
                                      repository_conf['default'])
           end
         end
+
+        public
 
         def mount_grape_helpers(api, schema_name)
           model = schema[schema_name]

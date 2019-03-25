@@ -19,6 +19,14 @@ module Ant
           end
           # :nocov: #
 
+          def []=(key, val)
+            @data[key] = val
+          end
+
+          def [](key)
+            @data[key]
+          end
+
           def store
             run_validations!
             @repository.store(@data)
@@ -37,6 +45,15 @@ module Ant
 
           def to_json(options = nil)
             @data.to_json(options)
+          end
+        end
+
+        # This class is for explicit usage of models without validations
+        class EmptyModel < Model
+          def run_validations!; end
+
+          def to_h
+            @data
           end
         end
       end

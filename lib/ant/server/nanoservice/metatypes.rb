@@ -61,7 +61,7 @@ module Ant
                   &.to_sym
           end
 
-          def build(name, fields)
+          def build(name, fields, _configs)
             validations = validation_builder(fields)
             klass = Class.new(Ant::Server::Nanoservice::Datasource::Model)
             build_constructor(klass)

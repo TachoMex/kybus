@@ -4,68 +4,78 @@ schema:
     - soft_delete
   models:
     users:
-      username:
-        type: string
-        # alphanumeric:
-        #   extra_chars: '._-'
-        size: 32
-        not_null:
-        keys:
-          primary: true
-      borndate:
-        type: string
-        not_null:
-        # keys:
-        #   index: true
-      email:
-        type: string
-        size: 64
-        not_null:
-        regex: '\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z'
-        # index: true
-      mobile:
-        type: string
-        not_null:
-        size: 16
-        # index: true
+      fields:
+        username:
+          type: string
+          # alphanumeric:
+          #   extra_chars: '._-'
+          size: 32
+          not_null:
+          keys:
+            primary: true
+        borndate:
+          type: string
+          not_null:
+          # keys:
+          #   index: true
+        email:
+          type: string
+          size: 64
+          not_null:
+          regex: '\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z'
+          # index: true
+        mobile:
+          type: string
+          not_null:
+          size: 16
+          # index: true
+      configs: {}
     passwords:
-      password:
-        type: strong_password
-      username:
-        type:
-          name: foreign_key
-          table: users
+      configs: {}
+      fields:
+        password:
+          type: strong_password
+        username:
+          type:
+            name: foreign_key
+            table: users
     auth_plugins:
-      auth_source:
-        type: auth_source
-      username:
-        type:
-          name: foreign_key
-          table: users
-      metadata:
-        type: json
+      configs: {}
+      fields:
+        auth_source:
+          type: auth_source
+        username:
+          type:
+            name: foreign_key
+            table: users
+        metadata:
+          type: json
     wallets:
-      wallet_id:
-        type: serial
-      username:
-        type:
-          name: foreign_key
-          table: users
+      configs: {}
+      fields:
+        wallet_id:
+          type: serial
+        username:
+          type:
+            name: foreign_key
+            table: users
     transactions:
-      source_wallet:
-        type:
-          name: foreign_key
-          optional: true
-          table: wallets
-          field: wallet_id
-      destination_wallet:
-        type:
-          name: foreign_key
-          table: wallets
-          field: wallet_id
-      amount:
-        type:
-          name: money
+      configs: {}
+      fields:
+        source_wallet:
+          type:
+            name: foreign_key
+            optional: true
+            table: wallets
+            field: wallet_id
+        destination_wallet:
+          type:
+            name: foreign_key
+            table: wallets
+            field: wallet_id
+        amount:
+          type:
+            name: money
   repositories:
     default:
       name: json

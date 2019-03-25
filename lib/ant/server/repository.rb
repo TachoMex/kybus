@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'nanoservice/datasource/json_repository'
+require_relative 'nanoservice/datasource/sequel'
+require_relative 'nanoservice/factory'
+
 module Ant
   module Server
     module Nanoservice
