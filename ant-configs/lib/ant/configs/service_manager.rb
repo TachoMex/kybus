@@ -2,7 +2,7 @@
 
 # TODO: Comming soon!
 
-require 'ant/dry/resource_injector'
+require 'ant/core'
 
 module Ant
   module Configuration
