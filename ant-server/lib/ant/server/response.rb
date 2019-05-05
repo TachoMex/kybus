@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../exceptions'
-require_relative '../dry/resource_injector'
 require_relative 'format'
 require_relative 'logger'
 require_relative 'request_response'

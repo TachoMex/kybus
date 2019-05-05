@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require './test/test_helper'
+require 'grape'
 
 module Ant
   module Server
