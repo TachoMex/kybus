@@ -15,6 +15,7 @@ module Ant
           @validators[config[:validator]].new
         end
 
+        # TODO: change this to resource injector
         def default_validators
           {
             jsend: JSend,

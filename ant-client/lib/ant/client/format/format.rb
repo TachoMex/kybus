@@ -13,6 +13,7 @@ module Ant
           @formats[config[:format]].new
         end
 
+        # TODO: change this to resource injector
         def default_formats
           {
             json: JSONFormat,

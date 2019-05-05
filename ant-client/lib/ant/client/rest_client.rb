@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'httparty'
+require 'ant/core'
+require 'cute_logger'
 
 require_relative 'session/base'
 require_relative 'format/format'
