@@ -13,7 +13,7 @@ module Ant
         File.delete(path) if File.file?(path)
         path = 'storage/antbot/debug_message__b.json'
         File.delete(path) if File.file?(path)
-        conf = Services.configs['bot']
+        conf = CONFIG
         conf['provider']['echo'] = false
 
         @bot = Ant::Bot::Base.new(conf)

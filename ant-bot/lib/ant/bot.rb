@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'ant/core'
-require 'ant/orm'
+require 'ant/storage'
 
 require_relative 'bot/base'
 require_relative 'bot/message'

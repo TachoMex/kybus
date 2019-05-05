@@ -2,17 +2,18 @@
 
 require 'ant/dry/daemon'
 require 'ant/bot/adapters/base'
-require 'ant/server/repository'
-require 'ant/server/repository'
-require 'ant/server/nanoservice/datasource/model'
+require 'ant/storage'
 require_relative 'command_definition'
+
+# TODO: Remove cute logger
+require 'cute_logger'
 
 module Ant
   module Bot
     # Base class for bot implementation. It wraps the threads execution, the
     # provider and the state storage inside an object.
     class Base
-      include Ant::Server::Nanoservice::Datasource
+      include Ant::Storage::Datasource
       # Configs needed:
       # - pool_size: number of threads created in execution
       # - provider: a configuration for a thread provider.
@@ -25,7 +26,7 @@ module Ant
         @commands = Ant::Bot::CommandDefinition.new
 
         # TODO: move this to config
-        @repository = Ant::Server::Nanoservice::Repository.from_config(
+        @repository = Ant::Storage::Repository.from_config(
           nil,
           { 'name' => 'json',
             'schema_name' => configs['name'],
@@ -33,7 +34,7 @@ module Ant
             'primary_key' => 'channel_id' },
           {}
         )
-        @factory = Ant::Server::Nanoservice::Factory.new(EmptyModel)
+        @factory = Ant::Storage::Factory.new(EmptyModel)
         @factory.register(:default, :json)
         @factory.register(:json, @repository)
       end
@@ -150,7 +151,7 @@ module Ant
       # Private implementation for load message
       def load_state(channel)
         @factory.get(channel)
-      rescue Ant::Server::Nanoservice::Datasource::Exceptions::ObjectNotFound
+      rescue Ant::Storage::Exceptions::ObjectNotFound
         @factory.create(channel_id: channel, params: {})
       end
 

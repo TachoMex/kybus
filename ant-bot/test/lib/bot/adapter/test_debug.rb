@@ -8,7 +8,7 @@ module Ant
     module Adapter
       class TestDebug < Minitest::Test
         def setup
-          conf = Services.configs['bot']
+          conf = CONFIG
           conf['provider']['echo'] = false
 
           @adapter = Ant::Bot::Adapter.from_config(conf['provider'])
