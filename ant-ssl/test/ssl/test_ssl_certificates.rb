@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './lib/ant/ssl'
+require './test/test_helper'
 require 'fileutils'
 
 class TestSSLCertificates < Minitest::Test
@@ -31,10 +31,7 @@ class TestSSLCertificates < Minitest::Test
   end
 
   def inventory
-    conf = Ant::Configuration::ConfigurationManager.new(
-      default_files: './config/test_certificates.yaml'
-    )
-    conf.load_configs!
+    conf = CONFIGS
     cert_conf = conf['certificate_descriptions']
     defaults = cert_conf['defaults']
     authorities = cert_conf['authorities']
