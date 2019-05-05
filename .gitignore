@@ -12,6 +12,7 @@ ant-*/application.log
 *.gem
 Gemfile.lock
 application.log
-/storage/
+*/storage/
 dev.rb
 develop.rb
+

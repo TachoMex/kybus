@@ -5,5 +5,5 @@ module Ant
     autoload(:Daemon, 'ant/dry/daemon.rb')
     autoload(:ResourceInjector, 'ant/dry/resource_injector.rb')
   end
-  autoload(:Exceptions, './exceptions.rb')
+  autoload(:Exceptions, 'ant/exceptions.rb')
 end
