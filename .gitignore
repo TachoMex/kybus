@@ -1,8 +1,10 @@
 /.bundle/
 /.yardoc
-/Gemfile.lock
+ant-*/Gemfile.lock
 /_yardoc/
-/coverage/
+ant-*/coverage/
+ant-*/doc/
+ant-*/application.log
 /doc/
 /pkg/
 /spec/reports/

@@ -2,6 +2,7 @@
 
 module Ant
   module Exceptions
+    autoload(:HTTP, './http_exceptions.rb')
     ##
     # Exception used as standard error on this gem.
     # @param message.  This param is meant to be read by another developer
