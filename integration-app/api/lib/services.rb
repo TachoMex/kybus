@@ -20,7 +20,7 @@ module Services
     end
 
     def schema
-      @schema ||= Ant::Server::Nanoservice::Schema.new(configs['schema'])
+      @schema ||= Ant::Nanoservice::Schema.new(configs['schema'])
     end
   end
 end

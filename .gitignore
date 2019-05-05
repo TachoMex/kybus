@@ -2,9 +2,9 @@
 /.yardoc
 ant-*/Gemfile.lock
 /_yardoc/
-ant-*/coverage/
-ant-*/doc/
-ant-*/application.log
+*/coverage/
+*/doc/
+*/application.log
 /doc/
 /pkg/
 /spec/reports/

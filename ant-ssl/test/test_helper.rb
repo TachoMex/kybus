@@ -4,7 +4,6 @@ require 'simplecov'
 require 'minitest/test'
 require 'minitest/autorun'
 require 'rdoc'
-require 'mocha/minitest'
 
 SimpleCov.minimum_coverage 100
 SimpleCov.start

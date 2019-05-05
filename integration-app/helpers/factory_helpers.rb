@@ -5,9 +5,10 @@ class DevelopmentAPI < Grape::API
   # Provides some helpers that will allow the tuple api to access a factory.
   # This tuple API would help to develop the repositories components.
   module FactoryHelpers
-    include Ant::Server::Nanoservice
-    include Datasource
-    include Exceptions
+    include Ant::Nanoservice
+    include Ant::Storage::Datasource
+    include Ant::Storage
+    include Ant::Storage::Exceptions
 
     # Models a single tuple as a key => value object.
     class Tuple < Model

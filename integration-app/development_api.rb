@@ -2,12 +2,12 @@
 
 require 'grape'
 require 'sequel'
-
-require_relative 'lib/ant'
-require_relative 'lib/ant/nanoservice'
-require_relative 'lib/ant/server/grape'
-require_relative 'lib/ant/http_exceptions'
-require './lib/ant/configs'
+require 'ant/core'
+require 'ant/nanoservice'
+require 'ant/server'
+require 'ant/server/grape'
+require 'ant/configs'
+require 'ant/storage'
 
 require_relative 'helpers/factory_helpers'
 require_relative 'api/lib/services'

@@ -32,7 +32,7 @@ module Ant
 
       def build_repositories(models, repository_conf)
         @repositories = models.each_with_object({}) do |(name, _), obj|
-          obj[name] = Ant::Server::Nanoservice::Repository
+          obj[name] = Ant::Storage::Repository
                       .from_config(@schema[name],
                                    @schema_configs[name]['configs'],
                                    repository_conf['default'])
@@ -47,7 +47,7 @@ module Ant
         api.helpers do
           define_method('factory') do
             @factory ||= begin
-              factory = Ant::Server::Nanoservice::Factory.new(model)
+              factory = Ant::Storage::Factory.new(model)
               factory.register(:default, :primary)
               factory.register(:primary, repo)
               factory

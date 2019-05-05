@@ -18,11 +18,10 @@ Gem::Specification.new do |spec|
   spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'mocha'
-  spec.add_development_dependency 'pry', '~> 0.10'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rdoc'
-  spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'webmock'
+  spec.add_development_dependency 'minitest', '~> 5.11'
+  spec.add_development_dependency 'pry', '~> 0.12'
+  spec.add_development_dependency 'rake', '~> 12.3'
+  spec.add_development_dependency 'rdoc', '~> 6.1'
+  spec.add_development_dependency 'simplecov', '~> 0.16'
+  spec.add_development_dependency 'webmock', '~> 3.5'
 end
