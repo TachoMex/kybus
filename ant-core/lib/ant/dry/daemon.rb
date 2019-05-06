@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'ant/logger'
+
 module Ant
   module DRY
     # Use this for running tasks that will be looping by only sending a lambda
@@ -9,6 +11,8 @@ module Ant
     # - Make it testable
     # - Add unit tests
     class Daemon
+      include Ant::Logger
+
       def initialize(wait_time, attach, retry_on_failure = false)
         @proc = -> { yield }
         @wait_time = wait_time

@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = spec.description = <<-EOF
     Ant::Core will be used across all the ant gems. Provides the most basic
     functionality or what might be used along with more than one gem.
-    Currently this only exposes the basic exceptions and the DRY patterns. 
+    Currently this only exposes the basic exceptions and the DRY patterns.
   EOF
   spec.homepage      = 'https://github.com/tachomex/ant'
   spec.license       = 'MIT'
@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
 
+  spec.add_development_dependency 'ant-logger', '~> 0.1'
   spec.add_development_dependency 'minitest', '~> 5.11'
   spec.add_development_dependency 'mocha', '~> 1.8'
   spec.add_development_dependency 'pry', '~> 0.12'

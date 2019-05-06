@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'cute_logger'
+require 'ant/logger'
 require 'ant/configs'
 require 'ant/bot'
 require 'awesome_print'

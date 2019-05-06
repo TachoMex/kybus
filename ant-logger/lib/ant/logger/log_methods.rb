@@ -13,23 +13,23 @@ module Ant
         LogMethods.register(:global_config, config)
       end
 
-      def log_info(msg, data)
+      def log_info(msg, data = {})
         log_raw(:info, msg, data, data[:debug])
       end
 
-      def log_warn(msg, data)
+      def log_warn(msg, data = {})
         log_raw(:warn, msg, data, data[:debug])
       end
 
-      def log_error(msg, data)
+      def log_error(msg, data = {})
         log_raw(:error, msg, data, data[:debug])
       end
 
-      def log_fatal(msg, data)
+      def log_fatal(msg, data = {})
         log_raw(:fatal, msg, data, data[:debug])
       end
 
-      def log_debug(msg, data)
+      def log_debug(msg, data = {})
         log_raw(:debug, msg, data)
       end
 

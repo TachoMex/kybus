@@ -33,7 +33,7 @@ module Ant
           recover_from!(Exceptions::AntSuccess, :success)
           recover_from!(Exceptions::AntFail, :fail)
           recover_from!(Exceptions::AntError, :error)
-          register(:loggers, :cute_logger, Server::CuteLogger.new)
+          register(:loggers, :cute_logger, Server::Logger.new)
           register(:formats, :jsend, Server::Format.new)
           log_mode(:cute_logger)
           format_mode(:jsend)

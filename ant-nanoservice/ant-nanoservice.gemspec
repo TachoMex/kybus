@@ -19,7 +19,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'ant-core', '~> 0.1'
   spec.add_runtime_dependency 'ant-storage', '~> 0.1'
-  spec.add_runtime_dependency 'cute_logger', '~> 0.1'
 
   spec.add_development_dependency 'minitest', '~> 5.11'
   spec.add_development_dependency 'mocha', '~> 1.8'

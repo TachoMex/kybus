@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   # TODO: Change CuteLogger to ant-logger
   spec.add_runtime_dependency 'ant-core', '~> 0.1'
-  spec.add_runtime_dependency 'cute_logger', '~> 0.1'
+  spec.add_runtime_dependency 'ant-logger', '~> 0.1'
 
   spec.add_development_dependency 'grape', '~> 1.2'
   spec.add_development_dependency 'minitest', '~> 5.0'

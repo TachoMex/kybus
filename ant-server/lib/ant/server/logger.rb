@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-require 'cute_logger'
+require 'ant/logger'
 module Ant
   module Server
     # Implements monitoring. This will add logs.
     # Currently it only support CuteLogger format, but it will be deprecated
     # in order to support a new log (actually kind of the same format).
-    class CuteLogger
+    class Logger
+      include Ant::Logger
       def access_data(response)
         {
           path: response.path,

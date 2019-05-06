@@ -2,7 +2,7 @@
 
 require 'httparty'
 require 'ant/core'
-require 'cute_logger'
+require 'ant/logger'
 
 require_relative 'session/base'
 require_relative 'format/format'
@@ -13,6 +13,8 @@ module Ant
     # HTTP client using HTTParty as support. This implementation makes it easier
     # to integrate with other backends.
     class RESTClient
+      include Ant::Logger
+
       def initialize(configs)
         @session = Session.build(configs)
         @config = configs

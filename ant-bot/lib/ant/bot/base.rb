@@ -5,8 +5,7 @@ require 'ant/bot/adapters/base'
 require 'ant/storage'
 require_relative 'command_definition'
 
-# TODO: Remove cute logger
-require 'cute_logger'
+require 'ant/logger'
 
 module Ant
   module Bot
@@ -14,6 +13,7 @@ module Ant
     # provider and the state storage inside an object.
     class Base
       include Ant::Storage::Datasource
+      include Ant::Logger
       # Configs needed:
       # - pool_size: number of threads created in execution
       # - provider: a configuration for a thread provider.
