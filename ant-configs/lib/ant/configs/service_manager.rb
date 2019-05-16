@@ -14,6 +14,10 @@ module Ant
         @configs = configs
       end
 
+      def self.auto_load!(test_connections: false)
+        @configs = Ant::Configuration::ConfigurationManager.auto_load!
+      end
+
       def register_plugin(name); end
     end
   end
