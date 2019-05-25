@@ -27,8 +27,13 @@ module Ant
 
       def configure!
         plugins = self.class.resources(:plugins)
-        plugins.each do |plug, _|
-          load_service!(plug, @configs[plug])
+        plugins.each do |plug, type|
+          case type
+          when 'unique'
+            Ant::Configuration::Autoconfigs.from_config!(plug, @configs[plug])
+          else
+            load_service!(plug, @configs[plug])
+          end
         end
       end
 
@@ -50,12 +55,14 @@ module Ant
         services
       end
 
-      def self.register_plugin(name)
-        # storing a 1 since it will to store the value name in the root plugins
-        register(:plugins, name, 1)
+      # The type unique is for global configurations as multi is for a hash
+      # containing all the objects to be created
+      def self.register_plugin(name, type = 'multi')
+        register(:plugins, name, type)
       end
 
       register_plugin('sequel')
+      register_plugin('logger', 'unique')
     end
   end
 end
