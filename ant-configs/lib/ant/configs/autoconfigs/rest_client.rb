@@ -1,5 +1,5 @@
 module Ant
-  module Configs
+  module Configuration
     module Autoconfigs
       class Sequel
         def self.from_config(config)

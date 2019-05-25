@@ -36,14 +36,14 @@ module Ant
       attr_reader :env_prefix
 
       def initialize(default_files:,
-                     default_placeholder: 'REPLACE_ME',
+                     default_placeholder: nil,
                      append_arrays: false,
-                     env_prefix: 'CONFIG',
+                     env_prefix: nil,
                      accept_default_keys: false)
         @default_files = array_wrap(default_files)
-        @default_placeholder = default_placeholder
+        @default_placeholder = default_placeholder || 'REPLACE_ME'
         @append_arrays = append_arrays
-        @env_prefix = env_prefix
+        @env_prefix = env_prefix || 'CONFIG'
         @accept_default_keys = accept_default_keys
         @configs = {}
         @env_vars = env_vars
@@ -145,6 +145,20 @@ module Ant
           config = Loaders::YAML.new(file, self).load!
           @configs = recursive_merge(@configs, config)
         end
+      end
+
+      def self.auto_load!
+        auto_configs = new(default_files: './config/autoconfig.yaml')
+        auto_configs.load_configs!
+        auto_configs = auto_configs['autoconfig']
+        configs = new(
+          default_files: (auto_configs['default_files'] || []) + (auto_configs['files'] || []) + ['./config/autoconfig.yaml'],
+          default_placeholder: auto_configs['default_placeholder'],
+          accept_default_keys: auto_configs['accept_default_keys'],
+          env_prefix: auto_configs['env_prefix']
+        )
+        configs.load_configs!
+        configs
       end
 
       # Exception raised when a configuration was not set
