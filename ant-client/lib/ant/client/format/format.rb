@@ -7,20 +7,18 @@ module Ant
   module Client
     # Singleton storing all the formats implemented for http clients.
     module Format
+      extend Ant::DRY::ResourceInjector
       class << self
         def build(config)
-          @formats ||= default_formats
-          @formats[config[:format]].new
+          resource(:formats, config[:format] || 'json').new
         end
 
-        # TODO: change this to resource injector
-        def default_formats
-          {
-            json: JSONFormat,
-            url_encoded: URLEncodedFormat
-          }
+        def register_format(name, klass)
+          register(:formats, name, klass)
         end
       end
+      register_format('json', JSONFormat)
+      register_format('url_encoded', URLEncodedFormat)
     end
   end
 end

@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'ant/configs/version'
 Gem::Specification.new do |spec|
   spec.name          = 'ant-configs'
-  spec.version       = Ant::Configs::VERSION
+  spec.version       = Ant::Configuration::VERSION
   spec.authors       = ['Gilberto Vargas']
   spec.email         = ['tachoguitar@gmail.com']
 

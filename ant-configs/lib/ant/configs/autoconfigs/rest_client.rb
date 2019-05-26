@@ -1,25 +1,29 @@
 module Ant
   module Configuration
     module Autoconfigs
-      class Sequel
+      class RESTClient
+        include Ant::Configuration::Utils
+
         def self.from_config(config)
-          require 'sequel'
+          require 'ant/client'
           new(config)
         end
 
         def initialize(config)
           @config = config
-          @connection = Sequel.connect(config)
+          @connection = Ant::Client::RESTClient.new(symbolize(config))
         end
 
         def sanity_check
-          @connection.fetch('select 1 + 1;')
+          true
         end
 
         def raw
           @connection
         end
       end
+
+      register('rest_client', RESTClient)
     end
   end
 end

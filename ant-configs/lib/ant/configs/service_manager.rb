@@ -66,9 +66,10 @@ module Ant
         register(:plugins, name, type)
       end
 
-      register_plugin('sequel')
       register_plugin('aws', 'unique')
       register_plugin('logger', 'unique')
+      register_plugin('sequel')
+      register_plugin('rest_client')
     end
   end
 end
