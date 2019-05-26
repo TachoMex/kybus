@@ -68,6 +68,10 @@ module Ant
         strings = string.split(/(?<!\\),/).map { |str| str.gsub('\,', ',') }
         strings.size == 1 ? strings.first : strings
       end
+
+      def symbolize(hash)
+        hash.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
+      end
     end
   end
 end

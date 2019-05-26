@@ -12,9 +12,10 @@ module Ant
       extend Ant::DRY::ResourceInjector
       attr_reader :configs
 
-      def initialize(configs)
+      def initialize(configs, plugin_subdir = '.')
         @configs = configs
         @services = {}
+        @plugin_subdir = plugin_subdir
       end
 
       def services(cathegory, name)
@@ -30,7 +31,7 @@ module Ant
         plugins.each do |plug, type|
           case type
           when 'unique'
-            Ant::Configuration::Autoconfigs.from_config!(plug, @configs[plug])
+            @services[plug] = Ant::Configuration::Autoconfigs.from_config!(plug, @configs[plug])
           else
             load_service!(plug, @configs[plug])
           end
@@ -42,10 +43,14 @@ module Ant
 
         services = {}
         keys.each do |service, config|
-          services[service] = Ant::Configuration::Autoconfigs.from_config!(name, config)
+          services[service] = build_service(name, config)
         end
 
         @services[name] = services
+      end
+
+      def build_service(name, config)
+        Ant::Configuration::Autoconfigs.from_config!(name, config, @plugin_subdir)
       end
 
       def self.auto_load!
@@ -62,6 +67,7 @@ module Ant
       end
 
       register_plugin('sequel')
+      register_plugin('aws', 'unique')
       register_plugin('logger', 'unique')
     end
   end
