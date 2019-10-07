@@ -1,0 +1,7 @@
+logger:
+  file: app.log
+  rotate_days: 30
+  rotate_size: 102400000
+  date_format: '%Y-%m-%d %H:%M:%S +Z'
+  log_format: "%time,%sev,%pid,%tid,%mod,%json\n------------------\n"
+  black_list: [pass, password, clabe, telefono, mobile, email, mail]

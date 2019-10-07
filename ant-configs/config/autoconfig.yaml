@@ -4,5 +4,4 @@ autoconfig:
   pretty_load: true
   default_files: []
   files:
-    - config/config.yaml
-    - config/git.yaml
+    - config/feature_flags.yaml
