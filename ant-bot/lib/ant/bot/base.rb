@@ -14,7 +14,7 @@ module Ant
     class Base
       include Ant::Storage::Datasource
       include Ant::Logger
-      # Configs needed:
+      # Configurations needed:
       # - pool_size: number of threads created in execution
       # - provider: a configuration for a thread provider.
       #   See supported adapters
