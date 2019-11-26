@@ -65,8 +65,21 @@ module Ant
       #   split_env_string('hello\, world') => 'hello, world'
       def split_env_string(string)
         # TODO: parse type of string
-        strings = string.split(/(?<!\\),/).map { |str| str.gsub('\,', ',') }
+        strings = string.split(/(?<!\\),/)
+                        .map { |str| str.gsub('\,', ',') }
+                        .map { |str| parse_type(str) }
         strings.size == 1 ? strings.first : strings
+      end
+
+      def parse_type(string)
+        case string.downcase
+        when 'true'
+          true
+        when 'false'
+          false
+        else
+          string
+        end
       end
 
       def symbolize(hash)

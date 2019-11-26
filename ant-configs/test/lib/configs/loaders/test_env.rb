@@ -9,13 +9,13 @@ module Ant
         def test_parse_vars
           env = {
             'UTEST_A' => '1',
-            'UTEST_B' => '2',
-            'UTEST_C' => '3'
+            'UTEST_B' => 'false',
+            'UTEST_C' => 'true'
           }
           data = Env.new('UTEST', nil, env).load!
           assert_equal(data['a'], '1')
-          assert_equal(data['b'], '2')
-          assert_equal(data['c'], '3')
+          assert_equal(data['b'], false)
+          assert_equal(data['c'], true)
         end
 
         def test_parse_vars_array

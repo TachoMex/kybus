@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.add_runtime_dependency 'ant-core', '~> 0.1'
 
+  spec.add_development_dependency 'ant-logger', '~> 0.2'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'mocha', '~> 1.8'
   spec.add_development_dependency 'pry', '~> 0.10'
