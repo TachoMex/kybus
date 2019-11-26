@@ -23,7 +23,7 @@ module Ant
 
       def initialize(config)
         @original_config = config
-        register('file', config['file'] || 'application.log')
+        register('file', config['stdout'] ? STDOUT : config['file'] || 'application.log')
         register('rotate_days', config['rotate_days'] || 7)
         register('rotate_size', config['rotate_size'] || 100 * 1024**2) # 100Mb
         register('date_format', config['date_format'] || '%Y-%m-%d %H:%M:%S')
