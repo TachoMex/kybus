@@ -41,6 +41,7 @@ module Ant
             resource('rotate_days'),
             resource('rotate_size')
           )
+          $stdout.sync = true if @original_config['stdout']
           logger.sev_threshold = SEVERITIES[resource('severity')]
           logger.datetime_format = resource('date_format')
           logger.formatter = format_builder(resource('log_format'))
