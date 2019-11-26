@@ -29,6 +29,8 @@ module Ant
       def configure!
         plugins = self.class.resources(:plugins)
         plugins.each do |plug, type|
+          next if @configs[plug].nil?
+
           case type
           when 'unique'
             @services[plug] = Ant::Configuration::Autoconfigs.from_config!(plug, @configs[plug])
@@ -66,10 +68,15 @@ module Ant
         register(:plugins, name, type)
       end
 
+      def features
+        @services['features']
+      end
+
       register_plugin('aws', 'unique')
       register_plugin('logger', 'unique')
       register_plugin('sequel')
       register_plugin('rest_client')
+      register_plugin('features', 'unique')
     end
   end
 end

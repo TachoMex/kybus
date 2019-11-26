@@ -1,0 +1,22 @@
+features:
+  on_1: true
+  on_2: Yes
+  on_3: yes
+  on_4: On
+  on_5: on
+  off_1: false
+  off_2: No
+  off_3: no
+  off_4: Off
+  off_5: off
+  ab_test_10:
+    provider: ab_test
+    threshold: 10
+  ab_test_50:
+    provider: ab_test
+    threshold: 0.5
+  canarying_1:
+    provider: canarying
+    initial: 10
+    step: 10
+    step_duration: 10

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'ant/core'
+require_relative 'feature_flag'
 require_relative 'utils'
 require_relative 'loaders/yaml'
 require_relative 'loaders/env'
