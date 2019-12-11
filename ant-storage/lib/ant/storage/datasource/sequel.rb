@@ -8,6 +8,18 @@ module Ant
       # Repository that fetch and store objects using a sequel connection
       # as resource.
       class Sequel < Repository
+        def self.from_config(conf)
+          conn = ::Sequel.connect(conf['endpoint'], conf)[conf['table'].to_sym]
+          if conf['schema'].nil?
+            # TODO: decouple use of classes
+            new(conn, conf['primary_key'].to_sym,
+                IDGenerators[:id])
+          else
+            # TODO: This line is very high coupled to ant-nanoservice
+            new(conn, conf['schema']::PRIMARY_KEY, IDGenerators[:id])
+          end
+        end
+
         def initialize(sequel_object, id, id_generator)
           @sequel = sequel_object
           super(id, id_generator)
@@ -33,7 +45,7 @@ module Ant
         end
 
         def connection
-          @sequel
+          @sequel.db
         end
       end
     end
