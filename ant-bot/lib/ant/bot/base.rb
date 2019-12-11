@@ -28,15 +28,18 @@ module Ant
         # TODO: move this to config
         @repository = Ant::Storage::Repository.from_config(
           nil,
-          { 'name' => 'json',
-            'schema_name' => configs['name'],
-            'storage' => 'storage/$name',
-            'primary_key' => 'channel_id' },
+          configs['state_repository']
+            .merge('primary_key' => 'channel_id',
+                   'table' => 'bot_sessions'),
           {}
         )
         @factory = Ant::Storage::Factory.new(EmptyModel)
         @factory.register(:default, :json)
         @factory.register(:json, @repository)
+      end
+
+      def session
+        @repository.connection
       end
 
       # Starts the bot execution, this is a blocking call.
@@ -131,7 +134,7 @@ module Ant
         log_debug('I\'m going to ask the next param', param: param)
         @provider.send_message(current_channel,
                                "I need you to tell me #{param}")
-        @state[:requested_param] = param
+        @state[:requested_param] = param.to_s
       end
 
       # Stores a parameter into the status
@@ -150,14 +153,19 @@ module Ant
 
       # Private implementation for load message
       def load_state(channel)
-        @factory.get(channel)
+        data = @factory.get(channel)
+        data[:params] = JSON.parse(data[:params], symbolize_names: true)
+        data
       rescue Ant::Storage::Exceptions::ObjectNotFound
-        @factory.create(channel_id: channel, params: {})
+        @factory.create(channel_id: channel, params: {}.to_json)
       end
 
       # Saves the state into storage
       def save_state!
+        json = @state[:params]
+        @state[:params] = json.to_json
         @state.store
+        @state[:params] = json
       end
     end
   end
