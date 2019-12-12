@@ -14,6 +14,20 @@ module Ant
     class Base
       include Ant::Storage::Datasource
       include Ant::Logger
+
+      def send_message(content)
+        @provider.send_message(current_channel, content)
+      end
+
+      def send_image(content)
+        @provider.send_image(current_channel, content)
+      end
+
+      def send_audio(content)
+        @provider.send_audio(current_channel, content)
+      end
+
+
       # Configurations needed:
       # - pool_size: number of threads created in execution
       # - provider: a configuration for a thread provider.
@@ -85,13 +99,18 @@ module Ant
       end
 
       # DSL method for adding simple commands
-      def register_command(name, params, &block)
+      def register_command(name, params = [], &block)
         @commands.register_command(name, params, block)
       end
 
       # Method for triggering command
       def run_command!
-        current_command_object.execute(current_params)
+        instance_eval(&current_command_object.block)
+        clear_command
+      end
+
+      def clear_command
+        @state[:cmd] = nil
       end
 
       # Checks if the command is ready to be executed
@@ -105,10 +124,14 @@ module Ant
         @state[:params] || {}
       end
 
+      def params
+        current_params
+      end
+
       # Loads command from state
       def current_command_object
         command = @state[:cmd]
-        @commands[command]
+        @commands[command] || @commands['default']
       end
 
       # returns the current_channel from where the message was sent
@@ -139,6 +162,7 @@ module Ant
 
       # Stores a parameter into the status
       def add_param(value)
+        return if @state[:requested_param].nil?
         log_debug('Received new param',
                   param: @state[:requested_param].to_sym,
                   value: value)

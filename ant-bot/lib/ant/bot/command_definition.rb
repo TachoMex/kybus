@@ -6,6 +6,8 @@ module Ant
     # it currently only gets a param list, but it will be extended to a more
     # complex DSL.
     class Command
+      attr_reader :block
+
       # Receives a list of params as symbols and the lambda with the block.
       def initialize(params, block)
         @params = params
