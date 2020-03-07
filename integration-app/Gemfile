@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'ant-bot'
+gem 'ant-client'
+gem 'ant-configs'
+gem 'ant-core'
+gem 'ant-nanoservice'
+gem 'ant-server'
+gem 'ant-ssl'
+gem 'grape'
+gem 'httparty'
+gem 'mocha'
+gem 'rack'
+gem 'rack-minitest'
+gem 'rake'
+gem 'sequel'
+gem 'simplecov'
+gem 'sqlite3'
+gem 'webmock'

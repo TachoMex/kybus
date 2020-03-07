@@ -1,0 +1,7 @@
+autoconfig:
+  env_prefix: ANT_AUTOCONFIG
+  test_connection: false
+  pretty_load: true
+  default_files: []
+  files:
+    - config/feature_flags.yaml

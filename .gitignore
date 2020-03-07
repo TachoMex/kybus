@@ -1,8 +1,10 @@
 /.bundle/
 /.yardoc
-/Gemfile.lock
+ant-*/Gemfile.lock
 /_yardoc/
-/coverage/
+*/coverage/
+*/doc/
+*/application.log
 /doc/
 /pkg/
 /spec/reports/
@@ -10,3 +12,7 @@
 *.gem
 Gemfile.lock
 application.log
+*/storage/
+dev.rb
+develop.rb
+

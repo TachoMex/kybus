@@ -1,20 +1,60 @@
-# Ruby Ants Framework
+# Ruby Ants Framework [![Build Status](https://travis-ci.com/TachoMex/ant.svg?token=mByHJndryoQGoBVujqw2&branch=develop)](https://travis-ci.com/TachoMex/ant)
 
-Ruby ants aims to be a framework for building microservices-based
-applications. Also, we expect that this framework will be very flexible so
-it will be possible to use small components without loading all the features.
+Ant provides a series of little gems that will help you to solve small problems.
+This gem was inspired by boiler plate code that I was failing on repeating each
+time I started a new project. The idea of this project is to provide tools for
+making apps that are microservices-oriented.
 
-You can have:
-- Some cool stuff for general purposes.
-  - Resource injection module.
-  - A basic and very general daemon.
-- HTTP client powered by HTTParty, but trying to be object based so you can easily manage session, parsing, cookies, auth, etc.
-- HTTP servers with either sinatra or grape.
-  - One problem I often found is the consistency while writing rest services. This allows you to have all the same look in all the endpoints by implementing a JSend specification.
-  - Log all the request on a basic way. Log an access log when a successful request was performed. Log a message when the client made a mistake. Log a full detail stack trace and params when the api crashes.
-  - But if you don't like anything you should be capable of modifying it and use it the way you prefer.
-- Want to use kafka or a distribuited queue service to build pipelines? you can have daemons listening to queues and processing the messages.
-- Do you have a system that is so trivial that it would be a waste to write? We introduce *nanoservices*. This will give a shipping-ready API with CRUD operations (the ones you need), connected to a database via sequel. All this can be done using a yaml file describing the data models.
+This repository contains one folder for each gem and an integration app, which
+will serve as an example of how I think this could be integrated. Each gem
+must have a 100% coverage in unit testing, and also the integration app should
+get fully tested along with the gems.
 
-This is not yet finished and is very likely that you can not find something yet,
-but we are working to have an amazing framework that we can rely on.
+Docker will be added so it can have databases in integration tests and allowing
+to run tests just by cloning the repository.
+
+## Gems
+Check the readme files for each gem so you can get more details about what each
+gem does. Here is a brief description of the general idea for each gem.
+
+### Bot
+ChatBots are getting common nowadays and there are many providers. They work on
+a similar way: a message poll using a websocket, each time a message is received
+you get access to the message contents and the sender data. This aims to provide
+an adapter model that will make it easier to change from slack to telegram by
+modifying some configurations (similar to sequel).
+
+### Client
+A library for creating HTTP clients powered by HTTParty.
+
+### Configs
+A library for loading configurations. It will provide many distinct sources to
+make it easier for you to handle them.
+
+### Core
+Provides common implementations for the gems, like a dependency injection
+mechanism.
+
+### Logger
+Provides an easy way for handling logs and metrics.
+
+### Nanoservice
+This is not a stable gem yet. It is an experiment for making an API from a
+configuration that describes the data types and the restrictions and expose it
+using a REST service.
+
+### Pipeline
+Using a queue as a message processing mechanism, it allows to create a service
+that will consume a queue and execute tasks from them.
+
+### Server
+For REST services powered by frameworks like sinatra or grape, it will provide
+some methods for stardardizing the api calls, logs and error handling.
+
+### SSL
+If you need to create a PKI for development purposes, this helps you to build
+them without the need of understanding how openssl works.
+
+### Storage
+If you need to store data and use some desing patterns like factory or repository,
+this gem helps you to build your ORM and DAO easier.

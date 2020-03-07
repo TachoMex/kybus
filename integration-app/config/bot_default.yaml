@@ -1,0 +1,16 @@
+bot:
+  name: antbot
+  state_repository: sqlite://storage/antbot.db
+  pool_size: 1
+  provider:
+    name: debug
+    echo: true
+    channels:
+      a:
+        - /remindme
+        - to get eggs
+        - 2019-03-11 12:00 everyday
+      b:
+        - /remindme
+        - to take the pills
+        - 2019-03-11 23:00 everyday
