@@ -27,6 +27,7 @@ class DevelopmentAPI < Grape::API
   prefix(:api)
   format(:json)
 
+  helpers Ant::Logger
   helpers FactoryHelpers
   helpers BasicAuthRoutes::AuthHelper
 

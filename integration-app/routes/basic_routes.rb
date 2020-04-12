@@ -2,6 +2,8 @@
 
 # This API provides routes to test JSend formats.
 class BasicRoutes < Grape::API
+  include Ant::Logger
+
   get :status do
     log_info('Requesting status for server')
     {
