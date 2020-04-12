@@ -14,6 +14,9 @@ module Ant
       attr_reader :schema, :repositories
 
       def initialize(schema)
+        raise('`models` config is missing') if schema['models'].nil?
+        raise('`repositories` is not defined') if schema['repositories'].nil?
+
         build_schemas(schema['models'])
         build_repositories(schema['models'], schema['repositories'])
       end
@@ -25,6 +28,7 @@ module Ant
         @schema = models.each_with_object({}) do |(name, configs), obj|
           columns = configs['fields']
           @schema_configs[name] = configs
+          configs['configs'] ||= {}
           configs['configs']['schema_name'] = name
           obj[name] = MetaTypes.build(name, columns, configs)
         end
@@ -54,6 +58,15 @@ module Ant
             end
           end
         end
+      end
+
+      def factory_builder(schema_name)
+        model = schema[schema_name]
+        repo = repositories[schema_name]
+        factory = Ant::Storage::Factory.new(model)
+        factory.register(:default, :primary)
+        factory.register(:primary, repo)
+        factory
       end
     end
   end
