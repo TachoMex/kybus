@@ -13,7 +13,7 @@ module Ant
         end
 
         def self.normalize_id(object, key)
-          object.is_a?(Hash) ? object[key] : object
+          object.is_a?(Hash) || object.nil? ? object[key] : object
         end
 
         id_generator = ->(id, key) { normalize_id(id, key) }

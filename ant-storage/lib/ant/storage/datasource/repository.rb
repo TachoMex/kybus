@@ -17,6 +17,8 @@ module Ant
         end
 
         def create_initial_object(id)
+          return id if @id.nil? && id.is_a?(Hash)
+
           object = { @id => @id_generator.call(id, @id) }
           object.merge!(id) if id.is_a?(Hash)
           object
@@ -31,6 +33,10 @@ module Ant
         end
 
         def exist?(id)
+          # Not the better solution, but works for objects that don't contain
+          # a unique id.
+          return if id.nil?
+
           get(id)
         rescue ObjectNotFound
           nil

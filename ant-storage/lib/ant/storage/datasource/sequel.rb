@@ -9,6 +9,7 @@ module Ant
       # as resource.
       class Sequel < Repository
         def self.from_config(conf)
+          conf['table'] ||= conf['schema_name']
           conn = ::Sequel.connect(conf['endpoint'], conf)[conf['table'].to_sym]
           if conf['schema'].nil?
             # TODO: decouple use of classes
