@@ -19,6 +19,10 @@ module Ant
         @provider.send_message(current_channel, content)
       end
 
+      def rescue_from(klass, &block)
+        @commands.register_command(klass, [], block)
+      end
+
       def send_image(content)
         @provider.send_image(current_channel, content)
       end
@@ -26,7 +30,6 @@ module Ant
       def send_audio(content)
         @provider.send_audio(current_channel, content)
       end
-
 
       # Configurations needed:
       # - pool_size: number of threads created in execution
@@ -96,6 +99,12 @@ module Ant
           ask_param(next_missing_param)
         end
         save_state!
+      rescue StandardError => e
+        catch = @commands[e.class]
+        raise if catch.nil?
+
+        instance_eval(&catch.block)
+        clear_command
       end
 
       # DSL method for adding simple commands
@@ -163,6 +172,7 @@ module Ant
       # Stores a parameter into the status
       def add_param(value)
         return if @state[:requested_param].nil?
+
         log_debug('Received new param',
                   param: @state[:requested_param].to_sym,
                   value: value)
