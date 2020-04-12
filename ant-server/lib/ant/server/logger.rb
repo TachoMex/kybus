@@ -42,7 +42,8 @@ module Ant
         log_error('Unexpected error on response',
                   access_data(response).merge(
                     error: response.exception,
-                    data: response.params
+                    data: response.params,
+                    trace: response.exception.backtrace
                   ))
       end
     end
