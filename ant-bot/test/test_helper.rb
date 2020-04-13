@@ -7,6 +7,7 @@ require 'rack-minitest/test'
 require 'rdoc'
 require 'webmock/minitest'
 require 'mocha/minitest'
+require 'sequel'
 
 SimpleCov.minimum_coverage 100
 SimpleCov.start
@@ -28,11 +29,14 @@ end
 
 CONFIG = {
   'name' => 'antbot',
-  'state_repository' => 'sqlite://storage/antbot.db',
+  'state_repository' => {
+    'name' => 'json',
+    'storage' => 'storage'
+  },
   'pool_size' => 1,
   'provider' => {
     'name' => 'debug',
-    'echo' => true,
+    'echo' => false,
     'channels' => {
       'a' => [
         '/remindme',
@@ -49,3 +53,7 @@ CONFIG = {
 }.freeze
 
 require 'ant/bot'
+require 'ant/bot/migrator'
+require 'ant/bot/testing'
+require 'ant/bot/adapters/debug'
+require 'ant/bot/adapters/telegram'

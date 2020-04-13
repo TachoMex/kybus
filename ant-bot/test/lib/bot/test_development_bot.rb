@@ -17,8 +17,8 @@ module Ant
         conf['provider']['echo'] = false
 
         @bot = Ant::Bot::Base.new(conf)
-        @bot.register_command('/remindme', %i[what when]) do |params|
-          @bot.assert_command('/remindme', params[:what], params[:when])
+        @bot.register_command('/remindme', %i[what when]) do
+          assert_command('/remindme', params[:what], params[:when])
         end
       end
 
