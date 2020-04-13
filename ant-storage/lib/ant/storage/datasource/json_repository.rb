@@ -12,7 +12,8 @@ module Ant
       # Uses this for testing purpouse.
       class JSONRepository < Repository
         def self.from_config(conf)
-          folder = conf['storage'].gsub('$name', conf['schema_name'])
+          folder = conf['storage']
+          folder.gsub!('$name', conf['schema_name']) if conf['schema_name']
           if conf['schema'].nil?
             # TODO: decouple use of classes
             new(folder, conf['primary_key'].to_sym,
