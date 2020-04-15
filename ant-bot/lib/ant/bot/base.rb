@@ -55,10 +55,6 @@ module Ant
         @factory.register(:json, @repository)
       end
 
-      def session
-        @repository.connection
-      end
-
       # Starts the bot execution, this is a blocking call.
       def run
         @pool = Array.new(@pool_size) do

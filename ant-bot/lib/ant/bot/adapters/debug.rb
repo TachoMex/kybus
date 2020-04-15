@@ -31,7 +31,7 @@ module Ant
         # to enable debug messages
         def initialize(messages, name, echo)
           @state = :open
-          @pending_messages = messages
+          @pending_messages = messages.dup
           @name = name
           @echo = echo
         end

@@ -14,13 +14,6 @@ module Ant
         @block = block
       end
 
-      # Calls the block with the params list. Fails if there is a missing param
-      def execute(params)
-        raise 'NotReady' unless ready?(params)
-
-        @block.call(params)
-      end
-
       # Checks if the params object given contains all the needed values
       def ready?(current_params)
         @params.all? { |key| current_params.key?(key) }

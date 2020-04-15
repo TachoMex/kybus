@@ -55,7 +55,8 @@ module Ant
 
         # interface for sending video
         def send_video(channel_name, video_url)
-          raise 'NotImplemented'
+          file = Faraday::UploadIO.new(video_url, 'video/mp4')
+          @client.api.send_video(chat_id: channel_name, audio: file)
         end
 
         # interface for sending uadio

@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rdoc', '~> 6.1'
   spec.add_development_dependency 'sequel'
   spec.add_development_dependency 'simplecov', '~> 0.16'
+  spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'telegram-bot-ruby'
   spec.add_development_dependency 'webmock', '~> 3.5'
 end
