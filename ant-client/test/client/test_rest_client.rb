@@ -8,8 +8,8 @@ module Ant
     class TestRESTClient < Minitest::Test
       include Ant::Exceptions
       CONFS = {
-        format: :json,
-        validator: :jsend,
+        format: 'json',
+        validator: 'jsend',
         endpoint: 'http://api.test'
       }.freeze
 
@@ -74,7 +74,7 @@ module Ant
       end
 
       def test_no_validator
-        @client = RESTClient.new(CONFS.merge(validator: :none))
+        @client = RESTClient.new(CONFS.merge(validator: 'none'))
         body = TEST_BODY.merge(status: 'fail')
         stub_request(:get, 'http://api.test/api/users')
           .to_return(body: body.to_json)
@@ -83,7 +83,7 @@ module Ant
       end
 
       def test_url_encoded
-        @client = RESTClient.new(CONFS.merge(format: :url_encoded))
+        @client = RESTClient.new(CONFS.merge(format: 'url_encoded'))
         stub_request(:get, 'http://api.test/api/users')
           .with(body: 'name=test&code=1234')
           .to_return(body: TEST_BODY.to_json)
