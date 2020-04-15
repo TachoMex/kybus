@@ -30,7 +30,7 @@ module Ant
       end
 
       def log_debug(msg, data = {})
-        log_raw(:debug, msg, data)
+        log_raw(:debug, msg, data, data[:debug])
       end
 
       def log_metric(metric:, amount:, group: nil, time: nil)
@@ -38,24 +38,26 @@ module Ant
                            group: group, time: time)
       end
 
-      def log_alert(description:, tagging_group:, tagging_sev:, tagging_org:)
+      def log_alert(description:, group:, alert_severity:, notify_group:)
         log_fatal('Alert Triggered',
                   description: description,
-                  group: tagging_group,
-                  severity: tagging_sev,
-                  response_team: tagging_org)
+                  group: group,
+                  severity: alert_severity,
+                  notify_group: notify_group)
       end
 
       def log_raw(severity, msg, data, debug = {})
         sev = Config::SEVERITIES[severity.to_s]
-        meta = config.merge_params(msg, data, debug, severity)
+        meta = config.merge_params(msg, data, debug)
         config.logger.add(sev, meta, self.class.name)
       end
 
       def config
         self.class.respond_to?(:resource) ? self.class.resource(:log_config) : LogMethods.global_config
       rescue StandardError => _e
+        # :nocov:
         Ant::Logger::LogMethods::global_config
+        # :nocov:
       end
 
       LogMethods.global_config = Config.from_config({})

@@ -49,7 +49,7 @@ module Ant
         end
       end
 
-      def merge_params(msg, data, debug, severity)
+      def merge_params(msg, data, debug)
         blacklist = resource('blacklist') + ['debug']
         params = {}
         data.each { |k, v| params[k] = v unless blacklist.include?(k.to_s) }
