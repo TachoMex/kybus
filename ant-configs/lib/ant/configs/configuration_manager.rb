@@ -92,6 +92,22 @@ module Ant
         @configs[key]
       end
 
+      def self.auto_load!
+        auto_configs = new(default_files: './config/autoconfig.yaml')
+        auto_configs.load_configs!
+        auto_configs = auto_configs['autoconfig']
+        configs = new(
+          default_files: (auto_configs['default_files'] || []) +
+                         (auto_configs['files'] || []) +
+                         ['./config/autoconfig.yaml'],
+          default_placeholder: auto_configs['default_placeholder'],
+          accept_default_keys: auto_configs['accept_default_keys'],
+          env_prefix: auto_configs['env_prefix']
+        )
+        configs.load_configs!
+        configs
+      end
+
       private
 
       # Looks for keys having the default placeholder, which are meant to be
@@ -146,20 +162,6 @@ module Ant
           config = Loaders::YAML.new(file, self).load!
           @configs = recursive_merge(@configs, config)
         end
-      end
-
-      def self.auto_load!
-        auto_configs = new(default_files: './config/autoconfig.yaml')
-        auto_configs.load_configs!
-        auto_configs = auto_configs['autoconfig']
-        configs = new(
-          default_files: (auto_configs['default_files'] || []) + (auto_configs['files'] || []) + ['./config/autoconfig.yaml'],
-          default_placeholder: auto_configs['default_placeholder'],
-          accept_default_keys: auto_configs['accept_default_keys'],
-          env_prefix: auto_configs['env_prefix']
-        )
-        configs.load_configs!
-        configs
       end
 
       # Exception raised when a configuration was not set

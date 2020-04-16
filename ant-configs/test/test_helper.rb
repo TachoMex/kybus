@@ -27,3 +27,11 @@ class TestGenerateDocs < Minitest::Test
 end
 
 require 'ant/configs'
+require 'ant/configs/autoconfigs/aws'
+require 'ant/configs/autoconfigs/features'
+require 'ant/configs/autoconfigs/logger'
+require 'ant/configs/autoconfigs/nanoservice'
+require 'ant/configs/autoconfigs/rest_client'
+require 'ant/configs/autoconfigs/sequel'
+require 'ant/configs/autoconfigs/aws/s3'
+require 'ant/configs/autoconfigs/aws/sqs'

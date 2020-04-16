@@ -1,0 +1,7 @@
+aws:
+  s3:
+    user_record:
+      bucket: ant-qa-users
+    log_record:
+      bucket: logprovider-qa-log
+      region: eu-west-1

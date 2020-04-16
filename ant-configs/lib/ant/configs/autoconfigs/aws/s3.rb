@@ -14,16 +14,14 @@ module Ant
           def initialize(config)
             @config = config
             @client = ::Aws::S3::Client.new(
-              symbolize(config).reject { |k, _| %i[bucket test_connection].include? k }
+              symbolize(config).reject do |k, _|
+                %i[bucket test_connection].include?(k)
+              end
             )
             @connection = ::Aws::S3::Bucket.new(
               name: config['bucket'],
               client: @client
             )
-          end
-
-          def sanity_check
-            false
           end
 
           def raw

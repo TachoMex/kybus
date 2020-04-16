@@ -14,16 +14,15 @@ module Ant
           def initialize(config)
             @config = config
             @client = ::Aws::SQS::Client.new(
-              symbolize(config).reject { |k, _| %i[queue test_connection].include? k }
+              symbolize(config).reject do |k, _|
+                %i[queue test_connection].include? k
+              end
             )
+            queue = @client.get_queue_url(queue_name: @config['queue'])
             @connection = ::Aws::SQS::Queue.new(
-              url: @client.get_queue_url(queue_name: @config['queue'])[:queue_url],
+              url: queue[:queue_url],
               client: @client
             )
-          end
-
-          def sanity_check
-            false
           end
 
           def raw

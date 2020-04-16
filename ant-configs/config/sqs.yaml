@@ -1,0 +1,4 @@
+aws:
+  sqs:
+    mailing:
+      queue: ant-mailing
