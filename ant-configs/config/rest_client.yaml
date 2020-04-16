@@ -1,0 +1,5 @@
+rest_client:
+  google:
+    validator: none
+    format: json
+    endpoint: https://google.com

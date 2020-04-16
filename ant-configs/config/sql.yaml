@@ -1,6 +1,3 @@
-sql:
+sequel:
   primary:
-    user: root
-    pass: s3cur3P4ssw0rd
-    endpoint: localhost
-    port: 3306
+    endpoint: sqlite://sql.db

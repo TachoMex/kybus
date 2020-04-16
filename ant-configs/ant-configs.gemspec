@@ -18,15 +18,19 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.add_runtime_dependency 'ant-core', '~> 0.1'
 
+  spec.add_development_dependency 'ant-client'
+  spec.add_development_dependency 'httparty'
   spec.add_development_dependency 'ant-logger', '~> 0.2'
-  spec.add_development_dependency 'aws-sdk-sqs'
   spec.add_development_dependency 'aws-sdk-s3'
+  spec.add_development_dependency 'aws-sdk-sqs'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'mocha', '~> 1.8'
   spec.add_development_dependency 'pry', '~> 0.10'
   spec.add_development_dependency 'rack-minitest', '~> 0.0'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rdoc', '~> 6.1'
+  spec.add_development_dependency 'sequel'
   spec.add_development_dependency 'simplecov', '~> 0.16'
+  spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'webmock', '~> 3.5'
 end

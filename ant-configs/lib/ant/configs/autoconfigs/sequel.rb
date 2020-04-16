@@ -14,16 +14,8 @@ module Ant
           @connection = ::Sequel.connect(config['endpoint'], config)
         end
 
-        def sanity_check
-          @connection.fetch('select 1 + 1;')
-        end
-
         def raw
           @connection
-        end
-
-        def help
-          CONFIG_KEYS
         end
       end
 

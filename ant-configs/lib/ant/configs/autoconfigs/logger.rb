@@ -12,10 +12,8 @@ module Ant
         def initialize(config)
           @config = config
           Ant::Logger::LogMethods.global_config = Ant::Logger::Config.new(config)
-        end
-
-        def sanity_check
-          true
+          @logger = Object.new
+          @logger.extend Ant::Logger
         end
 
         def raw

@@ -18,8 +18,9 @@ module Ant
         @plugin_subdir = plugin_subdir
       end
 
-      def services(cathegory, name, sub = nil)
-        service = @services[cathegory][name]
+      def services(cathegory, name = nil?, sub = nil)
+        service = @services[cathegory]
+        service = service[name] if service.is_a?(Hash) && name
         service = service[sub] if service.is_a?(Hash) && sub
         service.raw
       end

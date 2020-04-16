@@ -14,10 +14,6 @@ module Ant
           @connection = Ant::Client::RESTClient.new(symbolize(config))
         end
 
-        def sanity_check
-          true
-        end
-
         def raw
           @connection
         end
