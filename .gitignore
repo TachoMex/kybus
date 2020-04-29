@@ -1,6 +1,6 @@
 /.bundle/
 /.yardoc
-ant-*/Gemfile.lock
+kybus-*/Gemfile.lock
 /_yardoc/
 */coverage/
 */doc/

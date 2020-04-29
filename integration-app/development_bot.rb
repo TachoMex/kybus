@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'ant/logger'
-require 'ant/configs'
-require 'ant/bot'
+require 'kybus/logger'
+require 'kybus/configs'
+require 'kybus/bot'
 require 'awesome_print'
 
 require_relative 'api/lib/services'
 
-bot = Ant::Bot::Base.new(Services.configs['bot'])
+bot = Kybus::Bot::Base.new(Services.configs['bot'])
 bot.register_command('/remindme', %i[what when]) do |params|
   puts "I will remind you to '#{params[:what]}' on #{params[:when]}"
 end

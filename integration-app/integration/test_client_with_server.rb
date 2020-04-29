@@ -3,7 +3,7 @@
 require 'rack'
 
 require './development_api'
-require 'ant/client'
+require 'kybus/client'
 
 ##
 # Runs an integration test by validating that the development api can be queried
@@ -18,7 +18,7 @@ class TestClientWithServer
   EXPECTATIONS = %i[status fail error fatal auth auth_failed no_keys].freeze
 
   def initialize
-    @client = Ant::Client::RESTClient.new(CONFS)
+    @client = Kybus::Client::RESTClient.new(CONFS)
     @server = Thread.new { Rack::Server.start }
     @expectations = Hash[EXPECTATIONS.collect { |k| [k, false] }]
   end
@@ -32,28 +32,28 @@ class TestClientWithServer
     assert(:status)
     %w[fail error fatal].each do |status|
       @client.get("/api/#{status}")
-    rescue Ant::Exceptions::AntBaseException => _e
+    rescue Kybus::Exceptions::AntBaseException => _e
       assert(status.to_sym)
     end
   end
 
   def test_basic_auth_empty_keys
     @client.get('/api/secret')
-  rescue Ant::Exceptions::AntFail => _e
+  rescue Kybus::Exceptions::AntFail => _e
     assert(:no_keys)
   end
 
   def test_basic_auth_fails
     conf = CONFS.merge(basic_auth: { user: 'test', password: 'no_secret' })
-    client = Ant::Client::RESTClient.new(conf)
+    client = Kybus::Client::RESTClient.new(conf)
     client.get('/api/secret')
-  rescue Ant::Exceptions::AntFail => _e
+  rescue Kybus::Exceptions::AntFail => _e
     assert(:auth_failed)
   end
 
   def test_basic_auth_success
     conf = CONFS.merge(basic_auth: { user: 'test', password: 'secret' })
-    client = Ant::Client::RESTClient.new(conf)
+    client = Kybus::Client::RESTClient.new(conf)
     data = client.get('/api/secret')
     assert(:auth) if data[:money] == 1000
   end

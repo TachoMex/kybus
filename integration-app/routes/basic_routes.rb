@@ -2,7 +2,7 @@
 
 # This API provides routes to test JSend formats.
 class BasicRoutes < Grape::API
-  include Ant::Logger
+  include Kybus::Logger
 
   get :status do
     log_info('Requesting status for server')
@@ -19,15 +19,15 @@ class BasicRoutes < Grape::API
   end
 
   get :fail do
-    raise(Ant::Exceptions::AntFail, 'Wrong Value')
+    raise(Kybus::Exceptions::AntFail, 'Wrong Value')
   end
 
   get :error do
-    raise(Ant::Exceptions::AntError, 'The system crashed')
+    raise(Kybus::Exceptions::AntError, 'The system crashed')
   end
 
   get :success do
-    raise(Ant::Exceptions::AntSuccess, 'U scare bro?')
+    raise(Kybus::Exceptions::AntSuccess, 'U scare bro?')
   end
 
   get :slow do

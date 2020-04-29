@@ -8,7 +8,7 @@ module Services
   class << self
     def configs
       @configs ||= begin
-        configs = Ant::Configuration::ConfigurationManager.new(
+        configs = Kybus::Configuration::ConfigurationManager.new(
           default_files: [
             './config/nanoservice_default.yaml',
             './config/bot_default.yaml'
@@ -20,7 +20,7 @@ module Services
     end
 
     def schema
-      @schema ||= Ant::Nanoservice::Schema.new(configs['schema'])
+      @schema ||= Kybus::Nanoservice::Schema.new(configs['schema'])
     end
   end
 end

@@ -2,12 +2,12 @@
 
 require 'grape'
 require 'sequel'
-require 'ant/core'
-require 'ant/nanoservice'
-require 'ant/server'
-require 'ant/server/grape'
-require 'ant/configs'
-require 'ant/storage'
+require 'kybus/core'
+require 'kybus/nanoservice'
+require 'kybus/server'
+require 'kybus/server/grape'
+require 'kybus/configs'
+require 'kybus/storage'
 
 require_relative 'helpers/factory_helpers'
 require_relative 'api/lib/services'
@@ -21,13 +21,13 @@ require_relative 'routes/user'
 # to debug new features by implementing them inside the gem code and avoid
 # having another repo for testing that would require this gem.
 class DevelopmentAPI < Grape::API
-  include Ant::Server::GrapeDecorator
+  include Kybus::Server::GrapeDecorator
 
   version('v1', using: :header, vendor: :ant_server)
   prefix(:api)
   format(:json)
 
-  helpers Ant::Logger
+  helpers Kybus::Logger
   helpers FactoryHelpers
   helpers BasicAuthRoutes::AuthHelper
 

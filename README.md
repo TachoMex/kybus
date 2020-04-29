@@ -1,6 +1,6 @@
-# Ruby Ants Framework [![Build Status](https://travis-ci.com/TachoMex/ant.svg?token=mByHJndryoQGoBVujqw2&branch=develop)](https://travis-ci.com/TachoMex/ant)
+# Ruby Ants Framework [![Build Status](https://travis-ci.com/TachoMex/kybus.svg?token=mByHJndryoQGoBVujqw2&branch=develop)](https://travis-ci.com/TachoMex/kybus)
 
-Ant provides a series of little gems that will help you to solve small problems.
+Kybus provides a series of little gems that will help you to solve small problems.
 This gem was inspired by boiler plate code that I was failing on repeating each
 time I started a new project. The idea of this project is to provide tools for
 making apps that are microservices-oriented.

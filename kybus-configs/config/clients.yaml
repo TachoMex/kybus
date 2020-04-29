@@ -1,0 +1,14 @@
+rest_clients:
+  github:
+    basic_auth:
+      user: Kybus
+      pass: SecretPassword
+    protocol: https
+    host: api.github.com
+    validator: none
+    format: json
+  wallet:
+    protocol: http
+    host: kybus-wallet.com
+    validate: jsend
+    format: json

@@ -1,6 +1,6 @@
 #!/bin/sh
 base_dir=$(pwd)
-for gem in ant-*; do
+for gem in kybus-*; do
   cd $base_dir/$gem;
   rm *.gem;
   gem build $gem.gemspec;
