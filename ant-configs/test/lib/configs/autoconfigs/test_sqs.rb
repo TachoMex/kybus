@@ -5,7 +5,7 @@ require 'aws-sdk-sqs'
 
 class TestSQS < AutoconfigTest
   def test_sqs_loader
-    mock = { queue_url: 'aws.sqs/ant-mailing'}
+    mock = { queue_url: 'aws.sqs/ant-mailing' }
     conf = YAML.load_file('./config/sqs.yaml')
     ::Aws::SQS::Client.any_instance
                       .expects(:get_queue_url)

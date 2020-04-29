@@ -32,14 +32,14 @@ class TestClientWithServer
     assert(:status)
     %w[fail error fatal].each do |status|
       @client.get("/api/#{status}")
-    rescue Ant::Exceptions::AntBaseException => _
+    rescue Ant::Exceptions::AntBaseException => _e
       assert(status.to_sym)
     end
   end
 
   def test_basic_auth_empty_keys
     @client.get('/api/secret')
-  rescue Ant::Exceptions::AntFail => _
+  rescue Ant::Exceptions::AntFail => _e
     assert(:no_keys)
   end
 
@@ -47,7 +47,7 @@ class TestClientWithServer
     conf = CONFS.merge(basic_auth: { user: 'test', password: 'no_secret' })
     client = Ant::Client::RESTClient.new(conf)
     client.get('/api/secret')
-  rescue Ant::Exceptions::AntFail => _
+  rescue Ant::Exceptions::AntFail => _e
     assert(:auth_failed)
   end
 

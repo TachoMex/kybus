@@ -9,5 +9,4 @@ require 'mocha/minitest'
 SimpleCov.minimum_coverage 100
 SimpleCov.start
 
-
 require './lib/ant/core'

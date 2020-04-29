@@ -59,9 +59,7 @@ module Ant
           puts message
         end
 
-        def echo=(toogle)
-          @echo = toogle
-        end
+        attr_writer :echo
 
         # receives the answer from the bot
         def answer(message)

@@ -66,11 +66,11 @@ module Ant
           raise(AntError, 'No implementation given') unless block_given?
 
           data.result = yield
-          # rubocop: disable RescueException
-        rescue Exception => ex
-          # rubocop: enable RescueException
-          data.exception = ex
-          resolver = exception_handler(ex)
+          # rubocop: disable Lint/RescueException
+        rescue Exception => e
+          # rubocop: enable Lint/RescueException
+          data.exception = e
+          resolver = exception_handler(e)
         end
         handle(resolver, data)
       end

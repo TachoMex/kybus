@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ant
   module Configuration
     class FeatureFlag
@@ -5,7 +7,6 @@ module Ant
         def initialize(configs)
           @configs = configs
           @threshold = normalize_thershold(configs['threshold'])
-
         end
 
         def normalize_thershold(value)

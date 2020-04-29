@@ -18,7 +18,6 @@ module Ant
         def register_validator(name, klass)
           register(:validators, name, klass)
         end
-
       end
       register_validator('jsend', JSend)
       register_validator('empty', NoValidator)

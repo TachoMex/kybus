@@ -69,13 +69,13 @@ module Ant
       # :nocov: #
       def pretty_load_configs!(terminate = true)
         load_configs!
-      rescue MissingConfigs => ex
+      rescue MissingConfigs => e
         puts 'You are missing some configs!'
         puts 'Add them to a file and export the config env var:'
         puts "$ export #{@env_prefix}_FILES='#{Dir.pwd}'/config/config.yaml"
         puts 'Maybe you just need to add them to your existing files'
         puts 'Missing configs:'
-        ex.keys.each { |k| puts "- \"#{k}\"" }
+        e.keys.each { |k| puts "- \"#{k}\"" }
         exit(1) if terminate
       end
       # :nocov: #

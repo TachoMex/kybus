@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TestLogger < Minitest::Test
   include Ant::Logger
 
@@ -67,7 +69,7 @@ class TestLogger < Minitest::Test
   def test_log_alert
     build_logger
     log_alert(description: 'test_executed',
-               alert_severity: 1, group: 'unit_testing', notify_group: 'sre')
+              alert_severity: 1, group: 'unit_testing', notify_group: 'sre')
     string = read_log
     assert(string.include?('FATAL'))
     assert(string.include?('test_executed'))

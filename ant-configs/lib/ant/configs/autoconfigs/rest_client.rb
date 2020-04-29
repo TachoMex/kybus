@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ant
   module Configuration
     module Autoconfigs

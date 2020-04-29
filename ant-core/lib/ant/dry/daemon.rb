@@ -26,11 +26,11 @@ module Ant
         loop do
           begin
             @proc.call
-          rescue StandardError => ex
+          rescue StandardError => e
             raise unless @retry_on_failure
 
             # :nocov: #
-            log_error('Unexpected error', error: ex)
+            log_error('Unexpected error', error: e)
             # :nocov: #
           end
           sleep(@wait_time)

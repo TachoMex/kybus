@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require_relative 'adapters/debug'
 require_relative 'base'
 module Ant
   module Bot
-
     class NonDebugAdapterInTesting < StandardError
     end
 

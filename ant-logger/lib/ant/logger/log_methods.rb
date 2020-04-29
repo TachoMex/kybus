@@ -56,7 +56,7 @@ module Ant
         self.class.respond_to?(:resource) ? self.class.resource(:log_config) : LogMethods.global_config
       rescue StandardError => _e
         # :nocov:
-        Ant::Logger::LogMethods::global_config
+        Ant::Logger::LogMethods.global_config
         # :nocov:
       end
 

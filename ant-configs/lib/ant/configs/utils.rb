@@ -20,7 +20,7 @@ module Ant
       #   a = { a: 1, b: { c: 2 } }
       #   b = { b: { d: 3 }, e: 4}
       #   recursive_merge(a, b) => { a: 1, b: { c: 2, d: 3 }, e: 4}
-      # rubocop: disable AbcSize
+      # rubocop: disable Metrics/AbcSize
       def recursive_merge(receiver, sender)
         return receiver if sender.nil?
 
@@ -38,7 +38,7 @@ module Ant
         end
         result
       end
-      # rubocop: enable AbcSize
+      # rubocop: enable Metrics/AbcSize
 
       # Takes a hash, an array and a value
       # It will traverse recursively into the hash and create a key inside the
