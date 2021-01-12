@@ -52,6 +52,8 @@ module Kybus
         # interface for sending messages
         def send_message(channel_name, contents)
           @client.api.send_message(chat_id: channel_name, text: contents)
+        rescue Telegram::Bot::Exceptions::ResponseError => err
+          return if err[:error_code] == '403'
         end
 
         # interface for sending video

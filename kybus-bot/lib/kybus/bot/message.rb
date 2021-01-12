@@ -18,7 +18,7 @@ module Kybus
       # Returns true when the received message is a command. Convention states
       # that messages should start with '/' to be considered commands
       def command?
-        raw_message.start_with?('/')
+        raw_message&.start_with?('/')
       end
     end
   end

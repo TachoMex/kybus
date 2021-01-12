@@ -197,6 +197,10 @@ module Kybus
         @state.store
         @state[:params] = json
       end
+
+      def session
+        @repository
+      end
     end
   end
 end
