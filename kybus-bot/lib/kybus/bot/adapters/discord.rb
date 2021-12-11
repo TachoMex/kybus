@@ -23,6 +23,22 @@ module Kybus
         def raw_message
           @message.content
         end
+
+        def user
+          @message.author.id
+        end
+
+        def is_private?
+          @message.channel.private?
+        end
+
+        def reply?
+          @message.message.reply?
+        end
+
+        def replied_message
+          DiscordMessage.new(@message.message.referenced_message)
+        end
       end
 
       ##
@@ -44,6 +60,12 @@ module Kybus
           @client.run(:async)
         end
 
+        attr_reader :client
+
+        def mention(id)
+          "<@!#{id}>"
+        end
+
         # Interface for receiving message
         def read_message
           # take the first message from the first open message,
@@ -59,7 +81,13 @@ module Kybus
 
         # interface for sending messages
         def send_message(channel_name, contents)
-          @client.channel(channel_name).send_message(contents)
+          puts "#{channel_name} => #{contents}" if @config['debug']
+          channel = @client.channel(channel_name)
+          if channel
+            channel.send_message(contents)
+          else
+            @client.user(channel_name).pm(contents)
+          end
         end
 
         # # interface for sending video

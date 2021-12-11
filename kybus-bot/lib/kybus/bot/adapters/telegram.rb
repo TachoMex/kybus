@@ -14,14 +14,30 @@ module Kybus
           @message = message
         end
 
+        def reply?
+          !!@message.reply_to_message
+        end
+
+        def replied_message
+          TelegramMessage.new(@message.reply_to_message)
+        end
+
         # Returns the channel id
         def channel_id
-          @message.from.id
+          @message.chat.id
         end
 
         # Returns the message contents
         def raw_message
           @message.to_s
+        end
+
+        def is_private?
+          @message.chat.type == 'private'
+        end
+
+        def user
+          @message.from.id
         end
       end
 
@@ -42,15 +58,25 @@ module Kybus
         # Interface for receiving message
         def read_message
           # take the first message from the first open message,
-          @client.listen do |message|
-            log_info('Received message', message: message.to_h,
-                                         from: message.from.to_h)
-            return TelegramMessage.new(message)
+          loop do
+            @client.listen do |message|
+              log_info('Received message', message: message.to_h,
+                                           from: message.from.to_h)
+              return TelegramMessage.new(message)
+            end
+          rescue Telegram::Bot::Exceptions::ResponseError => e
+            log_error('An error ocurred while calling to Telegram API', e)
           end
         end
 
+        def mention(id)
+          "[user](tg://user?id=#{id})"
+        end
+
+
         # interface for sending messages
         def send_message(channel_name, contents)
+          puts "#{channel_name} => #{contents}" if @config['debug']
           @client.api.send_message(chat_id: channel_name, text: contents)
         rescue Telegram::Bot::Exceptions::ResponseError => err
           return if err[:error_code] == '403'

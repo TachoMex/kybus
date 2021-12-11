@@ -8,7 +8,8 @@ module Kybus
       class << self
         def run_migrations!(conn)
           conn.create_table?(:bot_sessions) do
-            String :channel_id, primary: true
+            String :channel_id
+            String :user
             String :params, text: true
             String :cmd
             String :requested_param

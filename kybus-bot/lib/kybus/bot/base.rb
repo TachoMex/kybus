@@ -14,21 +14,22 @@ module Kybus
     class Base
       include Kybus::Storage::Datasource
       include Kybus::Logger
+      attr_reader :provider
 
-      def send_message(content)
-        @provider.send_message(current_channel, content)
+      def send_message(content, channel = nil)
+        @provider.send_message(channel || current_channel, content)
       end
 
       def rescue_from(klass, &block)
         @commands.register_command(klass, [], block)
       end
 
-      def send_image(content)
-        @provider.send_image(current_channel, content)
+      def send_image(content, channel = nil)
+        @provider.send_image(channel || current_channel, content)
       end
 
-      def send_audio(content)
-        @provider.send_audio(current_channel, content)
+      def send_audio(content, channel = nil)
+        @provider.send_audio(channel || current_channel, content)
       end
 
       # Configurations needed:
@@ -61,6 +62,7 @@ module Kybus
           # TODO: Create a subclass with the context execution
           Kybus::DRY::Daemon.new(@pool_size, true) do
             message = @provider.read_message
+            @last_message = message
             process_message(message)
           end
         end
@@ -85,9 +87,9 @@ module Kybus
         load_state!(message.channel_id)
         log_debug('loaded state', message: message.to_h, state: @state.to_h)
         if message.command?
-          self.command = message
+          self.command = message.raw_message
         else
-          add_param(message)
+          add_param(message.raw_message)
         end
         if command_ready?
           run_command!
@@ -133,6 +135,10 @@ module Kybus
         current_params
       end
 
+      def mention(name)
+        @provider.mention(name)
+      end
+
       # Loads command from state
       def current_command_object
         command = @state[:cmd]
@@ -144,11 +150,19 @@ module Kybus
         @state[:channel_id]
       end
 
+      def current_user
+        @last_message.user
+      end
+
+      def is_private?
+        @last_message.is_private?
+      end
+
       # stores the command into state
       def command=(cmd)
         log_debug('Message set as command', command: cmd)
 
-        @state[:cmd] = cmd.raw_message
+        @state[:cmd] = cmd.split(' ').first
         @state[:params] = {}
       end
 
@@ -173,7 +187,7 @@ module Kybus
                   param: @state[:requested_param].to_sym,
                   value: value)
 
-        @state[:params][@state[:requested_param].to_sym] = value.raw_message
+        @state[:params][@state[:requested_param].to_sym] = value
       end
 
       # Loads the state from storage
