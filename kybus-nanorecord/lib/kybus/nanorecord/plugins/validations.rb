@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 module Kybus
   module Nanorecord
-    module Pluggins
+    module Plugins
       class Validations < Base
-        def apply(hook_provider)
+        def apply(_hook_provider)
           tables.each do |t|
           end
         end
       end
-      ::Kybus::Nanorecord::ModelHooks.register_plugin(Validations)
+      PluginProvider.register_plugin(Validations)
     end
   end
 end

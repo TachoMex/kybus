@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Kybus
   module Nanorecord
-    module Pluggins
+    module Plugins
       class Base
         def initialize(schema)
           @schema = schema
@@ -19,21 +21,11 @@ module Kybus
         end
 
         def config(table_name, config_name)
-          conf = table(table_name)['configs']
-          case conf
-          when Array
-            return {} if conf.include?(config_name)
-
-            conf.find { |hash| hash.is_a?(Hash) && (hash['name'] == config_name || hash[config_name]) }
-          when Hash
-            conf[config_name]
-          when String
-            conf == config_name && {}
-          end
+          table(table_name).configs.config_for(config_name)
         end
 
         def models
-          @schema['models']
+          @schema.models
         end
       end
     end

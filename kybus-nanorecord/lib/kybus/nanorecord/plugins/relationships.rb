@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require_relative 'base'
 
 module Kybus
   module Nanorecord
-    module Pluggins
+    module Plugins
       class Relationships < Base
         class Plugin
           def initialize(model, table, conf)
@@ -48,7 +50,7 @@ module Kybus
           end
         end
       end
-      ::Kybus::Nanorecord::ModelHooks.register_plugin(Relationships)
+      PluginProvider.register_plugin(Relationships)
     end
   end
 end
