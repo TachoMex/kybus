@@ -55,7 +55,7 @@ module Kybus
                      'date' => 1_586_922_532,
                      'text' => 'hi' } }] }
 
-      stub_api_query(path: 'getUpdates', response: response)
+      stub_api_query(path: 'getUpdates', response:)
       msg = @adapter.read_message
       assert_equal(msg.raw_message, 'hi')
       assert_equal(msg.channel_id, 1)

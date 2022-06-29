@@ -201,7 +201,7 @@ module Kybus
       def command=(cmd)
         log_debug('Message set as command', command: cmd)
 
-        @state[:cmd] = cmd.split(' ').first
+        @state[:cmd] = cmd.split.first
         @state[:params] = {}
         @state[:files] = {}
       end
@@ -213,7 +213,7 @@ module Kybus
 
       # Sends a message to get the next parameter from the user
       def ask_param(param)
-        log_debug('I\'m going to ask the next param', param: param)
+        log_debug('I\'m going to ask the next param', param:)
         provider.send_message(current_channel,
                               "I need you to tell me #{param}")
         @state[:requested_param] = param.to_s
@@ -225,7 +225,7 @@ module Kybus
 
         log_debug('Received new param',
                   param: @state[:requested_param].to_sym,
-                  value: value)
+                  value:)
 
         @state[:params][@state[:requested_param].to_sym] = value
       end
