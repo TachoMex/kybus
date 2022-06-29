@@ -26,7 +26,7 @@ module Kybus
           meta.each { |k, v| entry.gsub!(k.to_s, v.to_s) }
           # json is slower than the meta records, so it is better to replace
           # in a lazy way.
-          # TODO: Move lazy tags to a pluggin-based model.
+          # TODO: Move lazy tags to a plugin-based model.
           entry.gsub('%json', data.to_json) if frmt.include?('%json')
         end.curry.call(format_string)
       end

@@ -34,16 +34,16 @@ module Kybus
       end
 
       def log_metric(metric:, amount:, group: nil, time: nil)
-        log_info('Metric', metric: metric, value: amount,
-                           group: group, time: time)
+        log_info('Metric', metric:, value: amount,
+                           group:, time:)
       end
 
       def log_alert(description:, group:, alert_severity:, notify_group:)
         log_fatal('Alert Triggered',
-                  description: description,
-                  group: group,
+                  description:,
+                  group:,
                   severity: alert_severity,
-                  notify_group: notify_group)
+                  notify_group:)
       end
 
       def log_raw(severity, msg, data, debug = {})
