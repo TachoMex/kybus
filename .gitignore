@@ -16,3 +16,6 @@ application.log
 dev.rb
 develop.rb
 
+*.db
+*.log
+*.sqlite
