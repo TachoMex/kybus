@@ -17,6 +17,7 @@ module Kybus
     # @param data.     Contains additional data to detail the error.
     class AntBaseException < StandardError
       attr_reader :message, :code, :data
+
       def initialize(message, code, data)
         @message = message
         @code = code
@@ -29,10 +30,10 @@ module Kybus
 
       def to_h
         {
-          message: message,
-          code: code,
-          data: data,
-          backtrace: backtrace
+          message:,
+          code:,
+          data:,
+          backtrace:
         }
       end
     end

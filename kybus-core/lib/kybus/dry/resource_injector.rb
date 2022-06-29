@@ -61,6 +61,14 @@ module Kybus
 
         res
       end
+
+      def unsafe_resource(key, subkey = nil)
+        if subkey.nil?
+          subkey = key
+          key = :root
+        end
+        resources(key)[subkey]
+      end
     end
   end
 end

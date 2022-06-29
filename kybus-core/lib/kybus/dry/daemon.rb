@@ -13,8 +13,8 @@ module Kybus
     class Daemon
       include Kybus::Logger
 
-      def initialize(wait_time, attach, retry_on_failure = false)
-        @proc = -> { yield }
+      def initialize(wait_time, attach, retry_on_failure = false, &block)
+        @proc = block
         @wait_time = wait_time
         @attach = attach
         @retry_on_failure = retry_on_failure
