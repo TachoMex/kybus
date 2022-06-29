@@ -2,6 +2,6 @@
 
 module Kybus
   module Configuration
-    VERSION = '0.2.0'
+    VERSION = '0.2.2'
   end
 end

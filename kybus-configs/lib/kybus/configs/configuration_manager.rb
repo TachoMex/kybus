@@ -159,8 +159,12 @@ module Kybus
       # Helper method for loading files into configurations
       def load_files(files)
         files.each do |file|
-          config = Loaders::YAML.new(file, self).load!
-          @configs = recursive_merge(@configs, config)
+          if File.file?(file)
+            config = Loaders::YAML.new(file, self).load!
+            @configs = recursive_merge(@configs, config)
+          else
+            puts "File not found and expected from autoconfig: `#{file}'"
+          end
         end
       end
 

@@ -17,6 +17,11 @@ module Kybus
         assert_equal(recursive_merge(a, b), a: 1, b: { c: 2, d: 3 },
                                             e: 4, f: %i[a b c])
       end
+
+      def test_parse_type
+        assert_equal(parse_type('123'), 123)
+        assert_equal(parse_type('123_'), '123_')
+      end
     end
   end
 end

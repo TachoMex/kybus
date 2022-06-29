@@ -64,7 +64,7 @@ module Kybus
       #   split_env_string('hello, world') => ['hello', 'world']
       #   split_env_string('hello\, world') => 'hello, world'
       def split_env_string(string)
-        # TODO: parse type of string
+        return string unless string.is_a?(String)
         strings = string.split(/(?<!\\),/)
                         .map { |str| str.gsub('\,', ',') }
                         .map { |str| parse_type(str) }
@@ -78,7 +78,12 @@ module Kybus
         when 'false'
           false
         else
-          string
+          int = string.to_i
+          if int.to_s == string
+            int
+          else
+            string
+          end
         end
       end
 
