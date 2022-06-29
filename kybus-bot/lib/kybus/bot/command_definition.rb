@@ -36,6 +36,10 @@ module Kybus
         @commands[name] = Command.new(params, block)
       end
 
+      def registered_commands
+        @commands.keys
+      end
+
       # Returns a command with the name
       def [](name)
         @commands[name]

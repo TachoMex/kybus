@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'base'
+require_relative '../message'
+
 module Kybus
   module Bot
     # :nodoc: #
@@ -8,9 +11,12 @@ module Kybus
       # Wraps a debugging message inside a class.
       class DebugMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
-        def initialize(text, channel)
+        attr_reader :attachment
+
+        def initialize(text, channel, attachment = nil)
           @text = text
           @channel = channel
+          @attachment = attachment
         end
 
         # Returns the channel id
@@ -21,6 +27,14 @@ module Kybus
         # Returns the message contents
         def raw_message
           @text
+        end
+
+        def user
+          channel_id
+        end
+
+        def has_attachment?
+          !!attachment
         end
       end
 
@@ -52,7 +66,7 @@ module Kybus
           DebugMessage.new(@pending_messages.shift, @name)
         end
 
-        def send_data(message)
+        def send_data(message, _attachment)
           return unless @echo
 
           puts "Sending message to channel: #{@name}"
@@ -62,8 +76,8 @@ module Kybus
         attr_writer :echo
 
         # receives the answer from the bot
-        def answer(message)
-          send_data(message)
+        def answer(message, attachment = nil)
+          send_data(message, attachment)
           @state = :open
         end
       end
@@ -112,8 +126,8 @@ module Kybus
         end
 
         # interface for sending messages
-        def send_message(channel_name, contents)
-          channel(channel_name).answer(contents)
+        def send_message(channel_name, contents, attachment = nil)
+          channel(channel_name).answer(contents, attachment)
         end
 
         # interface for sending video

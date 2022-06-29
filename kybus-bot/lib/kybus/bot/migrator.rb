@@ -11,6 +11,7 @@ module Kybus
             String :channel_id
             String :user
             String :params, text: true
+            String :files, text: true
             String :cmd
             String :requested_param
           end

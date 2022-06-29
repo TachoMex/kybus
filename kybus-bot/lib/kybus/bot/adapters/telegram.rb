@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'telegram/bot'
+require 'faraday'
 
 module Kybus
   module Bot
@@ -36,8 +37,60 @@ module Kybus
           @message.chat.type == 'private'
         end
 
+        def has_attachment?
+          !!@message.document
+        end
+
+        def attachment
+          @message.document
+        end
+
         def user
           @message.from.id
+        end
+      end
+
+      class TelegramFile
+        extend Kybus::DRY::ResourceInjector
+        attr_reader :id
+
+        def initialize(message)
+          @id = case message
+                when String
+                  message
+                when Hash
+                  message['id'] || message[:id]
+                when TelegramFile
+                  message.id
+                else
+                  message.file_id
+                end
+        end
+
+        def to_h
+          {
+            provide: 'telegram',
+            id: @id
+          }
+        end
+
+        def cli
+          @cli ||= TelegramFile.resource(:cli)
+        end
+
+        def meta
+          @meta ||= cli.api.get_file(file_id: @id)
+        end
+
+        def original_name
+          meta.dig('result', 'file_name')
+        end
+
+        def download
+          token = cli.api.token
+          file_path = meta.dig('result', 'file_path')
+          path = "https://api.telegram.org/file/bot#{token}/#{file_path}"
+          Faraday.get(path).body
         end
       end
 
@@ -53,6 +106,7 @@ module Kybus
         def initialize(configs)
           @config = configs
           @client = ::Telegram::Bot::Client.new(@config['token'])
+          TelegramFile.register(:cli, @client)
         end
 
         # Interface for receiving message
@@ -64,7 +118,7 @@ module Kybus
                                            from: message.from.to_h)
               return TelegramMessage.new(message)
             end
-          rescue Telegram::Bot::Exceptions::ResponseError => e
+          rescue ::Telegram::Bot::Exceptions::ResponseError => e
             log_error('An error ocurred while calling to Telegram API', e)
           end
         end
@@ -73,31 +127,40 @@ module Kybus
           "[user](tg://user?id=#{id})"
         end
 
-
         # interface for sending messages
         def send_message(channel_name, contents)
           puts "#{channel_name} => #{contents}" if @config['debug']
           @client.api.send_message(chat_id: channel_name, text: contents)
-        rescue Telegram::Bot::Exceptions::ResponseError => err
-          return if err[:error_code] == '403'
+        rescue ::Telegram::Bot::Exceptions::ResponseError => e
+          return if e[:error_code] == '403'
         end
 
         # interface for sending video
         def send_video(channel_name, video_url)
-          file = Faraday::UploadIO.new(video_url, 'video/mp4')
+          file = Faraday::FilePart.new(video_url, 'video/mp4')
           @client.api.send_video(chat_id: channel_name, audio: file)
         end
 
         # interface for sending uadio
         def send_audio(channel_name, audio_url)
-          file = Faraday::UploadIO.new(audio_url, 'audio/mp3')
+          file = Faraday::FilePart.new(audio_url, 'audio/mp3')
           @client.api.send_audio(chat_id: channel_name, audio: file)
         end
 
         # interface for sending image
         def send_image(channel_name, image_url)
-          file = Faraday::UploadIO.new(image_url, 'image/jpeg')
+          file = Faraday::FilePart.new(image_url, 'image/jpeg')
           @client.api.send_photo(chat_id: channel_name, photo: file)
+        end
+
+        # interface for sending document
+        def send_document(channel_name, image_url)
+          file = Faraday::FilePart.new(image_url, 'application/octect-stream')
+          @client.api.send_document(chat_id: channel_name, document: file)
+        end
+
+        def file_builder(file)
+          TelegramFile.new(file)
         end
       end
 

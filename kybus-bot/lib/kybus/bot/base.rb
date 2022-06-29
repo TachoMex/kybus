@@ -16,8 +16,18 @@ module Kybus
       include Kybus::Logger
       attr_reader :provider
 
+      class BotError < StandardError; end
+
+      class EmptyMessageError < BotError
+        def initialize
+          super('Message is empty')
+        end
+      end
+
       def send_message(content, channel = nil)
-        @provider.send_message(channel || current_channel, content)
+        raise(EmptyMessageError) unless content
+
+        provider.send_message(channel || current_channel, content)
       end
 
       def rescue_from(klass, &block)
@@ -25,11 +35,15 @@ module Kybus
       end
 
       def send_image(content, channel = nil)
-        @provider.send_image(channel || current_channel, content)
+        provider.send_image(channel || current_channel, content)
       end
 
       def send_audio(content, channel = nil)
-        @provider.send_audio(channel || current_channel, content)
+        provider.send_audio(channel || current_channel, content)
+      end
+
+      def send_document(content, channel = nil)
+        provider.send_document(channel || current_channel, content)
       end
 
       # Configurations needed:
@@ -42,6 +56,7 @@ module Kybus
         @pool_size = configs['pool_size']
         @provider = Kybus::Bot::Adapter.from_config(configs['provider'])
         @commands = Kybus::Bot::CommandDefinition.new
+        register_command('default') { ; }
 
         # TODO: move this to config
         @repository = Kybus::Storage::Repository.from_config(
@@ -61,7 +76,7 @@ module Kybus
         @pool = Array.new(@pool_size) do
           # TODO: Create a subclass with the context execution
           Kybus::DRY::Daemon.new(@pool_size, true) do
-            message = @provider.read_message
+            message = provider.read_message
             @last_message = message
             process_message(message)
           end
@@ -90,6 +105,7 @@ module Kybus
           self.command = message.raw_message
         else
           add_param(message.raw_message)
+          add_file(message.attachment) if message.has_attachment?
         end
         if command_ready?
           run_command!
@@ -135,8 +151,31 @@ module Kybus
         current_params
       end
 
+      def add_file(file)
+        return if @state[:requested_param].nil?
+
+        log_debug('Received new file',
+                  param: @state[:requested_param].to_sym,
+                  file: file.to_h)
+
+        files[@state[:requested_param].to_sym] = provider.file_builder(file)
+        @state[:params]["_#{@state[:requested_param]}_filename".to_sym] = file.file_name
+      end
+
+      def files
+        @state[:files] ||= {}
+      end
+
+      def file(name)
+        (file = files[name]) && provider.file_builder(file)
+      end
+
       def mention(name)
-        @provider.mention(name)
+        provider.mention(name)
+      end
+
+      def registered_commands
+        @commands.registered_commands
       end
 
       # Loads command from state
@@ -164,6 +203,7 @@ module Kybus
 
         @state[:cmd] = cmd.split(' ').first
         @state[:params] = {}
+        @state[:files] = {}
       end
 
       # validates which is the following parameter required
@@ -174,8 +214,8 @@ module Kybus
       # Sends a message to get the next parameter from the user
       def ask_param(param)
         log_debug('I\'m going to ask the next param', param: param)
-        @provider.send_message(current_channel,
-                               "I need you to tell me #{param}")
+        provider.send_message(current_channel,
+                              "I need you to tell me #{param}")
         @state[:requested_param] = param.to_s
       end
 
@@ -198,18 +238,26 @@ module Kybus
       # Private implementation for load message
       def load_state(channel)
         data = @factory.get(channel)
-        data[:params] = JSON.parse(data[:params], symbolize_names: true)
+        data[:params] = JSON.parse(data[:params] || '{}', symbolize_names: true)
+        data[:files] = JSON.parse(data[:files] || '{}', symbolize_names: true)
         data
       rescue Kybus::Storage::Exceptions::ObjectNotFound
         @factory.create(channel_id: channel, params: {}.to_json)
       end
 
+      def parse_state!; end
+
       # Saves the state into storage
       def save_state!
-        json = @state[:params]
-        @state[:params] = json.to_json
+        backup = @state.clone
+        %i[params files].each do |param|
+          @state[param] = @state[param].to_json
+        end
+
         @state.store
-        @state[:params] = json
+        %i[params files].each do |param|
+          @state[param] = backup[param]
+        end
       end
 
       def session
