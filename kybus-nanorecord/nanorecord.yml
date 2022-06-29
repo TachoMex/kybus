@@ -1,0 +1,41 @@
+schema:
+  models:
+    articles:
+      fields:
+        title:
+        description:
+      configs:
+        - belongs_to: user
+        - timestamps
+    users:
+      fields:
+        username:
+          size: 32
+          not_null:
+          unique: true
+        borndate:
+          type: string
+          not_null:
+          index: true
+        email:
+          type: string
+          size: 64
+          not_null:
+          regex: '\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z'
+          unique: true
+        mobile:
+          type: string
+          not_null:
+          size: 16
+          unique: true
+      configs:
+        - safe_password
+        - timestamps
+    categories:
+      fields:
+        name:
+          not_null:
+          unique: true
+    article_classifications:
+      configs:
+        - belongs_to: [article, category]
