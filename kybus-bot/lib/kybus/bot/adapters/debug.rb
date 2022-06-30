@@ -14,6 +14,7 @@ module Kybus
         attr_reader :attachment
 
         def initialize(text, channel, attachment = nil)
+          super()
           @text = text
           @channel = channel
           @attachment = attachment

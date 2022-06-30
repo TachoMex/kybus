@@ -11,6 +11,7 @@ module Kybus
       class DiscordMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
         def initialize(msg)
+          super
           @message = msg
         end
 
@@ -70,11 +71,9 @@ module Kybus
         def read_message
           # take the first message from the first open message,
           loop do
-            if @pool.empty?
-              sleep(0.1)
-            else
-              break
-            end
+            break unless @pool.empty?
+
+            sleep(0.1)
           end
           DiscordMessage.new(@pool.shift)
         end

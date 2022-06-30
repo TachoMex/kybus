@@ -12,6 +12,7 @@ module Kybus
       class TelegramMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
         def initialize(message)
+          super()
           @message = message
         end
 
