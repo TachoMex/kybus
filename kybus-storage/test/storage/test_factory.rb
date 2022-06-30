@@ -52,7 +52,7 @@ class TestFactory < Minitest::Test
   end
 
   def setup
-    Dir.mkdir('storage') unless File.exist?('storage')
+    FileUtils.mkdir_p('storage')
     path = 'storage/tuples/hello.json'
     File.delete(path) if File.file?(path)
     path = 'storage/tuples/default.json'

@@ -20,7 +20,7 @@ class TestClientWithServer
   def initialize
     @client = Kybus::Client::RESTClient.new(CONFS)
     @server = Thread.new { Rack::Server.start }
-    @expectations = Hash[EXPECTATIONS.collect { |k| [k, false] }]
+    @expectations = EXPECTATIONS.to_h { |k| [k, false] }
   end
 
   def assert(expectation)

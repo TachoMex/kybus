@@ -75,7 +75,7 @@ module Kybus
         puts "$ export #{@env_prefix}_FILES='#{Dir.pwd}'/config/config.yaml"
         puts 'Maybe you just need to add them to your existing files'
         puts 'Missing configs:'
-        e.keys.each { |k| puts "- \"#{k}\"" }
+        e.each_key { |k| puts "- \"#{k}\"" }
         exit(1) if terminate
       end
       # :nocov: #

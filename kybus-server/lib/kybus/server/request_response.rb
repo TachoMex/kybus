@@ -6,8 +6,9 @@ module Kybus
     # to track monitoring logs and format the response after the endpoint was
     # executed
     class RequestResponse
-      attr_reader :params, :exception, :result, :start_timestamp
-      attr_writer :exception, :result, :start_timestamp
+      attr_accessor :exception, :result, :start_timestamp
+      attr_reader :params
+
       def initialize(request:, params:)
         @request = request
         @params = params

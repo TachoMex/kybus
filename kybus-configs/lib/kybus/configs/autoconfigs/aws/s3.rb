@@ -14,9 +14,7 @@ module Kybus
           def initialize(config)
             @config = config
             @client = ::Aws::S3::Client.new(
-              symbolize(config).reject do |k, _|
-                %i[bucket test_connection].include?(k)
-              end
+              symbolize(config).except(:bucket, :test_connection)
             )
             @connection = ::Aws::S3::Bucket.new(
               name: config['bucket'],

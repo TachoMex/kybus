@@ -38,7 +38,7 @@ module Kybus
       ##
       # helper to sumarize fatal and error status
       def error_format(level, code, message, data)
-        { status: level, code: code, message: message, data: data }
+        { status: level, code:, message:, data: }
       end
     end
   end

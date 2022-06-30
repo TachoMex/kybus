@@ -10,8 +10,8 @@ module Kybus
       # values are inside the restrictions. It dependes on a repository
       # for storing values.
       class Model
-        attr_reader :data
-        attr_writer :data
+        attr_accessor :data
+        attr_writer :repository
 
         # :nocov: #
         def run_validations!
@@ -40,8 +40,6 @@ module Kybus
         def initialize(data)
           @data = data
         end
-
-        attr_writer :repository
 
         def to_json(options = nil)
           @data.to_json(options)

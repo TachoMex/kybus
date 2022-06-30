@@ -29,7 +29,7 @@ module Kybus
         def load!
           configs = {}
           @array.each_with_index do |obj, idx|
-            next unless obj.start_with?('--' + @env_prefix)
+            next unless obj.start_with?("--#{@env_prefix}")
 
             value = extract_value(obj, idx + 1)
             key = obj.split('=').first

@@ -59,7 +59,7 @@ module Kybus
 
       def process_request
         params[:__init_time] = Time.now
-        data = RequestResponse.new(request: request, params: params)
+        data = RequestResponse.new(request:, params:)
         resolver = :success
         Server::Response.logger.access(data)
         begin

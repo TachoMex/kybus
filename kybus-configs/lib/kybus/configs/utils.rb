@@ -20,15 +20,15 @@ module Kybus
       #   a = { a: 1, b: { c: 2 } }
       #   b = { b: { d: 3 }, e: 4}
       #   recursive_merge(a, b) => { a: 1, b: { c: 2, d: 3 }, e: 4}
-      # rubocop: disable Metrics/AbcSize
       def recursive_merge(receiver, sender)
         return receiver if sender.nil?
 
         result = receiver.dup
         (receiver.keys + sender.keys).each do |key|
-          value = if receiver[key].is_a?(Hash)
+          value = case receiver[key]
+                  when Hash
                     recursive_merge(receiver[key], sender[key])
-                  elsif receiver[key].is_a?(Array)
+                  when Array
                     # TODO: Enable merging arrays
                     sender[key]
                   else
@@ -38,7 +38,6 @@ module Kybus
         end
         result
       end
-      # rubocop: enable Metrics/AbcSize
 
       # Takes a hash, an array and a value
       # It will traverse recursively into the hash and create a key inside the
@@ -52,7 +51,7 @@ module Kybus
           hash
         else
           hash[current] ||= {}
-          recursive_set(hash[current], key[1..-1], value)
+          recursive_set(hash[current], key[1..], value)
         end
       end
 
@@ -65,6 +64,7 @@ module Kybus
       #   split_env_string('hello\, world') => 'hello, world'
       def split_env_string(string)
         return string unless string.is_a?(String)
+
         strings = string.split(/(?<!\\),/)
                         .map { |str| str.gsub('\,', ',') }
                         .map { |str| parse_type(str) }
@@ -88,7 +88,7 @@ module Kybus
       end
 
       def symbolize(hash)
-        hash.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
+        hash.transform_keys(&:to_sym)
       end
     end
   end

@@ -97,7 +97,7 @@ module Kybus
                     'User-Agent' => 'Ruby Kybus Client' }
         @client = RESTClient.new(conf)
         stub_request(:get, 'http://api.test/api/secret')
-          .with(headers: headers)
+          .with(headers:)
           .to_return(body: TEST_BODY.to_json)
         @client.get('/api/secret')
       end

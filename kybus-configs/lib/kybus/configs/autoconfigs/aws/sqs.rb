@@ -14,9 +14,7 @@ module Kybus
           def initialize(config)
             @config = config
             @client = ::Aws::SQS::Client.new(
-              symbolize(config).reject do |k, _|
-                %i[queue test_connection].include? k
-              end
+              symbolize(config).except(:queue, :test_connection)
             )
             queue = @client.get_queue_url(queue_name: @config['queue'])
             @connection = ::Aws::SQS::Queue.new(

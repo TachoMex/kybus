@@ -8,6 +8,7 @@ module Kybus
       # already exists.
       class ObjectAlreadyExists < Kybus::Exceptions::AntFail
         attr_reader :id
+
         def initialize(id, object)
           @id = id
           super("Object #{id} already exists", nil, object)
@@ -25,9 +26,10 @@ module Kybus
       # Exception used when it is requested an object that can not be found.
       class ObjectNotFound < Kybus::Exceptions::AntFail
         attr_reader :id
+
         def initialize(id)
           @id = id
-          super("Object #{id} does not exist", nil, id: id)
+          super("Object #{id} does not exist", nil, id:)
         end
       end
     end

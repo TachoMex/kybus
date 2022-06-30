@@ -12,7 +12,7 @@ module Kybus
         lambda do |env, level, ex|
           params = env['api.endpoint'].params
           request = env['api.endpoint'].request
-          pkg = RequestResponse.new(request: request, params: params)
+          pkg = RequestResponse.new(request:, params:)
           pkg.exception = ex
           Server::Response.logger.send(level, pkg)
           Server::Response.format.send(level, pkg)
@@ -81,7 +81,7 @@ module Kybus
         base.after do
           params = env['api.endpoint'].params
           request = env['api.endpoint'].request
-          pkg = RequestResponse.new(request: request, params: params)
+          pkg = RequestResponse.new(request:, params:)
           Server::Response.logger.access(pkg)
         end
       end

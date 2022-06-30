@@ -30,9 +30,7 @@ module Kybus
               when Symbol
                 @data[key] = val if self.class::VALIDATIONS.key?(key)
               when String
-                if self.class::VALIDATIONS.keys.map(&:to_s).include?(key)
-                  @data[key.to_sym] = val
-                end
+                @data[key.to_sym] = val if self.class::VALIDATIONS.keys.map(&:to_s).include?(key)
               end
             end
           end

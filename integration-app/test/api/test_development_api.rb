@@ -25,7 +25,7 @@ class TestDevelopmentAPI < Minitest::Test
   end
 
   def jsend_test(status, code, message, http_code, headers = {})
-    get("/api/#{status}", headers: headers)
+    get("/api/#{status}", headers:)
     assert_equal(http_code, last_response.status)
     response = last_json_response
     assert_equal(response['status'], status)

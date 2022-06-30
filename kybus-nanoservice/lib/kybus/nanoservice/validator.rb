@@ -22,8 +22,8 @@ module Kybus
         register(:validators, new_name, validator)
       end
 
-      def self.register_type(type)
-        block = proc { |value| yield(value) }
+      def self.register_type(type, &block)
+        block = proc(&block)
         register(:types, type, block)
       end
 

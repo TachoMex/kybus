@@ -15,7 +15,7 @@ class TestTuplesAPI < Minitest::Test
   end
 
   def create(key, value, repository = 'json')
-    post("/api/nanoservice/#{repository}/tuples/#{key}", value: value)
+    post("/api/nanoservice/#{repository}/tuples/#{key}", value:)
     response = last_json_response
     assert_equal(201, last_response.status)
     assert_equal('success', response['status'])

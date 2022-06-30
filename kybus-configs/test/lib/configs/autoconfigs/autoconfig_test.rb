@@ -6,7 +6,7 @@ class AutoconfigTest < Minitest::Test
   include Kybus::Configuration
 
   def delete_file(path)
-    File.delete(path) if File.exist?(path)
+    FileUtils.rm_rf(path)
   end
 
   def build_config(confs = {})

@@ -17,7 +17,7 @@ module Kybus
         end
 
         def threshold_calculation
-          @threshold + (Time.now - @initial_time).to_i / @step_duration.to_i * @step
+          @threshold + ((Time.now - @initial_time).to_i / @step_duration.to_i * @step)
         end
 
         def initial_time(time)

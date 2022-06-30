@@ -6,7 +6,7 @@ module Kybus
       # Implements basic auth functionality for http client
       module BasicAuth
         def basic_auth(request, user:, password:)
-          request[:basic_auth] ||= { username: user, password: password }
+          request[:basic_auth] ||= { username: user, password: }
         end
       end
     end

@@ -26,8 +26,8 @@ module Kybus
 
       def subject_string
         "/C=#{@config['country']}/ST=#{@config['state']}" \
-        "/L=#{@config['city']}/O=#{@config['organization']}" \
-        "/OU=#{@config['team']}/CN=#{@config['name']}"
+          "/L=#{@config['city']}/O=#{@config['organization']}" \
+          "/OU=#{@config['team']}/CN=#{@config['name']}"
       end
 
       def configure_cert_details!(cert)
@@ -35,7 +35,7 @@ module Kybus
         cert.serial = @config['serial']
         cert.subject = OpenSSL::X509::Name.parse(subject_string)
         cert.not_before = Time.now
-        cert.not_after = cert.not_before + ONE_YEAR * @config['expiration']
+        cert.not_after = cert.not_before + (ONE_YEAR * @config['expiration'])
       end
 
       def configure_extensions!(cert, extension_factory)

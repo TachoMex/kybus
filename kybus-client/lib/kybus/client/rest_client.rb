@@ -54,13 +54,13 @@ module Kybus
       private
 
       def perform_raw_request(method, path, data)
-        log_debug('Performing request', method: method, path: path, data: data)
+        log_debug('Performing request', method:, path:, data:)
         init_time = Time.now
         uri = (path.start_with?('http') ? path : "#{@endpoint}#{path}")
         result = @session.perform_request(method, uri,
                                           @format.pack(data))
         log_info('Request perfomed',
-                 path: path,
+                 path:,
                  server: @endpoint,
                  verb: method,
                  processing_time: (Time.now - init_time).to_f * 1000)

@@ -39,7 +39,7 @@ module Kybus
 
       def sign!
         @cert.issuer = @ca.cert.subject
-        @cert.sign(@ca.key, OpenSSL::Digest::SHA256.new)
+        @cert.sign(@ca.key, OpenSSL::Digest.new('SHA256'))
       end
 
       def save!
