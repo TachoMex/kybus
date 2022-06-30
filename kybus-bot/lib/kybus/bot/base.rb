@@ -9,19 +9,13 @@ require_relative 'dsl_methods'
 require_relative 'command_executor'
 
 require 'kybus/logger'
+require 'forwardable'
 
 module Kybus
   module Bot
     # Base class for bot implementation. It wraps the threads execution, the
     # provider and the state storage inside an object.
     class Base
-      include Kybus::Storage::Datasource
-      include Kybus::Logger
-      include Kybus::Bot::DSLMethods
-      include Kybus::Bot::CommandExecutor
-
-      attr_reader :provider
-
       class BotError < StandardError; end
 
       class EmptyMessageError < BotError
@@ -29,6 +23,14 @@ module Kybus
           super('Message is empty')
         end
       end
+
+      extend Forwardable
+      include Kybus::Storage::Datasource
+      include Kybus::Logger
+
+      attr_reader :provider, :last_message
+
+      def_delegators :@commands, :registered_commands, :state
 
       # Configurations needed:
       # - pool_size: number of threads created in execution
@@ -39,7 +41,7 @@ module Kybus
       def initialize(configs)
         @pool_size = configs['pool_size']
         @provider = Kybus::Bot::Adapter.from_config(configs['provider'])
-        @commands = Kybus::Bot::CommandDefinition.new
+        @commands = Kybus::Bot::CommandExecutor.new(self)
         register_command('default') { nil }
 
         # TODO: move this to config
@@ -63,7 +65,7 @@ module Kybus
           Kybus::DRY::Daemon.new(@pool_size, true) do
             message = provider.read_message
             @last_message = message
-            process_message(message)
+            @commands.process_message(message)
           end
         end
         # TODO: Implement an interface for killing the process
@@ -73,58 +75,12 @@ module Kybus
         # :nocov: #
       end
 
-      def add_file(file)
-        return unless @state[:requested_param]
-
-        log_debug('Received new file',
-                  param: @state.requested_param.to_sym,
-                  file: file.to_h)
-
-        files[@state.requested_param.to_sym] = provider.file_builder(file)
-        @state.store_param("_#{@state[:requested_param]}_filename".to_sym, file.file_name)
+      def register_command(klass, params = [], &block)
+        @commands.register_command(klass, params, &block)
       end
 
-      def registered_commands
-        @commands.registered_commands
-      end
-
-      # validates which is the following parameter required
-      def next_missing_param
-        current_command_object.next_missing_param(current_params)
-      end
-
-      # Sends a message to get the next parameter from the user
-      def ask_param(param)
-        log_debug('I\'m going to ask the next param', param:)
-        provider.send_message(current_channel,
-                              "I need you to tell me #{param}")
-        @state.requested_param = param.to_s
-      end
-
-      # Stores a parameter into the status
-      def add_param(value)
-        return if @state.requested_param.nil?
-
-        log_debug('Received new param',
-                  param: @state.requested_param.to_sym,
-                  value:)
-
-        @state.store_param(@state.requested_param.to_sym, value)
-      end
-
-      # Loads the state from storage
-      def load_state!(channel)
-        @state = load_state(channel)
-      end
-
-      # Private implementation for load message
-      def load_state(channel)
-        ChannelState.load_state(channel)
-      end
-
-      # Saves the state into storage
-      def save_state!
-        @state.save!
+      def rescue_from(klass, &block)
+        @commands.register_command(klass, [], &block)
       end
 
       def session

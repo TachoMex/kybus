@@ -1,12 +1,41 @@
 # frozen_string_literal: true
 
+require 'forwardable'
+
 module Kybus
   module Bot
-    module CommandExecutor
+    class CommandExecutor
+      extend Forwardable
+
+      include Kybus::Logger
+      attr_reader :state, :dsl
+
+      def_delegator :@state, :clear_command
+      def_delegators :@definitions, :registered_commands, :register_command
+      def_delegator :@state, :channel_id, :current_channel
+      def_delegator :@state, :params, :current_params
+      def_delegator :@state, :save!, :save_state!
+
+      def initialize(bot)
+        @bot = bot
+        @definitions = Kybus::Bot::CommandDefinition.new
+        @dsl = DSLMethods.new(bot.provider, @state)
+      end
+
       # Process a single message, this method can be overwriten to enable
       # more complex implementations of commands. It receives a message object.
       def process_message(message)
-        run_simple_command!(message)
+        load_state!(message.channel_id)
+        log_debug('loaded state', message: message.to_h, state: @state.to_h)
+        save_token!(message)
+        try_command!
+        save_state!
+      rescue StandardError => e
+        catch = @definitions[e.class]
+        raise if catch.nil?
+
+        @dsl.instance_eval(&catch.block)
+        clear_command
       end
 
       def save_token!(message)
@@ -26,28 +55,21 @@ module Kybus
         end
       end
 
-      def run_simple_command!(message)
-        load_state!(message.channel_id)
-        log_debug('loaded state', message: message.to_h, state: @state.to_h)
-        save_token!(message)
-        try_command!
-        save_state!
-      rescue StandardError => e
-        catch = @commands[e.class]
-        raise if catch.nil?
+      def add_file(file)
+        return unless @state.requested_param
 
-        instance_eval(&catch.block)
-        clear_command
+        log_debug('Received new file',
+                  param: @state.requested_param.to_sym,
+                  file: file.to_h)
+
+        files[@state.requested_param.to_sym] = @bot.provider.file_builder(file)
+        @state.store_param("_#{@state[:requested_param]}_filename".to_sym, file.file_name)
       end
 
       # Method for triggering command
       def run_command!
-        instance_eval(&current_command_object.block)
+        @dsl.instance_eval(&current_command_object.block)
         clear_command
-      end
-
-      def clear_command
-        @state.clear_command
       end
 
       # Checks if the command is ready to be executed
@@ -59,13 +81,48 @@ module Kybus
       # Loads command from state
       def current_command_object
         command = @state.command
-        @commands[command] || @commands['default']
+        @definitions[command] || @definitions['default']
       end
 
       # stores the command into state
       def command=(cmd)
         log_debug('Message set as command', command: cmd)
         @state.command = cmd
+      end
+
+      # validates which is the following parameter required
+      def next_missing_param
+        current_command_object.next_missing_param(current_params)
+      end
+
+      # Sends a message to get the next parameter from the user
+      def ask_param(param)
+        log_debug('I\'m going to ask the next param', param:)
+        @bot.provider.send_message(current_channel,
+                                   "I need you to tell me #{param}")
+        @state.requested_param = param.to_s
+      end
+
+      # Stores a parameter into the status
+      def add_param(value)
+        return if @state.requested_param.nil?
+
+        log_debug('Received new param',
+                  param: @state.requested_param.to_sym,
+                  value:)
+
+        @state.store_param(@state.requested_param.to_sym, value)
+      end
+
+      # Loads the state from storage
+      def load_state!(channel)
+        @state = load_state(channel)
+        @dsl.state = @state
+      end
+
+      # Private implementation for load message
+      def load_state(channel)
+        ChannelState.load_state(channel)
       end
     end
   end

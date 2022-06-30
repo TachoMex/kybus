@@ -2,15 +2,24 @@
 
 module Kybus
   module Bot
-    module DSLMethods
+    class DSLMethods
+      attr_accessor :state
+      attr_reader :provider
+
+      def initialize(provider, state)
+        @provider = provider
+        @state = state
+      end
+
+      # returns the current_channel from where the message was sent
+      def current_channel
+        state.channel_id
+      end
+
       def send_message(content, channel = nil)
         raise(EmptyMessageError) unless content
 
         provider.send_message(channel || current_channel, content)
-      end
-
-      def rescue_from(klass, &block)
-        @commands.register_command(klass, [], block)
       end
 
       def send_image(content, channel = nil)
@@ -25,22 +34,12 @@ module Kybus
         provider.send_document(channel || current_channel, content)
       end
 
-      # DSL method for adding simple commands
-      def register_command(name, params = [], &block)
-        @commands.register_command(name, params, block)
-      end
-
-      # loads parameters from state
-      def current_params
-        @state.params
-      end
-
       def params
-        current_params
+        state.params
       end
 
       def files
-        @state.files
+        state.files
       end
 
       def file(name)
@@ -51,17 +50,12 @@ module Kybus
         provider.mention(name)
       end
 
-      # returns the current_channel from where the message was sent
-      def current_channel
-        @state.channel_id
-      end
-
       def current_user
-        @last_message.user
+        provider.last_message.user
       end
 
       def is_private?
-        @last_message.is_private?
+        provider.last_message.is_private?
       end
     end
   end

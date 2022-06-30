@@ -27,7 +27,11 @@ module Kybus
       def receives(msg, attachments = nil)
         msg = ::Kybus::Bot::Adapter::DebugMessage.new(msg, 'testing', attachments)
         @last_message = msg
-        process_message(msg)
+        @commands.process_message(msg)
+      end
+
+      def expects(method)
+        @commands.dsl.expects(method)
       end
     end
   end

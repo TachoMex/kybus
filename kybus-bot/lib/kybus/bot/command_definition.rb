@@ -9,7 +9,7 @@ module Kybus
       attr_reader :block
 
       # Receives a list of params as symbols and the lambda with the block.
-      def initialize(params, block)
+      def initialize(params, &block)
         @params = params
         @block = block
       end
@@ -32,8 +32,8 @@ module Kybus
       end
 
       # Stores an operation definition
-      def register_command(name, params, block)
-        @commands[name] = Command.new(params, block)
+      def register_command(name, params, &block)
+        @commands[name] = Command.new(params, &block)
       end
 
       def registered_commands
