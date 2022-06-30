@@ -10,11 +10,11 @@ Gem::Specification.new do |spec|
   spec.email         = ['tachoguitar@gmail.com']
 
   spec.summary       = 'Kybus framework core functionality'
-  spec.description   = spec.description = <<-EOF
+  spec.description   =  <<-DESC
     Kybus::Core will be used across all the kybus gems. Provides the most basic
     functionality or what might be used along with more than one gem.
     Currently this only exposes the basic exceptions and the DRY patterns.
-  EOF
+  DESC
   spec.homepage      = 'https://github.com/tachomex/kybus'
   spec.license       = 'MIT'
 

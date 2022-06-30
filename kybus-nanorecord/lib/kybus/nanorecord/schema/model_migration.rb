@@ -25,6 +25,8 @@ module Kybus
           ActiveRecord::Migration[unsafe_resource(:migration_version) || DEFAULT_MIGRATION_VERSION]
         end
 
+        # rubocop: disable Metrics/MethodLength
+        # rubocop: disable Metrics/AbcSize
         def build_class!
           @migration_class = Class.new(self.class.base_migration_class) do
             extend Kybus::DRY::ResourceInjector
@@ -46,6 +48,8 @@ module Kybus
 
           @migrations << @migration_class
         end
+        # rubocop: enable Metrics/MethodLength Metrics/AbcSize
+        # rubocop: enable Metrics/AbcSize
 
         def inject_hooks!
           @migration_class.register(:fields, fields.values)

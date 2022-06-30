@@ -22,6 +22,7 @@ module Kybus
         @message = message
         @code = code
         @data = data
+        super(message)
       end
 
       def to_log_format

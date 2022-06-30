@@ -44,9 +44,7 @@ module Kybus
         def extract_value(string, idx)
           if string.include?('=')
             string.split('=')[1]
-          elsif @array.size == idx
-            'true'
-          elsif @array[idx].start_with?('--')
+          elsif @array.size == idx || @array[idx].start_with?('--')
             'true'
           else
             @array[idx]

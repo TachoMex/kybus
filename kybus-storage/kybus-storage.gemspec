@@ -10,10 +10,10 @@ Gem::Specification.new do |spec|
   spec.email         = ['tachoguitar@gmail.com']
 
   spec.summary       = 'Implements storage modules for kybus framework'
-  spec.description   = <<-EOF
+  spec.description   = <<-DESC
     This module helps to design persistance modules that are very configurable
     about where and how to store data.
-  EOF
+  DESC
 
   spec.homepage      = 'https://github.com/tachomex/kybus'
   spec.license       = 'MIT'

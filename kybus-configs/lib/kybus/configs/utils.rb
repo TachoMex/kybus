@@ -28,9 +28,9 @@ module Kybus
           value = case receiver[key]
                   when Hash
                     recursive_merge(receiver[key], sender[key])
-                  when Array
-                    # TODO: Enable merging arrays
-                    sender[key]
+                  #   TODO: Enable merging arrays
+                  # when Array
+                  #   sender[key]
                   else
                     sender[key]
                   end

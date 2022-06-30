@@ -5,6 +5,7 @@ module Kybus
     class FeatureFlag
       class Canarying < ABTest
         def initialize(configs)
+          super(configs)
           @enabled = configs
           @initial_time = initial_time(configs['starting_hour'])
           @threshold = normalize_thershold(configs['initial'] || 0)

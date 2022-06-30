@@ -11,12 +11,16 @@ module Kybus
           @model = model
         end
 
+        def pase_array(config_name)
+          return {} if raw.include?(config_name)
+
+          raw.find { |hash| hash.is_a?(Hash) && (hash['name'] == config_name || hash[config_name]) }
+        end
+
         def config_for(config_name)
           case raw
           when Array
-            return {} if raw.include?(config_name)
-
-            raw.find { |hash| hash.is_a?(Hash) && (hash['name'] == config_name || hash[config_name]) }
+            pase_array(config_name)
           when Hash
             raw[config_name]
           when String

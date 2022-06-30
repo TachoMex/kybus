@@ -21,15 +21,18 @@ module Kybus
         new(config)
       end
 
+      def init_log_file
+        register('file', @original_config['stdout'] ? $stdout : @original_config['file'] || 'application.log')
+        register('rotate_days', @original_config['rotate_days'] || 7)
+        register('rotate_size', @original_config['rotate_size'] || (100 * (1024**2))) # 100Mb
+      end
+
       def initialize(config)
         @original_config = config
-        register('file', config['stdout'] ? $stdout : config['file'] || 'application.log')
-        register('rotate_days', config['rotate_days'] || 7)
-        register('rotate_size', config['rotate_size'] || (100 * (1024**2))) # 100Mb
+        init_log_file
         register('date_format', config['date_format'] || '%Y-%m-%d %H:%M:%S')
         register('severity', config['severity'] || 'info')
-        register('log_format', config['log_format'] ||
-                 "%time,%sev,%pid,%tid,%mod,%json\n")
+        register('log_format', config['log_format'] || "%time,%sev,%pid,%tid,%mod,%json\n")
         register('blacklist', config['blacklist'] || %w[pass password])
         register('logger', logger)
       end
