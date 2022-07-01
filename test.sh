@@ -5,5 +5,8 @@ for gem in kybus-*; do
   bundle update
   bundle exec rake test
 done;
+cd $base_dir/integration-app
+bundle install
+bundle exec rake test
 
 cd $base_dir;

@@ -41,7 +41,7 @@ module Kybus
         # :nocov: #
 
         def configure_request(request)
-          basic_auth(request, @config[:basic_auth]) if @config[:basic_auth]
+          basic_auth(request, **@config[:basic_auth]) if @config[:basic_auth]
           request[:verify] = @config[:verify] if @config.key?(:verify)
         end
 

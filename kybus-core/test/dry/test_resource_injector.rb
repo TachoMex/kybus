@@ -13,6 +13,7 @@ module Kybus
         assert_equal(42, self.class.resource(:magic_number))
         assert_equal(42, self.class.resource(:root, :magic_number))
         assert_equal('secret', self.class.resource(:passwords, :database))
+        assert_nil(self.class.unsafe_resource(:not_found))
       end
     end
   end

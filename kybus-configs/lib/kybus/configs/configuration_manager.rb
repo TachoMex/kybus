@@ -163,7 +163,9 @@ module Kybus
             config = Loaders::YAML.new(file, self).load!
             @configs = recursive_merge(@configs, config)
           else
+            # :nocov:
             puts "File not found and expected from autoconfig: `#{file}'"
+            # :nocov:
           end
         end
       end
