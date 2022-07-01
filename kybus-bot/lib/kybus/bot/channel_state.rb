@@ -5,6 +5,8 @@ module Kybus
     class ChannelState
       extend Kybus::DRY::ResourceInjector
 
+      attr_accessor :last_message
+
       def self.factory
         resource(:factory)
       end
@@ -46,6 +48,11 @@ module Kybus
 
       def files
         @data[:files] || {}
+      end
+
+      def save_file(identifier, file)
+        files[identifier] = file
+        store_param("_#{@data[:requested_param]}_filename".to_sym, file.file_name)
       end
 
       def requested_param=(param)

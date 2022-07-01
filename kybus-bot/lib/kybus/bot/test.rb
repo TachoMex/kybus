@@ -25,7 +25,8 @@ module Kybus
       end
 
       def receives(msg, attachments = nil)
-        msg = ::Kybus::Bot::Adapter::DebugMessage.new(msg, 'testing', attachments)
+        attachments = Adapter::DebugMessage::DebugFile.new(attachments) if attachments
+        msg = Adapter::DebugMessage.new(msg, 'testing', attachments)
         @last_message = msg
         @commands.process_message(msg)
       end

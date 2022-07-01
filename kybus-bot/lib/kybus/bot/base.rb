@@ -28,7 +28,7 @@ module Kybus
       include Kybus::Storage::Datasource
       include Kybus::Logger
 
-      attr_reader :provider, :last_message
+      attr_reader :provider
 
       def_delegators :@commands, :registered_commands, :state
 
@@ -64,7 +64,6 @@ module Kybus
           # TODO: Create a subclass with the context execution
           Kybus::DRY::Daemon.new(@pool_size, true) do
             message = provider.read_message
-            @last_message = message
             @commands.process_message(message)
           end
         end

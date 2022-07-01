@@ -13,6 +13,28 @@ module Kybus
         # It receives a string with the raw text and the id of the channel
         attr_reader :attachment
 
+        class DebugFile
+          def initialize(path)
+            @path = path
+          end
+
+          def to_json(obj)
+            to_h.to_json(obj)
+          end
+
+          def file_name
+            @path
+          end
+
+          def download
+            File.read(@path)
+          end
+
+          def to_h
+            { path: @path }
+          end
+        end
+
         def initialize(text, channel, attachment = nil)
           super()
           @text = text
@@ -36,6 +58,10 @@ module Kybus
 
         def has_attachment?
           !!attachment
+        end
+
+        def is_private?
+          true
         end
       end
 
@@ -116,7 +142,7 @@ module Kybus
             return msg.read_message if msg
 
             # :nocov: #
-            sleep(1)
+            sleep(0.01)
             # :nocov: #
           end
         end
@@ -144,6 +170,24 @@ module Kybus
         # interface for sending image
         def send_image(channel_name, image_url)
           channel(channel_name).answer("IMG: #{image_url}")
+        end
+
+        # interface for sending image
+        def send_document(channel_name, doc_url)
+          channel(channel_name).answer("DOC: #{doc_url}")
+        end
+
+        def file_builder(data)
+          case data
+          when DebugMessage::DebugFile
+            data
+          when Hash
+            DebugMessage::DebugFile.new(data[:path])
+          end
+        end
+
+        def mention(user)
+          "@#{user}"
         end
 
         # changes echo config

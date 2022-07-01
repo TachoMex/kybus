@@ -32,6 +32,7 @@ module Kybus
           send_message('I crashed')
           send_image('dog.jpg')
           send_audio('game_over.mp3')
+          send_document('doc.txt')
         end
         @bot.register_command('/crash') do
           raise(StandardError, 'Oh no!')

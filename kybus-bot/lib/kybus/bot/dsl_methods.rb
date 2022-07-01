@@ -17,7 +17,7 @@ module Kybus
       end
 
       def send_message(content, channel = nil)
-        raise(EmptyMessageError) unless content
+        raise(Base::EmptyMessageError) unless content
 
         provider.send_message(channel || current_channel, content)
       end
@@ -51,11 +51,11 @@ module Kybus
       end
 
       def current_user
-        provider.last_message.user
+        state.last_message.user
       end
 
       def is_private?
-        provider.last_message.is_private?
+        state.last_message.is_private?
       end
     end
   end

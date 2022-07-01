@@ -26,6 +26,7 @@ module Kybus
       # more complex implementations of commands. It receives a message object.
       def process_message(message)
         load_state!(message.channel_id)
+        @state.last_message = message
         log_debug('loaded state', message: message.to_h, state: @state.to_h)
         save_token!(message)
         try_command!
@@ -62,8 +63,7 @@ module Kybus
                   param: @state.requested_param.to_sym,
                   file: file.to_h)
 
-        files[@state.requested_param.to_sym] = @bot.provider.file_builder(file)
-        @state.store_param("_#{@state[:requested_param]}_filename".to_sym, file.file_name)
+        @state.save_file(@state.requested_param.to_sym, @bot.provider.file_builder(file))
       end
 
       # Method for triggering command

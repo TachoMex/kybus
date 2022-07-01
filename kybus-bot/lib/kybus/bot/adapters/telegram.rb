@@ -39,11 +39,11 @@ module Kybus
         end
 
         def has_attachment?
-          !!@message.document
+          !!attachment
         end
 
         def attachment
-          @message.document
+          @message.document || @message.photo&.last || @message.audio
         end
 
         def user
@@ -120,7 +120,9 @@ module Kybus
               return TelegramMessage.new(message)
             end
           rescue ::Telegram::Bot::Exceptions::ResponseError => e
+            # :nocov:
             log_error('An error ocurred while calling to Telegram API', e)
+            # :nocov:
           end
         end
 
@@ -132,9 +134,11 @@ module Kybus
         def send_message(channel_name, contents)
           puts "#{channel_name} => #{contents}" if @config['debug']
           @client.api.send_message(chat_id: channel_name, text: contents)
+          # :nocov:
         rescue ::Telegram::Bot::Exceptions::ResponseError => e
           return if e[:error_code] == '403'
         end
+        # :nocov:
 
         # interface for sending video
         def send_video(channel_name, video_url)
