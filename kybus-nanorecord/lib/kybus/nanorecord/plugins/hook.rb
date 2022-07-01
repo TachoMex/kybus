@@ -21,7 +21,7 @@ module Kybus
         end
 
         def has?(type)
-          !@hooks[type].empty?
+          @hooks[type] && !@hooks[type].empty?
         end
       end
     end

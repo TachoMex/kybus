@@ -24,7 +24,7 @@ module Kybus
           when Hash
             raw[config_name]
           when String
-            raw == config_name && {}
+            raw == config_name ? {} : nil
           end
         end
       end

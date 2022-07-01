@@ -17,7 +17,7 @@ module Kybus
         end
 
         def append_field(table, name, conf)
-          models['fields'][table][name] = conf
+          models[table].add_field(name, conf)
         end
 
         def config(table_name, config_name)

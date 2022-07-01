@@ -10,13 +10,17 @@ module Kybus
   module Nanorecord
     class Schema
       class Model
-        attr_reader :name, :configs
+        attr_reader :name, :configs, :fields
 
         def initialize(model_name, table_schema)
           @name = model_name.classify
           @fields = (table_schema['fields'] || {}).to_h { |name, confs| [name, Field.new(name, confs)] }
           @configs = Config.new(table_schema['configs'], self)
           @migration = ModelMigration.new(model_name, @fields, {})
+        end
+
+        def add_field(name, conf)
+          @fields[name] = conf
         end
 
         def build!
