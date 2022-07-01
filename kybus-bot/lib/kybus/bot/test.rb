@@ -27,12 +27,12 @@ module Kybus
       def receives(msg, attachments = nil)
         attachments = Adapter::DebugMessage::DebugFile.new(attachments) if attachments
         msg = Adapter::DebugMessage.new(msg, 'testing', attachments)
-        @last_message = msg
-        @commands.process_message(msg)
+        provider.last_message = msg
+        executor.process_message(msg)
       end
 
       def expects(method)
-        @commands.dsl.expects(method)
+        executor.dsl.expects(method)
       end
     end
   end

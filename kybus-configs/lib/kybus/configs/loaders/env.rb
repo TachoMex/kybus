@@ -11,9 +11,8 @@ module Kybus
       #   export CONFIG_ENV_OBJ__VALUE=3 => { "env_obj" => { 'value' => '3' } }
       class Env
         include Kybus::Configuration::Utils
-        def initialize(env_prefix, manager, conf = ENV.to_h)
+        def initialize(env_prefix, conf = ENV.to_h)
           @env_prefix = env_prefix
-          @manager = manager
           @env = conf
         end
 
@@ -29,6 +28,7 @@ module Kybus
           end
         end
       end
+      ConfigurationManager.register_config_provider(Env)
     end
   end
 end

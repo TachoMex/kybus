@@ -2,23 +2,11 @@
 
 module Kybus
   module Bot
-    class ChannelState
-      extend Kybus::DRY::ResourceInjector
+    class CommandState
+      attr_reader :command
 
-      attr_accessor :last_message
-
-      def self.factory
-        resource(:factory)
-      end
-
-      def self.load_state(channel)
-        data = factory.get(channel)
-        new(data)
-      rescue Kybus::Storage::Exceptions::ObjectNotFound
-        new(factory.create(channel_id: channel, params: '{}'))
-      end
-
-      def initialize(data)
+      def initialize(data, command)
+        @command = command
         data[:params] = JSON.parse(data[:params] || '{}', symbolize_names: true)
         data[:files] = JSON.parse(data[:files] || '{}', symbolize_names: true)
         @data = data
@@ -28,14 +16,20 @@ module Kybus
         @data[:cmd] = nil
       end
 
-      def command=(cmd)
-        @data[:cmd] = cmd.split.first
-        @data[:params] = {}
-        @data[:files] = {}
+      def ready?
+        command.ready?(params)
       end
 
-      def command
-        @data[:cmd]
+      # validates which is the following parameter required
+      def next_missing_param
+        command.next_missing_param(params)
+      end
+
+      def command=(cmd)
+        @command = cmd
+        @data[:cmd] = cmd.name
+        @data[:params] = {}
+        @data[:files] = {}
       end
 
       def params
@@ -65,10 +59,6 @@ module Kybus
 
       def store_param(param, value)
         @data[:params][param] = value
-      end
-
-      def to_h
-        @data.to_h
       end
 
       def save!

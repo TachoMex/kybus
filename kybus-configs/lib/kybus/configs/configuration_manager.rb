@@ -3,52 +3,43 @@
 require 'kybus/core'
 require_relative 'feature_flag'
 require_relative 'utils'
-require_relative 'loaders/yaml'
-require_relative 'loaders/env'
-require_relative 'loaders/arg'
+require_relative 'config_validator'
+require 'forwardable'
 
 module Kybus
   module Configuration
-    # This class provides a module for loading configurations from 4 sources:
-    # - YAML default files
-    # - YAML files
-    # - ENV vars
-    # - ARGV values
-    # Using yaml defaults:
-    # TODO: Add docs
-    # Using yaml files
-    # TODO: Add docs
-    # Using env vars:
-    # TODO: Add docs
-    # Using arg vars:
-    # TODO: Add docs
     class ConfigurationManager
+      extend Kybus::DRY::ResourceInjector
+      extend Forwardable
       include Utils
-      # [String(Array)] A path to default yaml configs.
-      attr_reader :default_files
-      # [String] The value provided by default. It should mean this \
-      # value is missing on configurations.
-      attr_reader :default_placeholder
-      # With this enabled all array will be concatenated instead of replaced.
-      attr_reader :append_arrays
-      # Use this configuration when you don't want your configs to be validated.
-      attr_reader :accept_default_keys
-      # The prefix used to find env strings and args.
-      attr_reader :env_prefix
+      attr_reader :metaconfigs
+
+      Metaconfig = Struct.new(:default_files, :default_placeholder, :append_arrays, :env_prefix, :accept_default_keys)
+
+      def_delegators :@metaconfigs, :default_files, :env_prefix, :default_placeholder, :accept_default_keys
+      def_delegator :@configs, :[]
+      def_delegator :@configs, :to_h
+
+      def self.register_config_provider(provider)
+        providers = unsafe_resource(:providers) || []
+        providers << provider
+        register(:providers, providers)
+      end
 
       def initialize(default_files:,
                      default_placeholder: nil,
                      append_arrays: false,
                      env_prefix: nil,
                      accept_default_keys: false)
-        @default_files = array_wrap(default_files)
-        @default_placeholder = default_placeholder || 'REPLACE_ME'
-        @append_arrays = append_arrays
-        @env_prefix = env_prefix || 'CONFIG'
-        @accept_default_keys = accept_default_keys
-        @configs = {}
-        @env_vars = env_vars
-        @config_files = env_files
+        @metaconfigs = Metaconfig.new(
+          array_wrap(default_files),
+          default_placeholder || 'REPLACE_ME',
+          append_arrays,
+          env_prefix || 'CONFIG',
+          accept_default_keys
+        )
+
+        @configs = Loaders::FilesLoader.new(default_files).load!
       end
 
       # Loads the configurations from all the possible sources. It will raise an
@@ -56,10 +47,8 @@ module Kybus
       # is present on the configs.
       def load_configs!
         load_configs
-        missing_keys = missing_configs
-        return if missing_keys.empty? || @accept_default_keys
-
-        raise MissingConfigs, missing_keys
+        validator = ConfigurationValidator.new(@configs, default_placeholder)
+        return self if accept_default_keys || validator.validate!
       end
 
       # Use this when you require the application to do not start when something
@@ -70,116 +59,37 @@ module Kybus
       def pretty_load_configs!(terminate = true)
         load_configs!
       rescue MissingConfigs => e
-        puts 'You are missing some configs!'
-        puts 'Add them to a file and export the config env var:'
-        puts "$ export #{@env_prefix}_FILES='#{Dir.pwd}'/config/config.yaml"
-        puts 'Maybe you just need to add them to your existing files'
-        puts 'Missing configs:'
-        e.each_key { |k| puts "- \"#{k}\"" }
+        e.show_missing_keys_error
         exit(1) if terminate
       end
       # :nocov: #
 
-      # returns the object as a hash
-      # :nocov: #
-      def to_h
-        @configs
-      end
-      # :nocov: #
-
-      # provide a method for accessing configs
-      def [](key)
-        @configs[key]
-      end
-
       def self.auto_load!
-        auto_configs = new(default_files: './config/autoconfig.yaml')
-        auto_configs.load_configs!
-        auto_configs = auto_configs['autoconfig']
+        auto_configs = new(default_files: './config/autoconfig.yaml').load_configs!['autoconfig']
         configs = new(
-          default_files: (auto_configs['default_files'] || []) +
-                         (auto_configs['files'] || []) +
+          default_files: auto_configs.fetch('default_files', []) +
+                         auto_configs.fetch('files', []) +
                          ['./config/autoconfig.yaml'],
           default_placeholder: auto_configs['default_placeholder'],
           accept_default_keys: auto_configs['accept_default_keys'],
           env_prefix: auto_configs['env_prefix']
         )
         configs.load_configs!
-        configs
       end
 
       private
 
-      # Looks for keys having the default placeholder, which are meant to be
-      # missing configurations
-      def missing_configs(hash = @configs, path = [])
-        case hash
-        when Hash
-          hash.map { |k, v| missing_configs(v, path + [k]) }.flatten
-        when Array
-          hash.map.with_index { |e, i| missing_configs(e, path + [i]) }.flatten
-        else
-          hash == @default_placeholder ? [path.join('.')] : []
-        end
-      end
-
-      # Path to config files
-      def env_files
-        @env_vars['files'] && array_wrap(@env_vars['files'])
-      end
-
-      # Extract vars from env
-      def env_vars
-        Loaders::Env.new(@env_prefix, self).load!
-      end
-
-      # Extract vars from arg
-      def arg_vars
-        Loaders::Arg.new(@env_prefix, self).load!
-      end
-
       # Helper method that loads configurations
       def load_configs
-        load_default_files
-        load_config_files
-        @configs = recursive_merge(@configs, @env_vars)
-        @configs = recursive_merge(@configs, arg_vars)
-      end
-
-      # Helper method for loading default files
-      def load_default_files
-        load_files(@default_files)
-      end
-
-      # Helper method for loading config files
-      def load_config_files
-        @config_files && load_files(@config_files)
-      end
-
-      # Helper method for loading files into configurations
-      def load_files(files)
-        files.each do |file|
-          if File.file?(file)
-            config = Loaders::YAML.new(file, self).load!
-            @configs = recursive_merge(@configs, config)
-          else
-            # :nocov:
-            puts "File not found and expected from autoconfig: `#{file}'"
-            # :nocov:
-          end
-        end
-      end
-
-      # Exception raised when a configuration was not set
-      class MissingConfigs < StandardError
-        # Keys that were not loaded correctly
-        attr_reader :keys
-
-        def initialize(keys)
-          @keys = keys
-          super('There are keys missing to be configured')
+        self.class.resource(:providers).each do |provider|
+          loader = provider.new(env_prefix)
+          recursive_merge(@configs, loader.load!)
         end
       end
     end
   end
 end
+
+require_relative 'loaders/env'
+require_relative 'loaders/yaml'
+require_relative 'loaders/arg'

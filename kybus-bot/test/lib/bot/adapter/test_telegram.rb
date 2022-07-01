@@ -6,14 +6,13 @@ require './lib/kybus/bot'
 module Kybus
   class TestTelegram < Minitest::Test
     include Kybus::Bot::Adapter
-    def setup
-      conf = CONFIG.dup
-      conf['provider'] = {
-        'name' => 'telegram',
-        'token' => 'telegram_token'
-      }
+    attr_reader :adapter
 
-      @adapter = Kybus::Bot::Adapter.from_config(conf['provider'])
+    def setup
+      @adapter = Kybus::Bot::Adapter.from_config({
+                                                   'name' => 'telegram',
+                                                   'token' => 'telegram_token'
+                                                 })
     end
 
     def build_photo
@@ -65,22 +64,22 @@ module Kybus
         stub_request(:post, "https://api.telegram.org/bottelegram_token/#{path}")
           .to_return(status: 200, body: {}.to_json)
 
-        @adapter.send(method,
-                      'debug_message__a',
-                      'Gemfile')
+        adapter.send(method,
+                     'debug_message__a',
+                     'Gemfile')
       end
     end
 
     def test_send_message
       stub_api_query(path: 'sendMessage', response: { chat_id: 'user', text: 'Testing' })
-      @adapter.send_message('user', 'Testing')
+      adapter.send_message('user', 'Testing')
     end
 
     def test_receive_file
       response = default_response(default_response, build_photo)
       stub_api_request(:post, 'getUpdates', response:)
 
-      msg = @adapter.read_message
+      msg = adapter.read_message
       assert_equal(msg.reply?, true)
       assert_equal(msg.has_attachment?, true)
       file = TelegramFile.new(msg.attachment)
@@ -94,7 +93,7 @@ module Kybus
     def test_read_message
       response = default_response
       stub_api_query(path: 'getUpdates', response:)
-      msg = @adapter.read_message
+      msg = adapter.read_message
       assert_equal(msg.raw_message, 'hi')
       assert_equal(msg.channel_id, 1)
       assert_equal(msg.is_private?, false)
@@ -106,7 +105,7 @@ module Kybus
     def test_file_storage
       response = default_response(default_response, build_photo)
       stub_api_request(:post, 'getUpdates', response:)
-      msg = @adapter.read_message
+      msg = adapter.read_message
       stub_api_request(:post, 'getFile', body: { 'file_id' => 'abcd123' },
                                          response: { result: { file_name: 'hello.txt' } })
 
@@ -115,14 +114,14 @@ module Kybus
       assert(file.to_h)
       assert(TelegramFile.new(file.to_h))
       assert(TelegramFile.new(file))
-      assert(@adapter.file_builder(file.id))
+      assert(adapter.file_builder(file.id))
     end
 
     def test_mention
       response = default_response
       stub_api_request(:post, 'getUpdates', response:)
-      message = @adapter.read_message
-      assert_equal('[user](tg://user?id=1)', @adapter.mention(message.user))
+      message = adapter.read_message
+      assert_equal('[user](tg://user?id=1)', adapter.mention(message.user))
     end
   end
 end

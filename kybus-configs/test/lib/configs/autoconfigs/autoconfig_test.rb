@@ -10,8 +10,7 @@ class AutoconfigTest < Minitest::Test
   end
 
   def build_config(confs = {})
-    ConfigurationManager.any_instance.expects(:env_vars).returns(confs)
-    ConfigurationManager.any_instance.expects(:env_vars).returns({})
+    ConfigurationManager.expects(:auto_load!).returns(confs)
     ServiceManager.auto_load!
   end
 end

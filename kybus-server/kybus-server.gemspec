@@ -19,17 +19,17 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   # TODO: Change CuteLogger to kybus-logger
-  spec.add_runtime_dependency 'kybus-core', '~> 0.1'
-  spec.add_runtime_dependency 'kybus-logger', '~> 0.1'
+  spec.add_runtime_dependency 'kybus-core'
+  spec.add_runtime_dependency 'kybus-logger'
 
-  spec.add_development_dependency 'grape', '~> 1.2'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'mocha', '~> 1.8'
-  spec.add_development_dependency 'pry', '~> 0.10'
-  spec.add_development_dependency 'rack-minitest', '~> 0.0'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'rdoc', '~> 6.1'
-  spec.add_development_dependency 'simplecov', '~> 0.16'
-  spec.add_development_dependency 'webmock', '~> 3.5'
+  spec.add_development_dependency 'grape'
+  spec.add_development_dependency 'minitest'
+  spec.add_development_dependency 'mocha'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'rack-minitest'
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rdoc'
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'webmock'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

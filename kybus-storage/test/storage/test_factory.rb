@@ -12,30 +12,27 @@ class TestFactory < Minitest::Test
   # Models a single tuple as a key => value object.
   class Tuple < Kybus::Storage::Datasource::Model
     def run_validations!
-      raise(Kybus::Exceptions::AntFail, 'nil value') if @data[:value].nil?
+      raise(Kybus::Exceptions::AntFail, 'nil value') unless data[:value]
     end
   end
 
   def json_repository
-    @json_repository ||= JSONRepository.new(
-      'storage/tuples',
-      :key,
-      IDGenerators[:id]
-    )
+    @json_repository ||= JSONRepository.new('storage/tuples', :key, IDGenerators[:id])
+  end
+
+  def run_sequel_migration!
+    db = ::Sequel.sqlite('storage/tuples.db')
+    db.create_table? :tuple do
+      column :key, :text, size: 40, primary_key: true
+      column :value, :text, size: 40
+    end
+    db
   end
 
   def sequel_repository
     @sequel_repository ||= begin
-      db = ::Sequel.sqlite('storage/tuples.db')
-      db.create_table? :tuple do
-        column :key, :text, size: 40, primary_key: true
-        column :value, :text, size: 40
-      end
-      Sequel.new(
-        db[:tuple],
-        :key,
-        IDGenerators[:id]
-      )
+      db = run_sequel_migration!
+      Sequel.new(db[:tuple], :key, IDGenerators[:id])
     end
   end
 
@@ -43,20 +40,20 @@ class TestFactory < Minitest::Test
     @factory ||= begin
       factory = Factory.new(Tuple)
       factory.register(:json, json_repository)
-      factory.register('json', json_repository)
       factory.register(:sequel, sequel_repository)
-      factory.register('sequel', sequel_repository)
       factory.register(:default, :json)
       factory
     end
   end
 
+  def delete_storage(path)
+    File.delete(path) if File.file?(path)
+  end
+
   def setup
     FileUtils.mkdir_p('storage')
-    path = 'storage/tuples/hello.json'
-    File.delete(path) if File.file?(path)
-    path = 'storage/tuples/default.json'
-    File.delete(path) if File.file?(path)
+    delete_storage('storage/tuples/hello.json')
+    delete_storage('storage/tuples/default.json')
     sequel_repository.connection[:tuple].truncate
   end
 
@@ -86,9 +83,10 @@ class TestFactory < Minitest::Test
     test_create
     ADAPTERS.each do |adapter|
       tuple = fetch_tuple(adapter)
-      tuple.data[:value] = 'modified'
+      data = tuple.data
+      data[:value] = 'modified'
       tuple.store
-      assert_equal(tuple.data, fetch_tuple(adapter).data)
+      assert_equal(data, fetch_tuple(adapter).data)
     end
   end
 

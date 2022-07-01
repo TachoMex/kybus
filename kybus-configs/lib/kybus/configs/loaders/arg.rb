@@ -19,9 +19,8 @@ module Kybus
       #   --config_flag --config_value 3 => { 'flag' => 'true', value => '3' }
       class Arg
         include Kybus::Configuration::Utils
-        def initialize(env_prefix, manager, array = ARGV)
+        def initialize(env_prefix, array = ARGV)
           @env_prefix = env_prefix.downcase
-          @manager = manager
           @array = array
         end
 
@@ -51,6 +50,7 @@ module Kybus
           end
         end
       end
+      ConfigurationManager.register_config_provider(Arg)
     end
   end
 end

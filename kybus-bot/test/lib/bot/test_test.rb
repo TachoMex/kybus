@@ -13,10 +13,6 @@ module Kybus
         end
       end
 
-      def test_bot_has_a_session
-        assert(@bot.session)
-      end
-
       def test_bot_has_registered_commands
         commands = @bot.registered_commands
         refute(commands.empty?)
@@ -71,6 +67,16 @@ module Kybus
         end
         @bot.expects(:send_message).with('@debug_message__testing')
         @bot.receives('/tag')
+      end
+
+      def test_default_command_does_nothing
+        @bot.register_command('/do_magic') do
+          # :nocov:
+          send_message('Magic done')
+          # :nocov:
+        end
+        @bot.expects(:send_message).never
+        @bot.receives('/do_maigc')
       end
     end
   end

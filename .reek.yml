@@ -1,0 +1,14 @@
+detectors:
+  MissingSafeMethod:
+    enabled: false
+  IrresponsibleModule:
+    enabled: false
+  BooleanParameter:
+    enabled: false
+  ControlParameter:
+    enabled: false
+  UncommunicativeVariableName:
+    accept:
+      - k
+      - v
+      - e

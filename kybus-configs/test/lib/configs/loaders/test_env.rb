@@ -12,7 +12,7 @@ module Kybus
             'UTEST_B' => 'false',
             'UTEST_C' => 'true'
           }
-          data = Env.new('UTEST', nil, env).load!
+          data = Env.new('UTEST', env).load!
           assert_equal(data['a'], 1)
           assert_equal(data['b'], false)
           assert_equal(data['c'], true)
@@ -24,7 +24,7 @@ module Kybus
             'UTEST_B' => '2',
             'UTEST_C' => '3'
           }
-          data = Env.new('UTEST', nil, env).load!
+          data = Env.new('UTEST', env).load!
           assert_equal(data['a'], [1, 2, 3])
           assert_equal(data['b'], 2)
           assert_equal(data['c'], 3)
@@ -36,7 +36,7 @@ module Kybus
             'UTEST_OBJ__B' => 2,
             'UTEST_OBJ__C' => 3
           }
-          data = Env.new('UTEST', nil, env).load!
+          data = Env.new('UTEST', env).load!
           assert_equal(data['obj']['a'], 1)
           assert_equal(data['obj']['b'], 2)
           assert_equal(data['obj']['c'], 3)

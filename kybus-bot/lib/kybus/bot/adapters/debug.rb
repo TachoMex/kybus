@@ -119,6 +119,8 @@ module Kybus
           end
         end
 
+        attr_accessor :last_message
+
         # It receives a hash with the configurations:
         # - name: the name of the channel
         # - channels a key value, where the key is a name and the value the
@@ -139,7 +141,7 @@ module Kybus
             raise NoMoreMessageException if @channels.values.all?(&:empty?)
 
             msg = @channels.values.find(&:open?)
-            return msg.read_message if msg
+            return @last_message = msg.read_message if msg
 
             # :nocov: #
             sleep(0.01)

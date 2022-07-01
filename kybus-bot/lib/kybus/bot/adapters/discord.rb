@@ -46,6 +46,9 @@ module Kybus
       # This adapter is intended to be used on unit tests and development.
       class Discord
         include ::Kybus::Logger
+
+        attr_reader :last_message, :client
+
         # It receives a hash with the configurations:
         # - name: the name of the channel
         # - channels a key value, where the key is a name and the value the
@@ -61,8 +64,6 @@ module Kybus
           @client.run(:async)
         end
 
-        attr_reader :client
-
         def mention(id)
           "<@!#{id}>"
         end
@@ -75,7 +76,7 @@ module Kybus
 
             sleep(0.1)
           end
-          DiscordMessage.new(@pool.shift)
+          @last_message = DiscordMessage.new(@pool.shift)
         end
 
         # interface for sending messages

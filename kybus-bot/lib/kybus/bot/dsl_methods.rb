@@ -11,11 +11,6 @@ module Kybus
         @state = state
       end
 
-      # returns the current_channel from where the message was sent
-      def current_channel
-        state.channel_id
-      end
-
       def send_message(content, channel = nil)
         raise(Base::EmptyMessageError) unless content
 
@@ -51,11 +46,16 @@ module Kybus
       end
 
       def current_user
-        state.last_message.user
+        provider.last_message.user
       end
 
       def is_private?
-        state.last_message.is_private?
+        provider.last_message.is_private?
+      end
+
+      # returns the current_channel from where the message was sent
+      def current_channel
+        state.channel_id
       end
     end
   end
