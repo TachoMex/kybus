@@ -9,6 +9,10 @@ class AutoconfigTest < Minitest::Test
     FileUtils.rm_rf(path)
   end
 
+  def mock_aws
+    Aws::InstanceProfileCredentials.any_instance.stubs(:get_credentials).returns('{}')
+  end
+
   def build_config(confs = {})
     ConfigurationManager.expects(:auto_load!).returns(confs)
     ServiceManager.auto_load!
