@@ -4,16 +4,11 @@ module Kybus
   module Nanorecord
     module Plugins
       class Timestamps < Base
-        def apply(hook_provider)
-          tables.each do |t|
-            conf = config(t, 'timestamps')
-            next unless conf
-
-            hook_provider.register_hook(t, :create_table, &:timestamps)
-          end
+        def apply!(_config, hook_provider)
+          hook_provider.register_hook(table, :create_table, &:timestamps)
         end
       end
-      PluginProvider.register_plugin(Timestamps)
+      PluginProvider.register_plugin('timestamps', Timestamps)
     end
   end
 end

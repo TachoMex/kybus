@@ -11,8 +11,12 @@ module Kybus
       def initialize(conf)
         @models = conf['schema']['models'].to_h { |name, fields| [name, Model.new(name, fields)] }
         @hooks = ModelHooks.new(self)
-        @hooks.run!
         @models.each { |name, model| model.hooks = @hooks.for_table(name) }
+        apply_plugins!
+      end
+
+      def apply_plugins!
+        @models.each_value { |model| model.apply_plugins!(@hooks) }
       end
 
       def self.load_file!(path)

@@ -4,28 +4,14 @@ module Kybus
   module Nanorecord
     module Plugins
       class Base
-        def initialize(schema)
-          @schema = schema
+        attr_reader :model
+
+        def initialize(model)
+          @model = model
         end
 
-        def tables
-          models.keys
-        end
-
-        def table(name)
-          models[name]
-        end
-
-        def append_field(table, name, conf)
-          models[table].add_field(name, conf)
-        end
-
-        def config(table_name, config_name)
-          table(table_name).configs.config_for(config_name)
-        end
-
-        def models
-          @schema.models
+        def table
+          model.name.tableize
         end
       end
     end

@@ -12,10 +12,6 @@ module Kybus
         @schema = schema
       end
 
-      def run!
-        Plugins::PluginProvider.apply!(@schema, self)
-      end
-
       def for_table(name)
         raise("#{name} does not exist") unless @hooks[name]
 

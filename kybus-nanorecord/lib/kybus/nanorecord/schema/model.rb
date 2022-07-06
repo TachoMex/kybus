@@ -19,8 +19,10 @@ module Kybus
           @migration = ModelMigration.new(model_name, @fields, {})
         end
 
-        def add_field(name, conf)
-          @fields[name] = conf
+        def apply_plugins!(global_hooks)
+          configs.plugins_config.each do |plugin|
+            Plugins::PluginProvider.apply!(plugin, self, global_hooks)
+          end
         end
 
         def build!

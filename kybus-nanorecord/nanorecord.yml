@@ -5,7 +5,8 @@ schema:
         title:
         description:
       configs:
-        - belongs_to: user
+        - name: belongs_to
+          models: user
         - timestamps
     users:
       fields:
@@ -38,4 +39,7 @@ schema:
           unique: true
     article_classifications:
       configs:
-        - belongs_to: [article, category]
+        - name: belongs_to
+          models: [article, category]
+  web:
+    api_type:

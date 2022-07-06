@@ -6,16 +6,13 @@ module Kybus
       class PluginProvider
         extend Kybus::DRY::ResourceInjector
 
-        def self.register_plugin(provider)
-          plugins = unsafe_resource(:plugins) || []
-          plugins << provider
-          register(:plugins, plugins)
+        def self.register_plugin(name, provider)
+          register(:plugins, name, provider)
         end
 
-        def self.apply!(schema, hooks)
-          resource(:plugins).map do |provider|
-            provider.new(schema).apply(hooks)
-          end
+        def self.apply!(config, model, hooks)
+          provider = resource(:plugins, config['name'])
+          provider.new(model).apply!(config, hooks)
         end
       end
     end

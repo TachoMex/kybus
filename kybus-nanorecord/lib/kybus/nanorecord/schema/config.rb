@@ -11,20 +11,26 @@ module Kybus
           @model = model
         end
 
-        def pase_array(config_name)
-          return {} if raw.include?(config_name)
+        def parse_array
+          raw.map { |str| str.is_a?(String) ? parse_string(str) : str }
+        end
 
-          raw.find { |hash| hash.is_a?(Hash) && (hash['name'] == config_name || hash[config_name]) }
+        def parse_string(str = raw)
+          { 'name' => str }
         end
 
         def config_for(config_name)
+          plugins_config.select { |h| h['name'] == config_name }.first
+        end
+
+        def plugins_config
           case raw
           when Array
-            pase_array(config_name)
-          when Hash
-            raw[config_name]
+            parse_array
           when String
-            raw == config_name ? {} : nil
+            parse_string
+          else
+            []
           end
         end
       end
