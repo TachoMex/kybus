@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-class TestConfig< Minitest::Test
+class TestConfig < Minitest::Test
   include Kybus::Nanorecord
 
   def build(data)
@@ -23,7 +23,7 @@ class TestConfig< Minitest::Test
   end
 
   def test_parse_hash
-    conf = build([{'name' => 'hello', 'value' => true},{'name' =>'testing', 'value' => false}])
+    conf = build([{ 'name' => 'hello', 'value' => true }, { 'name' => 'testing', 'value' => false }])
     assert(conf.config_for('hello')['value'])
     refute(conf.config_for('testing')['value'])
     assert_nil(conf.config_for('not_testing'))

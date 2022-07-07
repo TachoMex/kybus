@@ -29,6 +29,7 @@ module Kybus
           klass = Class.new(ActiveRecord::Base)
           Object.const_set(name, klass)
           @hooks.apply(:model, klass)
+          fields.each_value { |field| field.apply_validations(klass) }
           klass
         end
 
