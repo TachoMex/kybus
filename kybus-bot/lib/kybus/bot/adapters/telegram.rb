@@ -57,9 +57,9 @@ module Kybus
         # :nocov:
 
         # interface for sending video
-        def send_video(channel_name, video_url)
+        def send_video(channel_name, video_url, comment = nil)
           file = Faraday::FilePart.new(video_url, 'video/mp4')
-          @client.api.send_video(chat_id: channel_name, audio: file)
+          @client.api.send_video(chat_id: channel_name, video: file, caption: comment)
         end
 
         # interface for sending uadio
@@ -69,9 +69,9 @@ module Kybus
         end
 
         # interface for sending image
-        def send_image(channel_name, image_url)
+        def send_image(channel_name, image_url, comment = nil)
           file = Faraday::FilePart.new(image_url, 'image/jpeg')
-          @client.api.send_photo(chat_id: channel_name, photo: file)
+          @client.api.send_photo(chat_id: channel_name, photo: file, caption: comment)
         end
 
         # interface for sending document

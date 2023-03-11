@@ -16,6 +16,10 @@ module Kybus
         @commands.keys
       end
 
+      def each(&block)
+        @commands.each(&block)
+      end
+
       # Returns a command with the name
       def [](name)
         @commands[name]

@@ -15,13 +15,13 @@ module Kybus
         'pool_size' => 1,
         'provider' => {
           'name' => 'debug',
-          'echo' => true,
+          'echo' => false,
           'channels' => { 'testing' => [] }
         }
       }.freeze
 
-      def self.make_test_bot
-        new(CONFIG)
+      def self.make_test_bot(extra_configs = {})
+        new(CONFIG.merge(extra_configs))
       end
 
       def receives(msg, attachments = nil)

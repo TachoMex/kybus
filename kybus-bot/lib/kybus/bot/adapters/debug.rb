@@ -60,6 +60,10 @@ module Kybus
           !!attachment
         end
 
+        def reply?
+          @reply
+        end
+
         def is_private?
           true
         end
@@ -142,10 +146,6 @@ module Kybus
 
             msg = @channels.values.find(&:open?)
             return @last_message = msg.read_message if msg
-
-            # :nocov: #
-            sleep(0.01)
-            # :nocov: #
           end
         end
 
@@ -160,7 +160,7 @@ module Kybus
         end
 
         # interface for sending video
-        def send_video(channel_name, video_url)
+        def send_video(channel_name, video_url, caption = nil)
           channel(channel_name).answer("VIDEO: #{video_url}")
         end
 
@@ -170,7 +170,7 @@ module Kybus
         end
 
         # interface for sending image
-        def send_image(channel_name, image_url)
+        def send_image(channel_name, image_url, caption = nil)
           channel(channel_name).answer("IMG: #{image_url}")
         end
 

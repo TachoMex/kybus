@@ -43,6 +43,10 @@ module Kybus
           meta.dig('result', 'file_name')
         end
 
+        def file_name
+          original_name
+        end
+
         def download
           token = cli.api.token
           file_path = meta.dig('result', 'file_path')

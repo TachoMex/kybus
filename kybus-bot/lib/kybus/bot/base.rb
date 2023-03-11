@@ -29,7 +29,7 @@ module Kybus
 
       attr_reader :provider, :executor, :pool_size, :pool, :definitions
 
-      def_delegators :executor, :state
+      def_delegators :executor, :state, :precommand_hook
       def_delegators :definitions, :registered_commands
 
       # Configurations needed:
@@ -49,7 +49,7 @@ module Kybus
         )
         @definitions = Kybus::Bot::CommandDefinition.new
         command_factory = CommandStateFactory.new(repository, @definitions)
-        @executor = Kybus::Bot::CommandExecutor.new(self, command_factory)
+        @executor = Kybus::Bot::CommandExecutor.new(self, command_factory, configs['inline_args'])
         register_command('default') { nil }
       end
 
@@ -70,6 +70,14 @@ module Kybus
         # :nocov: #
         pool.each(&:await)
         # :nocov: #
+      end
+
+      def redirect(command, *params)
+        @executor.invoke(command, params)
+      end
+
+      def send_message(contents, channel)
+        @provider.send_message(contents, channel)
       end
 
       def register_command(klass, params = [], &block)

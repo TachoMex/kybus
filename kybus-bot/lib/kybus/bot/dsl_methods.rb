@@ -6,9 +6,10 @@ module Kybus
       attr_accessor :state
       attr_reader :provider
 
-      def initialize(provider, state)
+      def initialize(provider, state, bot)
         @provider = provider
         @state = state
+        @bot = bot
       end
 
       def send_message(content, channel = nil)
@@ -17,8 +18,12 @@ module Kybus
         provider.send_message(channel || current_channel, content)
       end
 
-      def send_image(content, channel = nil)
-        provider.send_image(channel || current_channel, content)
+      def send_image(content, channel = nil, caption: nil)
+        provider.send_image(channel || current_channel, content, caption)
+      end
+
+      def send_video(content, channel = nil, caption: nil)
+        provider.send_video(channel || current_channel, content, caption)
       end
 
       def send_audio(content, channel = nil)
@@ -53,9 +58,17 @@ module Kybus
         provider.last_message.is_private?
       end
 
+      def last_message
+        provider.last_message
+      end
+
       # returns the current_channel from where the message was sent
       def current_channel
         state.channel_id
+      end
+
+      def method_missing(method, *args, &block)
+        @bot.send(method, *args, &block)
       end
     end
   end

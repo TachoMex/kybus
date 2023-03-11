@@ -17,7 +17,7 @@ module Kybus
       end
 
       def ready?
-        command.ready?(params)
+        command&.ready?(params)
       end
 
       # validates which is the following parameter required

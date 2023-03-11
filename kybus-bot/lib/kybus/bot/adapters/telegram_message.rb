@@ -17,7 +17,7 @@ module Kybus
         end
 
         def reply?
-          !!@message.reply_to_message
+          @message.respond_to?(:reply_to_message) && !!@message.reply_to_message
         end
 
         def replied_message
@@ -43,7 +43,9 @@ module Kybus
         end
 
         def attachment
-          @message.document || @message.photo&.last || @message.audio
+          (@message.respond_to?(:document) && @message.document) || 
+            (@message.respond_to?(:photo) && @message.photo&.last) || 
+            (@message.respond_to?(:audio) && @message&.audio)
         end
 
         def user

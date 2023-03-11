@@ -19,10 +19,12 @@ module Kybus
         execution_context&.state
       end
 
-      def initialize(bot, channel_factory)
+      def initialize(bot, channel_factory, inline_args)
         @bot = bot
         @channel_factory = channel_factory
-        @dsl = DSLMethods.new(bot.provider, state)
+        @dsl = DSLMethods.new(bot.provider, state, bot)
+        @inline_args = inline_args
+        @precommand_hook = proc {}
       end
 
       # Process a single message, this method can be overwriten to enable
@@ -42,9 +44,29 @@ module Kybus
         execution_context.add_file(file)
       end
 
+      def search_command_with_inline_arg(message)
+        command, values = @channel_factory.command_with_inline_arg(message.raw_message)
+        if command
+          execution_context.command = command
+          values.each do |value|
+            execution_context.next_param = execution_context.next_missing_param
+            execution_context.add_param(value)
+          end
+        else
+          execution_context.command = @channel_factory.default_command
+        end
+      end
+
       def save_token!(message)
         if message.command?
-          execution_context.command = @channel_factory.command_or_default(message.command)
+          command = @channel_factory.command(message.command)
+          if @inline_args && !command
+            search_command_with_inline_arg(message)
+          elsif !@inline_args && !command
+            execution_context.command = @channel_factory.default_command
+          else
+            execution_context.command = command
+          end
         else
           save_param!(message)
         end
@@ -52,14 +74,21 @@ module Kybus
 
       def run_command_or_prepare!
         if execution_context.ready?
+          @dsl.state = execution_context.state
+          @dsl.instance_eval(&@precommand_hook)
           run_command!
         else
           ask_param(execution_context.next_missing_param)
         end
       end
 
+      def precommand_hook(&block)
+        @precommand_hook = proc(&block)
+      end
+
       def fallback(error)
         catch = @channel_factory.command(error.class)
+        log_error('Unexpected error', error)
         execution_context.command = catch if catch
       end
 
@@ -70,6 +99,18 @@ module Kybus
         raise unless fallback(e)
 
         retry
+      end
+
+      def invoke(command_name, args)
+        command = @channel_factory.command(command_name)
+        if command.nil? || command.params_size != args.size
+          raise "Wrong redirect #{command_name}, #{bot.registered_commands}"
+        end
+        state.command = command
+        command.params.zip(args).each do |param, value|
+          state.store_param(param, value)
+        end
+        run_command_or_prepare!
       end
 
       # Sends a message to get the next parameter from the user

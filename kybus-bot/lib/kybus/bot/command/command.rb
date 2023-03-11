@@ -24,6 +24,10 @@ module Kybus
       def next_missing_param(current_params)
         params.find { |key| !current_params.key?(key) }.to_s
       end
+
+      def params_size
+        @params.size
+      end
     end
   end
 end

@@ -78,6 +78,64 @@ module Kybus
         @bot.expects(:send_message).never
         @bot.receives('/do_maigc')
       end
+
+      def test_inline_args
+        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
+        bot.register_command('/hello', %i[number]) do
+          confirm(params[:number])
+        end
+        bot.expects(:confirm).with('8')
+        bot.receives('/hello8')
+      end
+
+      def test_inline_multi_args
+        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
+        bot.register_command('/hello', %i[number letter]) do
+          confirm(params[:number], params[:letter])
+        end
+        bot.expects(:confirm).with('8', 'a')
+        bot.receives('/hello8__a')
+      end
+
+      def test_inline_args_regular_command
+        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
+        bot.register_command('/hello') do
+          confirm
+        end
+        bot.expects(:confirm)
+        bot.receives('/hello')
+      end
+
+      def test_inline_args_default_command
+        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
+        bot.register_command('default') do
+          confirm
+        end
+        bot.expects(:confirm)
+        bot.receives('/hello99')
+      end
+
+      def test_precommand_hooks
+        @bot.precommand_hook { send_message('prehook') }
+        %w[/hello /start /new].each do |cmd|
+          @bot.register_command(cmd) {}
+          @bot.expects(:send_message).with('prehook')
+          @bot.receives(cmd)
+        end
+      end
+
+      def test_redirect
+        @bot.register_command('/hello') do
+          redirect('/other', 2)
+        end
+
+        @bot.register_command('/other', %i[number]) do
+          send_message("Hello #{params[:number]}")
+        end
+
+        @bot.expects(:send_message).with('Hello 2')
+        @bot.receives('/hello')
+      end
     end
   end
 end

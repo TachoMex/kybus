@@ -27,6 +27,7 @@ module Kybus
         assert_raises(Debug::NoMoreMessageException) { @bot.run }
       end
 
+
       def test_error_recover
         @bot.rescue_from(StandardError) do
           send_message('I crashed')
