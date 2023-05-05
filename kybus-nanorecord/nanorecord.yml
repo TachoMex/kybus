@@ -41,5 +41,7 @@ schema:
       configs:
         - name: belongs_to
           models: [article, category]
-  web:
-    api_type:
+  controllers:
+    web:
+      articles:
+        layout: 'application'

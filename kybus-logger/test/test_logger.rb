@@ -82,4 +82,23 @@ class TestLogger < Minitest::Test
     log_info('Some added value', test: true)
     check_default_log_test('INFO', 'app.log')
   end
+
+  def test_log_array
+    build_logger
+    string1 = 'hello friend'
+    string2 = 'how are you'
+    log_info(string1, string2)
+    string = read_log
+    assert(string.include?(string1))
+    assert(string.include?(string2))
+  end
+
+  def test_log_exception
+    exception = assert_raises { raise 'hello' }
+    build_logger
+    log_error('An error ocurred', exception)
+    string = read_log
+    assert(string.include?('stack'))
+    assert(string.include?('message'))
+  end
 end

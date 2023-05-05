@@ -164,7 +164,7 @@ module Kybus
         end
 
         # interface for sending video
-        def send_video(channel_name, video_url, caption = nil)
+        def send_video(channel_name, video_url, _caption = nil)
           channel(channel_name).answer("VIDEO: #{video_url}")
         end
 
@@ -174,7 +174,7 @@ module Kybus
         end
 
         # interface for sending image
-        def send_image(channel_name, image_url, caption = nil)
+        def send_image(channel_name, image_url, _caption = nil)
           channel(channel_name).answer("IMG: #{image_url}")
         end
 

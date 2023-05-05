@@ -26,7 +26,8 @@ module Kybus
     end
 
     def default_response(reply = nil, photo = nil)
-      from = { 'id' => 1, 'test' => 't', 'username' => 'test', 'is_bot' => false, 'first_name' => 'test', 'type' => 'group' }
+      from = { 'id' => 1, 'test' => 't', 'username' => 'test', 'is_bot' => false, 'first_name' => 'test',
+               'type' => 'group' }
       { 'ok' => true,
         'result' => [{ 'update_id' => 1,
                        'message' =>

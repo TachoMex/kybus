@@ -5,7 +5,7 @@ require 'minitest/autorun'
 require 'rack-minitest/test'
 require 'webmock/minitest'
 require 'mocha/minitest'
-
+ENV['AWS_REGION'] = 'us-east-1'
 SimpleCov.minimum_coverage 100
 SimpleCov.start
 

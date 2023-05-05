@@ -47,8 +47,8 @@ module Kybus
         end
 
         def attachment
-          (@message.respond_to?(:document) && @message.document) || 
-            (@message.respond_to?(:photo) && @message.photo&.last) || 
+          (@message.respond_to?(:document) && @message&.document) ||
+            (@message.respond_to?(:photo) && @message.photo&.last) ||
             (@message.respond_to?(:audio) && @message&.audio)
         end
 

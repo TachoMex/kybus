@@ -6,8 +6,9 @@ module Kybus
     # it currently only gets a param list, but it will be extended to a more
     # complex DSL.
     class Command
-      attr_reader :block, :params, :name
-      attr_writer :name
+      attr_accessor :name
+      attr_reader :block, :params
+
       # Receives a list of params as symbols and the lambda with the block.
       def initialize(name, params_config, &block)
         @name = name

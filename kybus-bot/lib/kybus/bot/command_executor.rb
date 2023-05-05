@@ -101,6 +101,7 @@ module Kybus
         execution_context.call!(@dsl)
       rescue StandardError => e
         raise unless fallback(e)
+
         execution_context.state.store_param(:_last_exception, e)
         retry
       end
@@ -110,6 +111,7 @@ module Kybus
         if command.nil? || command.params_size != args.size
           raise "Wrong redirect #{command_name}, #{bot.registered_commands}"
         end
+
         state.command = command
         command.params.zip(args).each do |param, value|
           state.store_param(param, value)

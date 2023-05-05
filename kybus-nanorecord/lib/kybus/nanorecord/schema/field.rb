@@ -19,7 +19,7 @@ module Kybus
         end
 
         def build_index
-          (@confs['unique'] || @confs['index']) && { unique: !!@confs['unique'] }
+          (@confs['unique'] || @confs['index']) && { unique: !@confs['unique'].nil? }
         end
 
         def build_regex

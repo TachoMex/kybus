@@ -13,24 +13,21 @@ module Kybus
         LogMethods.register(:global_config, config)
       end
 
-      def log_info(msg, data = {})
-        log_raw(:info, msg, data, data[:debug])
-      end
-
-      def log_warn(msg, data = {})
-        log_raw(:warn, msg, data, data[:debug])
-      end
-
-      def log_error(msg, data = {})
-        log_raw(:error, msg, data, data[:debug])
-      end
-
-      def log_fatal(msg, data = {})
-        log_raw(:fatal, msg, data, data[:debug])
-      end
-
-      def log_debug(msg, data = {})
-        log_raw(:debug, msg, data, data[:debug])
+      %i[debug info warn error fatal].each do |level|
+        define_method("log_#{level}".to_s) do |msg, data = nil|
+          debug = {}
+          case data
+          when Hash
+            debug = data.delete(:debug)
+          when NilClass
+            data = {}
+          when String
+            data = [data]
+          when Exception
+            data = { message: data.message, class: data.class, stack: data.backtrace }
+          end
+          log_raw(level, msg, data, debug)
+        end
       end
 
       def log_metric(metric:, amount:, group: nil, time: nil)

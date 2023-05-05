@@ -15,7 +15,7 @@ application.log
 */storage/
 dev.rb
 develop.rb
-
+kybus-*/lib/*.html
 *.db
 *.log
 *.sqlite

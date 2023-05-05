@@ -80,7 +80,7 @@ module Kybus
         end
 
         # interface for sending messages
-        def send_message(channel_name, contents, caption = nil)
+        def send_message(channel_name, contents, _caption = nil)
           puts "#{channel_name} => #{contents}" if @config['debug']
           channel = @client.channel(channel_name)
           if channel

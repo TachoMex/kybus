@@ -1,1 +1,33 @@
-../.rubocop.yml
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - lib/ods.rb
+    - vendor/**/*
+    - .bundle/**/*
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Naming/VariableNumber:
+  Enabled: false
+Metrics/MethodLength:
+  Max: 15
+Style/OptionalBooleanParameter:
+  Enabled: false
+Naming/PredicateName:
+  Enabled: false
+# anonymous blocks crash flog
+Naming/BlockForwarding:
+  Enabled: false
+Metrics:
+  Exclude:
+  - lib/bot/core/commands.rb
+  - lib/bot/core/roles.rb
+  - test/**/*
+  - db/**/*
+  - bin/**/*
+Layout/LineLength:
+  Exclude:
+    - bin/*

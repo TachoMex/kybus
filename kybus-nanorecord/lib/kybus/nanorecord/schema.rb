@@ -2,6 +2,7 @@
 
 require_relative 'model_hooks'
 require_relative 'schema/model'
+require_relative 'controller/web_controllers'
 
 module Kybus
   module Nanorecord
@@ -13,6 +14,7 @@ module Kybus
         @hooks = ModelHooks.new(self)
         @models.each { |name, model| model.hooks = @hooks.for_table(name) }
         apply_plugins!
+        @controllers = Controller::WebControllers.new(conf.dig('schema', 'controllers', 'web'), self)
       end
 
       def apply_plugins!
@@ -26,6 +28,10 @@ module Kybus
 
       def build_models
         @models.map { |_, model| model.build! }
+      end
+
+      def build_controllers!
+        @controllers.build!
       end
 
       def build_model_migrations
