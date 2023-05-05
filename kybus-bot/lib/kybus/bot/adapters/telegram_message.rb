@@ -17,7 +17,7 @@ module Kybus
         end
 
         def reply?
-          @message.respond_to?(:reply_to_message) && !!@message.reply_to_message
+          @message.respond_to?(:reply_to_message) && @message.reply_to_message
         end
 
         def replied_message
@@ -27,6 +27,10 @@ module Kybus
         # Returns the channel id
         def channel_id
           @message.chat.id
+        end
+
+        def message_id
+          @message.respond_to?(:message_id) ? @message.message_id : @message['result']['message_id']
         end
 
         # Returns the message contents

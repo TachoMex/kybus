@@ -63,6 +63,10 @@ module Kybus
         end
       end
 
+      def dsl
+        @executor.dsl
+      end
+
       # Starts the bot execution, this is a blocking call.
       def run
         # TODO: Implement an interface for killing the process
@@ -77,7 +81,8 @@ module Kybus
       end
 
       def send_message(contents, channel)
-        @provider.send_message(contents, channel)
+        log_debug('Sending message', contents:, channel:)
+        provider.message_builder(@provider.send_message(contents, channel))
       end
 
       def register_command(klass, params = [], &block)

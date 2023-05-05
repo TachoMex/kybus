@@ -80,6 +80,10 @@ module Kybus
           @client.api.send_document(chat_id: channel_name, document: file)
         end
 
+        def message_builder(raw_message)
+          TelegramMessage.new(raw_message)
+        end
+
         def file_builder(file)
           TelegramFile.new(file)
         end

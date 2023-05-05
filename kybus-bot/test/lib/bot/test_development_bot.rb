@@ -27,9 +27,18 @@ module Kybus
         assert_raises(Debug::NoMoreMessageException) { @bot.run }
       end
 
+      def test_regexp_commands
+        @bot.register_command(/regexp/) { send_message('regexp') }
+        @bot.register_command('default') { send_message('/help') }
+        @bot.expects(:send_message).with('regexp')
+        @bot.receives('regexp')
+        @bot.expects(:send_message).with('/help')
+        @bot.receives('not regex')
+      end
 
       def test_error_recover
         @bot.rescue_from(StandardError) do
+          log_info('Error happened', params[:_last_error])
           send_message('I crashed')
           send_image('dog.jpg')
           send_audio('game_over.mp3')

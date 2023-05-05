@@ -67,6 +67,10 @@ module Kybus
         state.channel_id
       end
 
+      def command_name
+        state&.command&.name
+      end
+
       def method_missing(method, *args, &block)
         @bot.send(method, *args, &block)
       end

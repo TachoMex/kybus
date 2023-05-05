@@ -26,7 +26,7 @@ module Kybus
     end
 
     def default_response(reply = nil, photo = nil)
-      from = { 'id' => 1, 'test' => 't', 'username' => 'test' }
+      from = { 'id' => 1, 'test' => 't', 'username' => 'test', 'is_bot' => false, 'first_name' => 'test', 'type' => 'group' }
       { 'ok' => true,
         'result' => [{ 'update_id' => 1,
                        'message' =>
@@ -36,7 +36,11 @@ module Kybus
                      'chat' => from,
                      'photo' => photo,
                      'date' => 1_586_922_532,
-                     'text' => 'hi' } }] }
+                     'text' => 'hi' }.compact }] }
+    end
+
+    def unwrap_default_response(response)
+      response['result'].first['message']
     end
 
     def stub_api_query(path: nil, body: {}, response: {})
@@ -49,10 +53,10 @@ module Kybus
     end
 
     def stub_api_request(method, path, body: {}, response: {}, prefix: '')
-      response = response.to_json unless response.is_a?(String)
+      response_body = response.is_a?(String) ? response : response.to_json
       stub_request(method, "https://api.telegram.org/#{prefix}bottelegram_token/#{path}")
         .with(body:)
-        .to_return(status: 200, body: response, headers: {})
+        .to_return(status: 200, body: response_body, headers: {})
     end
 
     def test_send_file
@@ -76,12 +80,12 @@ module Kybus
     end
 
     def test_receive_file
-      response = default_response(default_response, build_photo)
+      response = default_response(unwrap_default_response(default_response), build_photo)
       stub_api_request(:post, 'getUpdates', response:)
 
       msg = adapter.read_message
-      assert_equal(msg.reply?, true)
-      assert_equal(msg.has_attachment?, true)
+      assert(msg.reply?)
+      assert(msg.has_attachment?)
       file = TelegramFile.new(msg.attachment)
       assert(msg.replied_message)
       stub_api_request(:post, 'getFile', body: { 'file_id' => 'abcd123' },
@@ -99,11 +103,11 @@ module Kybus
       assert_equal(msg.is_private?, false)
       assert_equal(msg.has_attachment?, false)
       assert_equal(msg.user, 1)
-      assert_equal(msg.reply?, false)
+      refute(msg.reply?)
     end
 
     def test_file_storage
-      response = default_response(default_response, build_photo)
+      response = default_response(unwrap_default_response(default_response), build_photo)
       stub_api_request(:post, 'getUpdates', response:)
       msg = adapter.read_message
       stub_api_request(:post, 'getFile', body: { 'file_id' => 'abcd123' },

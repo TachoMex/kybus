@@ -17,8 +17,9 @@ module Kybus
 
       def call!(context)
         context.state = state
-        context.instance_eval(&block)
+        statement = context.instance_eval(&block)
         clear_command
+        statement
       end
 
       def initialize(channel_id, channel_factory)
@@ -33,6 +34,10 @@ module Kybus
 
         log_debug('Received new param', param:, value:)
         state.store_param(param.to_sym, value)
+      end
+
+      def expecting_command?
+        state.command.nil?
       end
 
       def add_file(file)

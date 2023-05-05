@@ -21,12 +21,17 @@ module Kybus
       }.freeze
 
       def self.make_test_bot(extra_configs = {})
-        new(CONFIG.merge(extra_configs))
+        conf = CONFIG.merge(extra_configs)
+        conf['provider']['channels'] = { conf['channel_id'] => [] } if conf['channel_id']
+        bot = new(conf)
+        bot.instance_variable_set(:@default_channel_id, conf['provider']['channels'].keys.first)
+        bot
       end
 
       def receives(msg, attachments = nil)
         attachments = Adapter::DebugMessage::DebugFile.new(attachments) if attachments
-        msg = Adapter::DebugMessage.new(msg, 'testing', attachments)
+        msg = Adapter::DebugMessage.new(msg, @default_channel_id, attachments)
+        log_info('Received message', channel: @default_channel_id, msg:)
         provider.last_message = msg
         executor.process_message(msg)
       end

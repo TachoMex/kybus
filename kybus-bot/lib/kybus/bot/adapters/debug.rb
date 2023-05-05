@@ -11,7 +11,7 @@ module Kybus
       # Wraps a debugging message inside a class.
       class DebugMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
-        attr_reader :attachment
+        attr_reader :attachment, :message_id
 
         class DebugFile
           def initialize(path)
@@ -40,6 +40,9 @@ module Kybus
           @text = text
           @channel = channel
           @attachment = attachment
+          @@message_id ||= 0
+          @@message_id += 1
+          @message_id = @@message_id + 1
         end
 
         # Returns the channel id
@@ -110,6 +113,7 @@ module Kybus
         def answer(message, attachment = nil)
           send_data(message, attachment)
           @state = :open
+          DebugMessage.new(message, @name)
         end
       end
 
@@ -144,8 +148,8 @@ module Kybus
           loop do
             raise NoMoreMessageException if @channels.values.all?(&:empty?)
 
-            msg = @channels.values.find(&:open?)
-            return @last_message = msg.read_message if msg
+            open_channel = @channels.values.find(&:open?)
+            return @last_message = open_channel.read_message if open_channel
           end
         end
 
@@ -186,6 +190,13 @@ module Kybus
           when Hash
             DebugMessage::DebugFile.new(data[:path])
           end
+        end
+
+        include Kybus::Logger
+
+        def message_builder(msg)
+          log_info('Building message object', msg:, msg_class: msg.class.name)
+          msg
         end
 
         def mention(user)

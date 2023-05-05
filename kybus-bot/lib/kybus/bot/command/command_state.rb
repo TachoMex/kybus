@@ -66,7 +66,6 @@ module Kybus
         %i[params files].each do |param|
           @data[param] = @data[param].to_json
         end
-
         @data.store
         %i[params files].each do |param|
           @data[param] = backup[param]

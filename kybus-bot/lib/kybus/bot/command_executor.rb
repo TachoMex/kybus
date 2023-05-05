@@ -32,8 +32,9 @@ module Kybus
       def process_message(message)
         @execution_context = ExecutionContest.new(message.channel_id, @channel_factory)
         save_token!(message)
-        run_command_or_prepare!
+        msg = run_command_or_prepare!
         save_execution_context!
+        msg
       end
 
       def save_param!(message)
@@ -58,7 +59,7 @@ module Kybus
       end
 
       def save_token!(message)
-        if message.command?
+        if execution_context.expecting_command?
           command = @channel_factory.command(message.command)
           if @inline_args && !command
             search_command_with_inline_arg(message)
@@ -76,9 +77,12 @@ module Kybus
         if execution_context.ready?
           @dsl.state = execution_context.state
           @dsl.instance_eval(&@precommand_hook)
-          run_command!
+          msg = run_command!
+          execution_context.clear_command
+          msg
         else
-          ask_param(execution_context.next_missing_param)
+          param = execution_context.next_missing_param
+          ask_param(param, execution_context.state.command.params_ask_label(param))
         end
       end
 
@@ -87,7 +91,7 @@ module Kybus
       end
 
       def fallback(error)
-        catch = @channel_factory.command(error.class)
+        catch = @channel_factory.command(error)
         log_error('Unexpected error', error)
         execution_context.command = catch if catch
       end
@@ -97,7 +101,7 @@ module Kybus
         execution_context.call!(@dsl)
       rescue StandardError => e
         raise unless fallback(e)
-
+        execution_context.state.store_param(:_last_exception, e)
         retry
       end
 
@@ -114,11 +118,10 @@ module Kybus
       end
 
       # Sends a message to get the next parameter from the user
-      def ask_param(param)
+      def ask_param(param, label = nil)
         provider = bot.provider
-        msg = "I need you to tell me #{param}"
-        log_debug(msg)
-        provider.send_message(provider.last_message.channel_id, msg)
+        msg = label || "I need you to tell me #{param}"
+        bot.send_message(provider.last_message.channel_id, msg)
         execution_context.next_param = param
       end
     end

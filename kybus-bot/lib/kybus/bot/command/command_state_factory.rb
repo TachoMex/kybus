@@ -14,8 +14,22 @@ module Kybus
         @definitions = definitions
       end
 
-      def command(name)
-        @definitions[name]
+      def command(search)
+        @definitions.each do |name, command|
+          case name
+          when String
+            return command if name == search
+          when Class
+            return command if search.is_a?(name)
+          when Regexp
+            if search.is_a?(String) && name.match?(search)
+              storable_command = command.clone
+              storable_command.name = search
+              return storable_command
+            end
+          end
+        end
+        nil
       end
 
       def default_command
@@ -28,15 +42,25 @@ module Kybus
 
       def command_with_inline_arg(name_with_arg)
         @definitions.each do |name, command|
-          next unless name.is_a?(String)
-          return [command, name_with_arg.gsub(name, '').split('__')] if name_with_arg.start_with?(name)
+          case name
+          when Class
+            return [command, []] if name_with_arg.is_a?(name)
+          when String
+            return [command, name_with_arg.gsub(name, '').split('__')] if name_with_arg.start_with?(name)
+          when Regexp
+            next unless name_with_arg.match?(name)
+
+            storable_command = command.dup
+            storable_command.name = name_with_arg
+            return [storable_command, [name_with_arg]]
+          end
         end
         nil
       end
 
       def load_state(channel)
         data = factory.get(channel.to_s)
-        CommandState.new(data, command_or_default(data[:cmd]))
+        CommandState.new(data, command(data[:cmd]))
       rescue Kybus::Storage::Exceptions::ObjectNotFound
         CommandState.new(factory.create(channel_id: channel.to_s, params: '{}'), nil)
       end
