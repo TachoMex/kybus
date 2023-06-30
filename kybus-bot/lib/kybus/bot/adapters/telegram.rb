@@ -47,12 +47,12 @@ module Kybus
         end
 
         # interface for sending messages
-        def send_message(channel_name, contents)
+        def send_message(contents, channel_name)
           puts "#{channel_name} => #{contents}" if @config['debug']
-          @client.api.send_message(chat_id: channel_name, text: contents)
+          @client.api.send_message(chat_id: channel_name.to_i, text: contents, parse_mode: @config['parse_mode'])
           # :nocov:
         rescue ::Telegram::Bot::Exceptions::ResponseError => e
-          return if e[:error_code] == '403'
+          return if e.error_code == '403'
         end
         # :nocov:
 

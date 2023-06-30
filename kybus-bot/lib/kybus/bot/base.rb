@@ -49,7 +49,12 @@ module Kybus
         )
         @definitions = Kybus::Bot::CommandDefinition.new
         command_factory = CommandStateFactory.new(repository, @definitions)
-        @executor = Kybus::Bot::CommandExecutor.new(self, command_factory, configs['inline_args'])
+        @executor = if configs['sidekiq']
+                      require_relative 'sidekiq_command_executor'
+                      Kybus::Bot::SidekiqCommandExecutor.new(self, command_factory, configs)
+                    else
+                      Kybus::Bot::CommandExecutor.new(self, command_factory, configs['inline_args'])
+                    end
         register_command('default') { nil }
       end
 

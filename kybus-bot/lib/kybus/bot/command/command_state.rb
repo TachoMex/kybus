@@ -7,9 +7,18 @@ module Kybus
 
       def initialize(data, command)
         @command = command
-        data[:params] = JSON.parse(data[:params] || '{}', symbolize_names: true)
-        data[:files] = JSON.parse(data[:files] || '{}', symbolize_names: true)
+        (data[:params] = JSON.parse(data[:params] || '{}', symbolize_names: true)) if data[:params].is_a?(String)
+        (data[:files] = JSON.parse(data[:files] || '{}', symbolize_names: true)) if data[:files].is_a?(String)
         @data = data
+      end
+
+      def self.from_json(str, commands_provider)
+        data = JSON.parse(str, symbolize_names: true)
+        new(data[:data], commands_provider[data[:command]])
+      end
+
+      def to_json(*args)
+        { command: command.name, data: @data }.to_json(*args)
       end
 
       def clear_command

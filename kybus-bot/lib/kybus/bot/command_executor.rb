@@ -123,7 +123,7 @@ module Kybus
       def ask_param(param, label = nil)
         provider = bot.provider
         msg = label || "I need you to tell me #{param}"
-        bot.send_message(provider.last_message.channel_id, msg)
+        bot.send_message(msg, provider.last_message.channel_id)
         execution_context.next_param = param
       end
     end

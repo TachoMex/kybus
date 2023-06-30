@@ -15,7 +15,7 @@ module Kybus
       def send_message(content, channel = nil)
         raise(Base::EmptyMessageError) unless content
 
-        provider.send_message(channel || current_channel, content)
+        @bot.send_message(content, channel || current_channel)
       end
 
       def send_image(content, channel = nil, caption: nil)

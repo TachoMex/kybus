@@ -159,7 +159,7 @@ module Kybus
         end
 
         # interface for sending messages
-        def send_message(channel_name, contents, attachment = nil)
+        def send_message(contents, channel_name, attachment = nil)
           channel(channel_name).answer(contents, attachment)
         end
 
