@@ -9,7 +9,7 @@ module Kybus
       attr_reader :state
 
       def_delegator :state, :requested_param=, :next_param=
-      def_delegators :state, :clear_command, :save!, :ready?, :next_missing_param
+      def_delegators :state, :clear_command, :save!, :ready?, :next_missing_param, :set_last_message
 
       def block
         state.command.block

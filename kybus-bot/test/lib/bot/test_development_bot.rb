@@ -3,7 +3,7 @@
 require './test/test_helper'
 
 module Kybus
-  module Client
+  module Bot
     class TestDevelopmentBot < Minitest::Test
       include Kybus::Bot::Adapter
 
@@ -49,6 +49,14 @@ module Kybus
         end
         @bot.stub_channels('a' => ['/crash'])
         @bot.run_test
+      end
+
+      def test_reply
+        @bot.expects(:refute).with(false)
+        @bot.register_command('/reply') do
+          refute(last_message.reply?)
+        end
+        @bot.receives('/reply')
       end
     end
   end

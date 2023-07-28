@@ -3,6 +3,8 @@
 module Kybus
   module Bot
     class DSLMethods
+      include Kybus::Logger
+
       attr_accessor :state
       attr_reader :provider
 
@@ -51,28 +53,28 @@ module Kybus
       end
 
       def current_user
-        provider.last_message.user
+        last_message.user
       end
 
       def is_private?
-        provider.last_message.is_private?
+        last_message.is_private?
       end
 
       def last_message
-        provider.last_message
+        state.last_message
       end
 
       # returns the current_channel from where the message was sent
       def current_channel
-        state.channel_id
+        last_message.channel_id
       end
 
       def command_name
         state&.command&.name
       end
 
-      def method_missing(method, *args, &block)
-        @bot.send(method, *args, &block)
+      def redirect(*args)
+        @bot.redirect(*args)
       end
     end
   end

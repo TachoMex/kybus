@@ -3,7 +3,7 @@
 require './test/test_helper'
 
 module Kybus
-  module Client
+  module Bot
     class TestSequelConnectivity < Minitest::Test
       def setup
         path = 'storage/bot.db'

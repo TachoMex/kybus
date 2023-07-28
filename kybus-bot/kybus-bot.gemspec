@@ -18,18 +18,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.add_dependency 'kybus-core', '~> 0.1'
 
-  spec.add_development_dependency 'kybus-logger', '~> 0.1'
-  spec.add_development_dependency 'kybus-storage', '~> 0.1'
-  spec.add_development_dependency 'minitest', '~> 5.11'
-  spec.add_development_dependency 'mocha', '~> 1.8'
-  spec.add_development_dependency 'pry', '~> 0.12'
-  spec.add_development_dependency 'rack-minitest', '~> 0.0'
-  spec.add_development_dependency 'rake', '~> 12.3'
-  spec.add_development_dependency 'rdoc', '~> 6.1'
-  spec.add_development_dependency 'sequel'
-  spec.add_development_dependency 'simplecov', '~> 0.16'
-  spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'telegram-bot-ruby'
-  spec.add_development_dependency 'webmock', '~> 3.5'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

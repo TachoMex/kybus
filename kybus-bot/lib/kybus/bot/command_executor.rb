@@ -19,6 +19,10 @@ module Kybus
         execution_context&.state
       end
 
+      def last_message
+        state&.last_message
+      end
+
       def initialize(bot, channel_factory, inline_args)
         @bot = bot
         @channel_factory = channel_factory
@@ -59,6 +63,7 @@ module Kybus
       end
 
       def save_token!(message)
+        execution_context.set_last_message(message.serialize)
         if execution_context.expecting_command?
           command = @channel_factory.command(message.command)
           if @inline_args && !command
@@ -121,9 +126,8 @@ module Kybus
 
       # Sends a message to get the next parameter from the user
       def ask_param(param, label = nil)
-        provider = bot.provider
         msg = label || "I need you to tell me #{param}"
-        bot.send_message(msg, provider.last_message.channel_id)
+        bot.send_message(msg, last_message.channel_id)
         execution_context.next_param = param
       end
     end

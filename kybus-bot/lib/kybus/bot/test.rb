@@ -31,7 +31,7 @@ module Kybus
       def receives(msg, attachments = nil)
         attachments = Adapter::DebugMessage::DebugFile.new(attachments) if attachments
         msg = Adapter::DebugMessage.new(msg, @default_channel_id, attachments)
-        log_info('Received message', channel: @default_channel_id, msg:)
+        log_info('Received message', channel: @default_channel_id, msg: msg.raw_message)
         provider.last_message = msg
         executor.process_message(msg)
       end

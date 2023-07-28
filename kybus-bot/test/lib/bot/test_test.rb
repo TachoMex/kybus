@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require './test/test_helper'
-require 'kybus/bot/test'
+require './lib/kybus/bot/test'
 
 module Kybus
-  module Client
+  module Bot
     class TestTest < Minitest::Test
       def setup
         @bot = ::Kybus::Bot::Base.make_test_bot

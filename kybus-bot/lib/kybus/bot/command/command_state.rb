@@ -7,18 +7,24 @@ module Kybus
 
       def initialize(data, command)
         @command = command
+        data = JSON.parse(data, symbolize_names: true) if data.is_a?(String)
         (data[:params] = JSON.parse(data[:params] || '{}', symbolize_names: true)) if data[:params].is_a?(String)
         (data[:files] = JSON.parse(data[:files] || '{}', symbolize_names: true)) if data[:files].is_a?(String)
+        (data[:last_message] = data[:last_message] && SerializedMessage.from_json(data[:last_message]))
         @data = data
       end
 
       def self.from_json(str, commands_provider)
         data = JSON.parse(str, symbolize_names: true)
-        new(data[:data], commands_provider[data[:command]])
+        new(data[:data], commands_provider.command(data[:command]))
       end
 
-      def to_json(*args)
-        { command: command.name, data: @data }.to_json(*args)
+      def to_json(*_args)
+        to_h.to_json
+      end
+
+      def to_h
+        { command: command.name, data: @data.to_h.merge(last_message: @data[:last_message]&.to_h) }
       end
 
       def clear_command
@@ -32,6 +38,14 @@ module Kybus
       # validates which is the following parameter required
       def next_missing_param
         command.next_missing_param(params)
+      end
+
+      def set_last_message(msg)
+        @data[:last_message] = msg
+      end
+
+      def last_message
+        @data[:last_message]
       end
 
       def command=(cmd)
@@ -72,11 +86,11 @@ module Kybus
 
       def save!
         backup = @data.clone
-        %i[params files].each do |param|
+        %i[params files last_message].each do |param|
           @data[param] = @data[param].to_json
         end
         @data.store
-        %i[params files].each do |param|
+        %i[params files last_message].each do |param|
           @data[param] = backup[param]
         end
       end

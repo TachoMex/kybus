@@ -14,6 +14,7 @@ module Kybus
             String :files, text: true
             String :cmd
             String :requested_param
+            String :last_message, text: true
           end
         end
       end

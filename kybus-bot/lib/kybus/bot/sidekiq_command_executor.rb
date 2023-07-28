@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sidekiq'
 
 module Kybus
@@ -5,10 +7,14 @@ module Kybus
     class SidekiqWorker
       include Sidekiq::Worker
       extend Kybus::DRY::ResourceInjector
-      include Kybus::Logger 
+      include Kybus::Logger
 
       def provider
         SidekiqWorker.resource(:provider)
+      end
+
+      def factory
+        SidekiqWorker.resource(:factory)
       end
 
       def bot
@@ -16,7 +22,8 @@ module Kybus
       end
 
       def build_context(details_json)
-        state = CommandState.from_json(details_json, bot.definitions)
+        state = CommandState.from_json(details_json, factory)
+        log_debug('Loaded message into worker', state: state.to_h)
         [DSLMethods.new(provider, state, bot), state]
       end
 
@@ -31,12 +38,13 @@ module Kybus
     class SidekiqCommandExecutor < CommandExecutor
       def initialize(bot, channel_factory, configs)
         super(bot, channel_factory, configs['inline_args'])
-        SidekiqWorker.register(:bot, bot)
+        SidekiqWorker.register(:factory, @channel_factory)
         SidekiqWorker.register(:provider, bot.provider)
+        SidekiqWorker.register(:bot, bot)
       end
 
       def run_command!
-        log_info('Enqueued process to sidekiq', data: state)
+        log_debug(msg: 'Enqueued process to sidekiq', state: state.to_h)
         SidekiqWorker.perform_async(state.to_json)
         nil
       end

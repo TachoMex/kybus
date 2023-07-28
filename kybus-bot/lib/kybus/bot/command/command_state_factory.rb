@@ -62,7 +62,7 @@ module Kybus
         data = factory.get(channel.to_s)
         CommandState.new(data, command(data[:cmd]))
       rescue Kybus::Storage::Exceptions::ObjectNotFound
-        CommandState.new(factory.create(channel_id: channel.to_s, params: '{}'), nil)
+        CommandState.new(factory.create(channel_id: channel.to_s, params: '{}', last_message: nil), nil)
       end
     end
   end

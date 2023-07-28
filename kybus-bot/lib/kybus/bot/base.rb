@@ -58,6 +58,15 @@ module Kybus
         register_command('default') { nil }
       end
 
+      def extend(*args)
+        DSLMethods.include(*args)
+      end
+
+      def self.helpers(mod = nil, &block)
+        DSLMethods.include(mod) if mod
+        DSLMethods.class_eval(&block) if block_given?
+      end
+
       def build_pool(pool_size)
         @pool = Array.new(pool_size) do
           # TODO: Create a subclass with the context execution
@@ -96,6 +105,12 @@ module Kybus
 
       def rescue_from(klass, &block)
         definitions.register_command(klass, [], &block)
+      end
+
+      def method_missing(method, *args, &block)
+        raise unless dsl.respond_to?(method)
+
+        dsl.send(method, *args, &block)
       end
     end
   end
