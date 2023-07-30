@@ -50,7 +50,7 @@ module Kybus
       end
 
       def search_command_with_inline_arg(message)
-        command, values = @channel_factory.command_with_inline_arg(message.raw_message)
+        command, values = @channel_factory.command_with_inline_arg(message.raw_message || '')
         if command
           execution_context.command = command
           values.each do |value|
