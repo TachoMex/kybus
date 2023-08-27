@@ -7,6 +7,10 @@ module Kybus
       MANDATORY_FIELDS = %i[channel_id provider message_id user raw_message].freeze
 
       def initialize(data)
+        data = data.to_h if data.is_a?(SerializedMessage)
+        raise "BadSerializedMessage: nil message" if data.nil?
+        data = data[:data] if data.is_a?(Hash) && data.key?(:data)
+
         missing_keys = MANDATORY_FIELDS.reject { |k| data.keys.include?(k) }
         raise "BadSerializedMessage: Missing keys `#{missing_keys}', got: #{data}" unless missing_keys.empty?
 
