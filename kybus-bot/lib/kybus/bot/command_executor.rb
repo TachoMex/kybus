@@ -111,17 +111,21 @@ module Kybus
         retry
       end
 
-      def invoke(command_name, args)
-        command = @channel_factory.command(command_name)
-        if command.nil? || command.params_size != args.size
-          raise "Wrong redirect #{command_name}, #{bot.registered_commands}"
-        end
-
+      def invoke(command, args)
         state.command = command
         command.params.zip(args).each do |param, value|
           state.store_param(param, value)
         end
         run_command_or_prepare!
+      end
+
+      def redirect(command_name, args)
+        command = @channel_factory.command(command_name)
+        if command.nil? || command.params_size != args.size
+          raise "Wrong redirect #{command_name}, #{bot.registered_commands}"
+        end
+
+        invoke(command, args)
       end
 
       # Sends a message to get the next parameter from the user

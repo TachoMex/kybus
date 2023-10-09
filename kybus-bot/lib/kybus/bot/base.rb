@@ -91,7 +91,7 @@ module Kybus
       end
 
       def redirect(command, *params)
-        @executor.invoke(command, params)
+        @executor.redirect(command, params)
       end
 
       def send_message(contents, channel)

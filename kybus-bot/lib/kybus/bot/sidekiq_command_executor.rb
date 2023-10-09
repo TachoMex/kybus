@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'sidekiq'
+require_relative 'sidekiq_dsl_methods'
 
 module Kybus
   module Bot
@@ -24,7 +25,7 @@ module Kybus
       def build_context(details_json)
         state = CommandState.from_json(details_json, factory)
         log_debug('Loaded message into worker', state: state.to_h)
-        [DSLMethods.new(provider, state, bot), state]
+        [SidekiqDSLMethods.new(provider, state, bot, factory), state]
       end
 
       def perform(details_json)
