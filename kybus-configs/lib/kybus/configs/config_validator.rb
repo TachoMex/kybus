@@ -15,9 +15,8 @@ module Kybus
 
         def show_missing_keys_error
           # :nocov:
-          puts "You are missing some configs!\nAdd them to a file and export the config env var:\n" \
-               "$ export #{env_prefix}_FILES='#{Dir.pwd}'/config/config.yaml\n" \
-               "Maybe you just need to add them to your existing files\nMissing configs:\n"
+          puts "You are missing some configs!\nAdd them to a file and export the config env var.\n" \
+               "Maybe you just need to add them to your existing files\nMissing configs:\n-"
           puts keys.join("\n- ")
           # :nocov:
         end

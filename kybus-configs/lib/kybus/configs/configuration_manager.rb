@@ -58,7 +58,7 @@ module Kybus
       # :nocov: #
       def pretty_load_configs!(terminate = true)
         load_configs!
-      rescue MissingConfigs => e
+      rescue ::Kybus::Configuration::ConfigurationValidator::MissingConfigs => e
         e.show_missing_keys_error
         exit(1) if terminate
       end
@@ -74,7 +74,12 @@ module Kybus
           accept_default_keys: auto_configs['accept_default_keys'],
           env_prefix: auto_configs['env_prefix']
         )
-        configs.load_configs!
+        if auto_configs['pretty_load']
+          configs.pretty_load_configs!
+        else
+          configs.load_configs!
+        end
+        configs
       end
 
       private
@@ -83,7 +88,7 @@ module Kybus
       def load_configs
         self.class.resource(:providers).each do |provider|
           loader = provider.new(env_prefix)
-          recursive_merge(@configs, loader.load!)
+          @configs = recursive_merge(@configs, loader.load!)
         end
       end
     end
