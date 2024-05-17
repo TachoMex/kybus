@@ -11,7 +11,7 @@ module Kybus
       class DiscordMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
         def initialize(msg)
-          super
+          super()
           @message = msg
         end
 
@@ -19,6 +19,20 @@ module Kybus
         def channel_id
           @message.channel.id
         end
+
+        def message_id
+          nil
+        end
+
+        def has_attachment?
+          !!attachment
+        end
+
+
+        def attachment
+          @message.file
+        end
+
 
         # Returns the message contents
         def raw_message
@@ -80,7 +94,7 @@ module Kybus
         end
 
         # interface for sending messages
-        def send_message(channel_name, contents, _caption = nil)
+        def send_message(contents, channel_name, _caption = nil)
           puts "#{channel_name} => #{contents}" if @config['debug']
           channel = @client.channel(channel_name)
           if channel
@@ -90,23 +104,27 @@ module Kybus
           end
         end
 
-        # # interface for sending video
-        # def send_video(channel_name, video_url)
-        #   file = Faraday::UploadIO.new(video_url, 'video/mp4')
-        #   @client.api.send_video(chat_id: channel_name, audio: file)
-        # end
-        #
-        # # interface for sending uadio
-        # def send_audio(channel_name, audio_url)
-        #   file = Faraday::UploadIO.new(audio_url, 'audio/mp3')
-        #   @client.api.send_audio(chat_id: channel_name, audio: file)
-        # end
-        #
-        # # interface for sending image
-        # def send_image(channel_name, image_url)
-        #   file = Faraday::UploadIO.new(image_url, 'image/jpeg')
-        #   @client.api.send_photo(chat_id: channel_name, photo: file)
-        # end
+        def message_builder(raw_message)
+          DiscordMessage.new(raw_message)
+        end
+
+        def send_file(channel_name, file, caption = nil)
+          @client.send_file(channel_name, File.open(file, 'r'))
+        end
+        
+        def send_video(channel_name, file, caption = nil)
+          @client.send_file(channel_name, File.open(file, 'r'))
+        end
+        
+        # interface for sending uadio
+        def send_audio(channel_name, file, caption = nil)
+          @client.send_file(channel_name, File.open(file, 'r'))
+        end
+        
+        # interface for sending image
+        def send_image(channel_name, file, caption = nil)
+          @client.send_file(channel_name, File.open(file, 'r'))
+        end
       end
 
       register('discord', Discord)
