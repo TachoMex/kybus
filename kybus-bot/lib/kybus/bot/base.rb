@@ -29,6 +29,16 @@ module Kybus
 
       attr_reader :provider, :executor, :pool_size, :pool, :definitions
 
+      DYNAMOID_FIELDS = {
+        'channel_id' => :string,
+        'user' => :string,
+        'params' => :string,
+        'files' => :string,
+        'cmd' => :string,
+        'requested_param' => :string,
+        'last_message' => :string
+      }.freeze
+
       def_delegators :executor, :state, :precommand_hook
       def_delegators :definitions, :registered_commands
 
@@ -38,18 +48,12 @@ module Kybus
       #   See supported adapters
       # - name: The bot name
       # - repository: Configurations about the state storage
+
       def initialize(configs)
         build_pool(configs['pool_size'])
         @provider = Kybus::Bot::Adapter.from_config(configs['provider'])
         # TODO: move this to config
-        repository = Kybus::Storage::Repository.from_config(
-          nil,
-          configs['state_repository'].merge('primary_key' => 'channel_id', 'table' => 'bot_sessions', 'fields' => {
-                                              'channel_id' => :string,
-                                              'session_data' => :string
-                                            }),
-          {}
-        )
+        repository = make_repository(configs)
         @definitions = Kybus::Bot::CommandDefinition.new
         command_factory = CommandStateFactory.new(repository, @definitions)
         @executor = if configs['sidekiq']
@@ -59,6 +63,12 @@ module Kybus
                       Kybus::Bot::CommandExecutor.new(self, command_factory, configs['inline_args'])
                     end
         register_command('default') { nil }
+      end
+
+      def make_repository(configs)
+        repository_config = configs['state_repository'].merge('primary_key' => 'channel_id', 'table' => 'bot_sessions')
+        repository_config.merge!('fields' => DYNAMOID_FIELDS) if repository_config['name'] == 'dynamoid'
+        Kybus::Storage::Repository.from_config(nil, repository_config, {})
       end
 
       def extend(*args)

@@ -3,6 +3,8 @@ module Kybus
     module Datasource
       # Repository that fetches and stores objects using a Dynamoid connection
       class DynamoidRepository < Repository
+        attr_reader :model_class
+
         def self.from_config(conf)
           if conf['dynamoid_config']
             require 'dynamoid'
@@ -31,7 +33,7 @@ module Kybus
             end
 
             # Set a constant name for the dynamic class
-            self.class_eval { const_set(:DynamicModel, self) }
+            self.class_eval { const_set("DynamicModel#{conf['table'].upcase}", self) }
           end
         end
 
@@ -45,6 +47,8 @@ module Kybus
           raise(ObjectNotFound, id) if result.nil?
 
           result.attributes
+        rescue Dynamoid::Errors::RecordNotFound
+          raise(ObjectNotFound, id)
         end
 
         def create_(data)
