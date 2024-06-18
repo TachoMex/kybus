@@ -44,7 +44,10 @@ module Kybus
         # TODO: move this to config
         repository = Kybus::Storage::Repository.from_config(
           nil,
-          configs['state_repository'].merge('primary_key' => 'channel_id', 'table' => 'bot_sessions'),
+          configs['state_repository'].merge('primary_key' => 'channel_id', 'table' => 'bot_sessions', 'fields' => {
+                                              'channel_id' => :string,
+                                              'session_data' => :string
+                                            }),
           {}
         )
         @definitions = Kybus::Bot::CommandDefinition.new
@@ -62,9 +65,9 @@ module Kybus
         DSLMethods.include(*args)
       end
 
-      def self.helpers(mod = nil, &block)
+      def self.helpers(mod = nil, &)
         DSLMethods.include(mod) if mod
-        DSLMethods.class_eval(&block) if block_given?
+        DSLMethods.class_eval(&) if block_given?
       end
 
       def build_pool(pool_size)
@@ -99,18 +102,18 @@ module Kybus
         provider.message_builder(@provider.send_message(contents, channel))
       end
 
-      def register_command(klass, params = [], &block)
-        definitions.register_command(klass, params, &block)
+      def register_command(klass, params = [], &)
+        definitions.register_command(klass, params, &)
       end
 
-      def rescue_from(klass, &block)
-        definitions.register_command(klass, [], &block)
+      def rescue_from(klass, &)
+        definitions.register_command(klass, [], &)
       end
 
-      def method_missing(method, *args, &block)
+      def method_missing(method, ...)
         raise unless dsl.respond_to?(method)
 
-        dsl.send(method, *args, &block)
+        dsl.send(method, ...)
       end
     end
   end
