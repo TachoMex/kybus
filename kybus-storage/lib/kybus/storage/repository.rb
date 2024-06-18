@@ -24,3 +24,5 @@ module Kybus
     end
   end
 end
+
+require_relative 'datasource/dynamoid'
