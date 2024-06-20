@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby 
+require 'kybus/cli'
+
+Kybus::CLI.start(ARGV)
