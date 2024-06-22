@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'logger'
-
 require_relative 'format'
 
 module Kybus
@@ -22,7 +21,12 @@ module Kybus
       end
 
       def init_log_file
-        register('file', @original_config['stdout'] ? $stdout : @original_config['file'] || 'application.log')
+        log_output = if @original_config['stdout']
+                       $stdout
+                     else
+                       @original_config['file'] || 'application.log'
+                     end
+        register('file', log_output)
         register('rotate_days', @original_config['rotate_days'] || 7)
         register('rotate_size', @original_config['rotate_size'] || (100 * (1024**2))) # 100Mb
       end
@@ -39,11 +43,16 @@ module Kybus
 
       def logger
         @logger ||= begin
-          logger = ::Logger.new(
-            resource('file'),
-            resource('rotate_days'),
-            resource('rotate_size')
-          )
+          log_output = resource('file')
+          if log_output == $stdout
+            logger = ::Logger.new(log_output)
+          else
+            logger = ::Logger.new(
+              log_output,
+              resource('rotate_days'),
+              resource('rotate_size')
+            )
+          end
           $stdout.sync = true if @original_config['stdout']
           logger.sev_threshold = SEVERITIES[resource('severity')]
           logger.datetime_format = resource('date_format')
