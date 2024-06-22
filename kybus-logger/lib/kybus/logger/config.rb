@@ -21,7 +21,7 @@ module Kybus
       end
 
       def init_log_file
-        log_output = if @original_config['stdout']
+        log_output = if @original_config['stdout'].nil? || @original_config['stdout']
                        $stdout
                      else
                        @original_config['file'] || 'application.log'
