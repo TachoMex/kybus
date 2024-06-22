@@ -42,6 +42,51 @@ module Kybus
           end
         end
 
+        def handle_message(body)
+          chat_id = body.dig('message', 'chat', 'id')
+          message_id = body.dig('message', 'message_id')
+          user = body.dig('message', 'from', 'username') || body.dig('message', 'from', 'first_name')
+          raw_message = body.dig('message', 'text')
+
+          replied_message = body.dig('message', 'reply_to_message')
+          is_private = body.dig('message', 'chat', 'type') == 'private'
+
+          # Check if the message has an attachment
+          has_attachment = body.dig('message',
+                                    'photo') || body.dig('message', 'document') || body.dig('message', 'video')
+          attachment = if has_attachment
+                         body.dig('message',
+                                  'photo')&.last || body.dig('message', 'document') || body.dig('message', 'video')
+                       end
+
+          # Serialize replied_message if it exists
+          serialized_replied_message = if replied_message
+                                         SerializedMessage.new(
+                                           provider: 'telegram',
+                                           channel_id: replied_message.dig('chat', 'id'),
+                                           message_id: replied_message.dig('message_id'),
+                                           user: replied_message.dig('from',
+                                                                     'username') || replied_message.dig('from',
+                                                                                                        'first_name'),
+                                           raw_message: replied_message.dig('text'),
+                                           is_private?: replied_message.dig('chat', 'type') == 'private'
+                                         ).serialize
+                                       end
+
+          message = SerializedMessage.new(
+            provider: 'telegram',
+            channel_id: chat_id,
+            message_id:,
+            user:,
+            replied_message: serialized_replied_message,
+            raw_message:,
+            is_private?: is_private,
+            attachment:
+          )
+
+          executor.process_message(message)
+        end
+
         def mention(id)
           "[user](tg://user?id=#{id})"
         end
@@ -52,7 +97,7 @@ module Kybus
           @client.api.send_message(chat_id: channel_name.to_i, text: contents, parse_mode: @config['parse_mode'])
           # :nocov:
         rescue ::Telegram::Bot::Exceptions::ResponseError => e
-          return if e.error_code == '403'
+          nil if e.error_code == '403'
         end
         # :nocov:
 

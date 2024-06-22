@@ -15,6 +15,7 @@ module Kybus
                   provider: 
                     name: #{@config[:bot_provider]}
                     token: #{@config[:bot_token]}
+                    mode: #{@config[:with_deployment_file] && @config[:cloud_provider] == 'aws' ? 'webhook_lambda' : 'polling'}
                     debug: true
                   state_repository:
             YAML
