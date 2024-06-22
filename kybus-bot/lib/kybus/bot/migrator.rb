@@ -43,7 +43,9 @@ module Kybus
             'namespace' => config['namespace'],
             'table' => 'bot_sessions',
             'primary_key' => 'channel_id',
-            'fields' => Base::DYNAMOID_FIELDS
+            'fields' => Base::DYNAMOID_FIELDS,
+            'read_capacity' => config['read_capacity'] || 1,
+            'write_capacity' => config['write_capacity'] || 1
           )
 
           # Ensure the table is created

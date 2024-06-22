@@ -25,7 +25,7 @@ module Kybus
           Class.new do
             include Dynamoid::Document
 
-            table name: conf['table'], key: conf['primary_key'].to_sym
+            table name: conf['table'], key: conf['primary_key'].to_sym, read_capacity: conf['read_capacity'], write_capacity: conf['write_capacity']
 
             # Dynamically add fields based on configuration
             conf['fields'].each do |field, type|
