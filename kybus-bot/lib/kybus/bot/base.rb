@@ -94,6 +94,11 @@ module Kybus
         @executor.dsl
       end
 
+      def handle_message(msg)
+        parsed = @provider.handle_message(msg)
+        @executor.process_message(parsed)
+      end
+
       # Starts the bot execution, this is a blocking call.
       def run
         # TODO: Implement an interface for killing the process

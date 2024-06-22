@@ -73,7 +73,7 @@ module Kybus
                                          ).serialize
                                        end
 
-          message = SerializedMessage.new(
+          SerializedMessage.new(
             provider: 'telegram',
             channel_id: chat_id,
             message_id:,
@@ -83,8 +83,6 @@ module Kybus
             is_private?: is_private,
             attachment:
           )
-
-          executor.process_message(message)
         end
 
         def mention(id)
