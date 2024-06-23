@@ -70,6 +70,10 @@ module Kybus
         def is_private?
           true
         end
+
+        def to_s
+          @text
+        end
       end
 
       # This class simulates a message chat with a user.

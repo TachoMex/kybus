@@ -91,7 +91,7 @@ module Kybus
 
         # interface for sending messages
         def send_message(contents, channel_name)
-          puts "#{channel_name} => #{contents}" if @config['debug']
+          log_debug('Sending message', channel_name:, message: contents)
           @client.api.send_message(chat_id: channel_name.to_i, text: contents, parse_mode: @config['parse_mode'])
           # :nocov:
         rescue ::Telegram::Bot::Exceptions::ResponseError => e

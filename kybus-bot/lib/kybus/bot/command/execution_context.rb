@@ -55,7 +55,7 @@ module Kybus
 
       # stores the command into state
       def command=(cmd)
-        log_debug('Message set as command', command: cmd)
+        log_debug('Message set as command', command: cmd.name)
         state.command = cmd
       end
     end
