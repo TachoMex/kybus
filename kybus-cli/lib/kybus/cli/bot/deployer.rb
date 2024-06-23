@@ -49,42 +49,75 @@ class Deployer
     end
   end
 
+  def create_policy!(name, body)
+    @iam_client.create_policy(policy_name: name, policy_document: body.to_json)
+    puts "Policy '#{name}' created."
+  rescue Aws::IAM::Errors::EntityAlreadyExists
+    puts "Policy '#{name}' already exists."
+  end
+
+  def attach_policy!(name, role)
+    @iam_client.attach_role_policy(role_name:  role, policy_arn: "arn:aws:iam::#{account_id}:policy/#{name}")
+    puts "Policy '#{name}' attached to role '#{role}'."
+  rescue Aws::IAM::Errors::EntityAlreadyExists
+    puts "Policy '#{name}' already attached to role '#{role}'."
+  end
+
   def create_roles!
-    iam_client = Aws::IAM::Client.new
+    @iam_client = Aws::IAM::Client.new
     policy_name = "#{function_name}-execution_policy"
     role_name = "#{function_name}-execution_role"
+    dynamo_policy_name = "#{function_name}-dynamo_policy"
 
-    policy_document = {
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Action: 'logs:CreateLogGroup',
-          Resource: "arn:aws:logs:#{@region}:#{account_id}:*"
-        },
-        {
-          Effect: 'Allow',
-          Action: [
-            'logs:CreateLogStream',
-            'logs:PutLogEvents'
-          ],
-          Resource: [
-            "arn:aws:logs:#{@region}:#{account_id}:log-group:/aws/lambda/#{function_name}:*"
-          ]
-        }
-      ]
-    }.to_json
+    create_policy!(policy_name,
+                   Version: '2012-10-17',
+                   Statement: [
+                     {
+                       Effect: 'Allow',
+                       Action: 'logs:CreateLogGroup',
+                       Resource: "arn:aws:logs:#{@region}:#{account_id}:*"
+                     },
+                     {
+                       Effect: 'Allow',
+                       Action: [
+                         'logs:CreateLogStream',
+                         'logs:PutLogEvents'
+                       ],
+                       Resource: [
+                         "arn:aws:logs:#{@region}:#{account_id}:log-group:/aws/lambda/#{function_name}:*"
+                       ]
+                     }
+                   ])
 
-    begin
-      iam_client.create_policy({
-                                 policy_name:,
-                                 policy_document:
-                               })
-      puts "Policy '#{policy_name}' created."
-    rescue Aws::IAM::Errors::EntityAlreadyExists
-      puts "Policy '#{policy_name}' already exists."
-    end
-
+    create_policy!(dynamo_policy_name, {
+                     Version: '2012-10-17',
+                     Statement: [
+                       {
+                         Effect: 'Allow',
+                         Action: [
+                           'dynamodb:BatchGetItem',
+                           'dynamodb:BatchWriteItem',
+                           'dynamodb:Describe*',
+                           'dynamodb:Get*',
+                           'dynamodb:List*',
+                           'dynamodb:PutItem',
+                           'dynamodb:Query',
+                           'dynamodb:Scan',
+                           'dynamodb:UpdateItem',
+                           'dynamodb:DeleteItem'
+                         ],
+                         Resource: "arn:aws:dynamodb:#{@region}:#{account_id}:table/#{function_name}*"
+                       }, {
+                         Effect: :Allow,
+                         Action: [
+                           'dynamodb:Describe*',
+                           'dynamodb:Get*',
+                           'dynamodb:List*'
+                         ],
+                         Resource: '*'
+                       }
+                     ]
+                   })
     assume_role_policy_document = {
       Version: '2012-10-17',
       Statement: [
@@ -99,24 +132,17 @@ class Deployer
     }.to_json
 
     begin
-      iam_client.create_role({
-                               role_name:,
-                               assume_role_policy_document:
-                             })
+      @iam_client.create_role({
+                                role_name:,
+                                assume_role_policy_document:
+                              })
       puts "Role '#{role_name}' created."
     rescue Aws::IAM::Errors::EntityAlreadyExists
       puts "Role '#{role_name}' already exists."
     end
 
-    begin
-      iam_client.attach_role_policy({
-                                      role_name:,
-                                      policy_arn: "arn:aws:iam::#{account_id}:policy/#{policy_name}"
-                                    })
-      puts "Policy '#{policy_name}' attached to role '#{role_name}'."
-    rescue Aws::IAM::Errors::EntityAlreadyExists
-      puts "Policy '#{policy_name}' already attached to role '#{role_name}'."
-    end
+    attach_policy!(policy_name, role_name)
+    attach_policy!(dynamo_policy_name, role_name)
   end
 
   def with_retries(max_retries = 5)

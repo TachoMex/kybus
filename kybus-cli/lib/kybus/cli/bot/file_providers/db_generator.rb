@@ -37,6 +37,10 @@ ActiveRecord::Base.establish_connection(APP_CONF['database'])
               RUBY
             when 'dynamoid'
               <<-RUBY
+def run_migrations!
+  require 'kybus/bot/migrator'
+  Kybus::Bot::Migrator.run_migrations!(APP_CONF['bots']['main']['state_repository'])
+end
               RUBY
             end
           end

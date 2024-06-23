@@ -25,7 +25,7 @@ def lambda_handler(event:, context:)
   body = JSON.parse(event['body'])
 
   BOT.handle_message(body)
-  { statusCode: 200, body: ') }
+  { statusCode: 200, body: '' }
 end
             AWSLAMBDA
           end

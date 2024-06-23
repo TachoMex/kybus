@@ -29,11 +29,10 @@ module Kybus
               content << <<-DYNAMOID
         name: dynamoid
         dynamoid_config: true
-        access_key:  'fake_access_key'
-        secret_key:  'fake_secret_key'
         region:  'us-east-1'
-        endpoint: http://localhost:4566
-        namespace: 'my_app_development'
+        namespace: '#{bot_name_snake_case}'
+        read_capacity: 3
+        write_capacity: 3
               DYNAMOID
             end
           end

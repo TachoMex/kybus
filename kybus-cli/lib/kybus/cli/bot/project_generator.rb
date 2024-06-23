@@ -47,6 +47,7 @@ module Kybus
         def write_files
           @file_writer.write('main.rb', main_rb_content)
           @file_writer.write('helpers/.keep', '')
+          @file_writer.write('.ruby-version', RUBY_VERSION)
           providers = ProjectGenerator.resource(:providers)
           providers.each do |provider|
             provider.new(@name, @configs).generate
@@ -60,7 +61,9 @@ module Kybus
             require_relative 'config_loaders/autoconfig'
             require_relative 'config_loaders/bot_builder'
 
-            BOT.run
+            if $PROGRAM_NAME == __FILE__
+              BOT.run
+            end
           RUBY
         end
       end
