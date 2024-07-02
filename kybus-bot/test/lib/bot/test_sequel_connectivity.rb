@@ -9,12 +9,12 @@ module Kybus
         path = 'storage/bot.db'
         endpoint = "sqlite://#{path}"
         File.delete(path) if File.file?(path)
-        Kybus::Bot::Migrator.run_migrations!(Sequel.connect(endpoint))
         conf = CONFIG.dup
         conf['state_repository'] = {
           'name' => 'sequel',
           'endpoint' => endpoint
         }
+        Kybus::Bot::Migrator.run_migrations!(conf['state_repository'])
         @sequel_bot = Kybus::Bot::Base.new(conf)
         @sequel_bot.register_command('/remindme', %i[what when]) do
           assert_command('/remindme', params[:what], params[:when])

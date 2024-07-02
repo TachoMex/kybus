@@ -44,6 +44,10 @@ module Kybus
         state.files
       end
 
+      def metadata
+        state.metadata
+      end
+
       def file(name)
         (file = files[name]) && provider.file_builder(file)
       end

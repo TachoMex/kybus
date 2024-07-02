@@ -9,6 +9,7 @@ module Kybus
         @command = command
         data = JSON.parse(data, symbolize_names: true) if data.is_a?(String)
         (data[:params] = JSON.parse(data[:params] || '{}', symbolize_names: true)) if data[:params].is_a?(String)
+        (data[:metadata] = JSON.parse(data[:metadata] || '{}', symbolize_names: true)) if data[:metadata].is_a?(String)
         (data[:files] = JSON.parse(data[:files] || '{}', symbolize_names: true)) if data[:files].is_a?(String)
         (data[:last_message] = data[:last_message] && SerializedMessage.from_json(data[:last_message]))
         @data = data
@@ -84,13 +85,17 @@ module Kybus
         @data[:params][param] = value
       end
 
+      def metadata
+        @data[:metadata] || {}
+      end
+
       def save!
         backup = @data.clone
-        %i[params files last_message].each do |param|
+        %i[params files last_message metadata].each do |param|
           @data[param] = @data[param].to_json
         end
         @data.store
-        %i[params files last_message].each do |param|
+        %i[params files last_message metadata].each do |param|
           @data[param] = backup[param]
         end
       end

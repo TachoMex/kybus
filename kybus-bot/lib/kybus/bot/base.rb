@@ -33,6 +33,7 @@ module Kybus
         'channel_id' => :string,
         'user' => :string,
         'params' => :string,
+        'metadata' => :string,
         'files' => :string,
         'cmd' => :string,
         'requested_param' => :string,
