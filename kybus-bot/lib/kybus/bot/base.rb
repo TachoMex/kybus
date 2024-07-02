@@ -17,6 +17,7 @@ module Kybus
     # provider and the state storage inside an object.
     class Base
       class BotError < StandardError; end
+      class AbortError < BotError; end
 
       class EmptyMessageError < BotError
         def initialize
@@ -64,6 +65,10 @@ module Kybus
                       Kybus::Bot::CommandExecutor.new(self, command_factory, configs['inline_args'])
                     end
         register_command('default') { nil }
+        rescue_from(::Kybus::Bot::Base::AbortError) do
+          msg = params[:_last_exception]&.message
+          send_message(msg) if msg && msg != "Kybus::Bot::Base::AbortError"
+        end
       end
 
       def make_repository(configs)

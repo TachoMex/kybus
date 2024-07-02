@@ -151,6 +151,24 @@ module Kybus
         @bot.receives('/set_metadata')
         @bot.receives('/validate')
       end
+
+      def test_abort_with_message
+        @bot.register_command('/abort') do
+          abort('Stop execution')
+          send_message('Not really expected')
+        end
+        @bot.expects(:send_message).with('Stop execution').once
+        @bot.receives('/abort')
+      end
+
+      def test_abort_without_message
+        @bot.register_command('/abort') do
+          abort
+          send_message('Not really expected')
+        end
+        @bot.expects(:send_message).never
+        @bot.receives('/abort')
+      end
     end
   end
 end

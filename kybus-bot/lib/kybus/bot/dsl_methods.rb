@@ -80,6 +80,10 @@ module Kybus
       def redirect(*args)
         @bot.redirect(*args)
       end
+
+      def abort(msg = nil)
+        raise ::Kybus::Bot::Base::AbortError, msg
+      end
     end
   end
 end
