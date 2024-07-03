@@ -27,8 +27,8 @@ aws:
       region: eu-west-1
       test_connection:
         list: {}
-        put: ant_testing.txt
-        get: ant_testing.txt
+        put: kybus_testing.txt
+        get: kybus_testing.txt
   sqs:
     etl_pipeline:
       queue: kybus-etl_pipeline

@@ -15,7 +15,7 @@ module Kybus
 
           def apply_to(hook_provider, to)
             hook_provider.register_hook(@table, :create_table) do |t|
-              t.column("#{to}_id".to_sym, :int)
+              t.column(:"#{to}_id", :int)
             end
 
             hook_provider.register_hook(@table, :post_table) do |t|

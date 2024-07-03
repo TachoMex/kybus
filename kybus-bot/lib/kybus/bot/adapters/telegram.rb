@@ -64,11 +64,11 @@ module Kybus
                                          SerializedMessage.new(
                                            provider: 'telegram',
                                            channel_id: replied_message.dig('chat', 'id'),
-                                           message_id: replied_message.dig('message_id'),
+                                           message_id: replied_message['message_id'],
                                            user: replied_message.dig('from',
                                                                      'username') || replied_message.dig('from',
                                                                                                         'first_name'),
-                                           raw_message: replied_message.dig('text'),
+                                           raw_message: replied_message['text'],
                                            is_private?: replied_message.dig('chat', 'type') == 'private'
                                          ).serialize
                                        end

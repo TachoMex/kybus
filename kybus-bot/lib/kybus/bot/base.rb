@@ -67,7 +67,7 @@ module Kybus
         register_command('default') { nil }
         rescue_from(::Kybus::Bot::Base::AbortError) do
           msg = params[:_last_exception]&.message
-          send_message(msg) if msg && msg != "Kybus::Bot::Base::AbortError"
+          send_message(msg) if msg && msg != 'Kybus::Bot::Base::AbortError'
         end
       end
 

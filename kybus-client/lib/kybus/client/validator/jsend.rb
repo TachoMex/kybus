@@ -7,9 +7,9 @@ module Kybus
       class JSend
         include Kybus::Exceptions
         EXCEPTION_LIST = {
-          'fail' => AntFail,
-          'error' => AntError,
-          'fatal' => AntError
+          'fail' => KybusFail,
+          'error' => KybusError,
+          'fatal' => KybusError
         }.freeze
 
         def validate(response)
@@ -22,7 +22,7 @@ module Kybus
                                       response[:code],
                                       response[:data])
           else
-            raise(AntError, 'Unknown Error')
+            raise(KybusError, 'Unknown Error')
           end
         end
       end

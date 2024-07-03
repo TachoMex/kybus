@@ -19,15 +19,15 @@ class BasicRoutes < Grape::API
   end
 
   get :fail do
-    raise(Kybus::Exceptions::AntFail, 'Wrong Value')
+    raise(Kybus::Exceptions::KybusFail, 'Wrong Value')
   end
 
   get :error do
-    raise(Kybus::Exceptions::AntError, 'The system crashed')
+    raise(Kybus::Exceptions::KybusError, 'The system crashed')
   end
 
   get :success do
-    raise(Kybus::Exceptions::AntSuccess, 'U scare bro?')
+    raise(Kybus::Exceptions::KybusSuccess, 'U scare bro?')
   end
 
   get :slow do

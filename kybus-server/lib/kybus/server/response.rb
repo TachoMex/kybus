@@ -30,9 +30,9 @@ module Kybus
         end
 
         def configure_defaults!
-          recover_from!(Exceptions::AntSuccess, :success)
-          recover_from!(Exceptions::AntFail, :fail)
-          recover_from!(Exceptions::AntError, :error)
+          recover_from!(Exceptions::KybusSuccess, :success)
+          recover_from!(Exceptions::KybusFail, :fail)
+          recover_from!(Exceptions::KybusError, :error)
           register(:loggers, :cute_logger, Server::Logger.new)
           register(:formats, :jsend, Server::Format.new)
           log_mode(:cute_logger)
@@ -63,7 +63,7 @@ module Kybus
         resolver = :success
         Server::Response.logger.access(data)
         begin
-          raise(AntError, 'No implementation given') unless block_given?
+          raise(KybusError, 'No implementation given') unless block_given?
 
           data.result = yield
           # rubocop: disable Lint/RescueException

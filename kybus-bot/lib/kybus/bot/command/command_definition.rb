@@ -8,16 +8,16 @@ module Kybus
       end
 
       # Stores an operation definition
-      def register_command(name, params, &block)
-        @commands[name] = Command.new(name, params, &block)
+      def register_command(name, params, &)
+        @commands[name] = Command.new(name, params, &)
       end
 
       def registered_commands
         @commands.keys
       end
 
-      def each(&block)
-        @commands.each(&block)
+      def each(&)
+        @commands.each(&)
       end
 
       # Returns a command with the name

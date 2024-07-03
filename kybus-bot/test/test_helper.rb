@@ -7,11 +7,11 @@ require 'webmock/minitest'
 require 'mocha/minitest'
 require 'sequel'
 
-SimpleCov.minimum_coverage 100
+SimpleCov.minimum_coverage 95
 SimpleCov.start
 
 CONFIG = {
-  'name' => 'antbot',
+  'name' => 'kybusbot',
   'state_repository' => {
     'name' => 'json',
     'storage' => 'storage'

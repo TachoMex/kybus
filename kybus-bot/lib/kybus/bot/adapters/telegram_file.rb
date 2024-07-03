@@ -40,7 +40,7 @@ module Kybus
         end
 
         def original_name
-          meta.dig('result', 'file_name')
+          meta.file_path
         end
 
         def file_name
@@ -49,7 +49,7 @@ module Kybus
 
         def download
           token = cli.api.token
-          file_path = meta.dig('result', 'file_path')
+          file_path = meta.file_path
           path = "https://api.telegram.org/file/bot#{token}/#{file_path}"
           Faraday.get(path).body
         end

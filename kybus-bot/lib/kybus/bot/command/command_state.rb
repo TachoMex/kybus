@@ -70,7 +70,7 @@ module Kybus
 
       def save_file(identifier, file)
         files[identifier] = file
-        store_param("_#{@data[:requested_param]}_filename".to_sym, file.file_name)
+        store_param(:"_#{@data[:requested_param]}_filename", file.file_name)
       end
 
       def requested_param=(param)

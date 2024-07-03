@@ -35,7 +35,7 @@ module Kybus
         def exist?(id)
           # Not the better solution, but works for objects that don't contain
           # a unique id.
-          return if id.nil?
+          return false if id.nil?
 
           get(id)
         rescue ObjectNotFound

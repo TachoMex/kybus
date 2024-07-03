@@ -47,6 +47,8 @@ module Kybus
     # configurations.
     class SubInventory
       def initialize(configs, inventory)
+        raise 'Nil config' if configs.nil?
+
         defaults = configs['defaults']
         @parent = inventory
         @certificates = configs['certificates'].map do |cert|
@@ -64,7 +66,10 @@ module Kybus
       end
 
       def ca(name)
-        @certificates.find { |cert| cert.ca_name == name }
+        ca = @certificates.find { |cert| cert.ca_name == name }
+        raise "CA #{name} not found" if ca.nil?
+
+        ca
       end
     end
   end

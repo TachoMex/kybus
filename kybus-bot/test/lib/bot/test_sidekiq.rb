@@ -33,7 +33,7 @@ module Kybus
         DSLMethods.any_instance.expects(:send_message).with(kind_of(String))
         @bot.receives('/channel_id')
       end
-      
+
       def test_sidekiq_redirect_no_params
         @bot.register_command('/redirect') do
           redirect('/test')
@@ -42,7 +42,7 @@ module Kybus
         @bot.register_command('/test') do
           assert_command(:done)
         end
-        
+
         DSLMethods.any_instance.expects(:assert_command).with(:done)
         @bot.receives('/redirect')
       end

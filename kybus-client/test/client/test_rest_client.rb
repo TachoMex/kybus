@@ -50,27 +50,27 @@ module Kybus
           .to_return(body: body.to_json)
         ex = assert_raises(klass) { @client.send(verb, path) }
         assert_equal(ex.message, body[:message] || message)
-        assert_equal(ex.code, body[:code] || 'ServerError')
+        assert_equal(ex.code, body[:code] || 'KybusError')
       end
 
       def test_jsend_fail
         body = { status: 'fail', message: 'Requested user does not exist',
                  code: 'NotFound', data: { username: 'test' } }
-        jsend_test(body, :get, '/api/users/test', AntFail)
+        jsend_test(body, :get, '/api/users/test', KybusFail)
       end
 
       def test_jsend_error
         body = { status: 'error',
                  message: 'Can not create user',
                  code: 'Duplicated', data: {} }
-        jsend_test(body, :post, '/api/users/test', AntError)
+        jsend_test(body, :post, '/api/users/test', KybusError)
       end
 
       def test_jsend_unknown
         body = { status: 'crashed',
                  message: nil,
                  return_code: 400, data: {} }
-        jsend_test(body, :post, '/do_magic', AntError, 'Unknown Error')
+        jsend_test(body, :post, '/do_magic', KybusError, 'Unknown Error')
       end
 
       def test_no_validator

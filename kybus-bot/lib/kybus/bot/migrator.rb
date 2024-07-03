@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Kybus
   module Bot
     module Migrator
@@ -50,9 +51,9 @@ module Kybus
           )
 
           # Ensure the table is created
-          unless Dynamoid.adapter.list_tables.include?('bot_sessions')
-            repository.model_class.create_table(sync: true)
-          end
+          return if Dynamoid.adapter.list_tables.include?('bot_sessions')
+
+          repository.model_class.create_table(sync: true)
         end
       end
     end

@@ -15,7 +15,7 @@ module Kybus
     #                  The default is the exception class, so it won't change
     #                  almost never.
     # @param data.     Contains additional data to detail the error.
-    class AntBaseException < StandardError
+    class KybusBaseException < StandardError
       attr_reader :message, :code, :data
 
       def initialize(message, code, data)
@@ -41,20 +41,20 @@ module Kybus
 
     ##
     # Is used to express a success with the client's request.
-    class AntSuccess < AntBaseException
+    class KybusSuccess < KybusBaseException
       def initialize(message, code = nil, data = {})
         code ||= self.class.name.split('::').last
-        super(message, code, data)
+        super
       end
     end
 
     ##
     # Is used to express a problem with the client's request.
-    class AntFail < AntBaseException
+    class KybusFail < KybusBaseException
       def initialize(message, code = nil, data = {})
         code ||= self.class.name.split('::').last
-        code = 'BadRequest' if code == 'AntFail'
-        super(message, code, data)
+        code = 'BadRequest' if code == 'KybusFail'
+        super
       end
     end
 
@@ -62,11 +62,11 @@ module Kybus
     # Is used to express an error that was found during the execution of the
     # program but it also means that the invoked endpoint has not the power to
     # fix it, so it will only complain.
-    class AntError < AntBaseException
+    class KybusError < KybusBaseException
       def initialize(message, code = nil, data = {})
         code ||= self.class.name.split('::').last
-        code = 'ServerError' if code == 'AntError'
-        super(message, code, data)
+        code = 'ServerError' if code == 'kybusError'
+        super
       end
     end
   end

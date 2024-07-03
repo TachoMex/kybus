@@ -38,11 +38,20 @@ module Kybus
         cert.not_after = cert.not_before + (ONE_YEAR * @config['expiration'])
       end
 
+      def apply_placeholders(description)
+        if description.include?('$')
+          description.gsub('$email', "email:#{@config['email']}").gsub('$dns', "DNS:#{@config['dns']}")
+        else
+          description
+        end
+      end
+
       def configure_extensions!(cert, extension_factory)
         @config['extensions'].each do |name, details|
+          applied_description = apply_placeholders(details['details'])
           extension = extension_factory.create_extension(
             name,
-            details['details'],
+            applied_description,
             details['critical']
           )
           cert.add_extension(extension)

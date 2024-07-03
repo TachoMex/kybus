@@ -32,14 +32,14 @@ class TestClientWithServer
     assert(:status)
     %w[fail error fatal].each do |status|
       @client.get("/api/#{status}")
-    rescue Kybus::Exceptions::AntBaseException => _e
+    rescue Kybus::Exceptions::KybusBaseException => _e
       assert(status.to_sym)
     end
   end
 
   def test_basic_auth_empty_keys
     @client.get('/api/secret')
-  rescue Kybus::Exceptions::AntFail => _e
+  rescue Kybus::Exceptions::KybusFail => _e
     assert(:no_keys)
   end
 
@@ -47,7 +47,7 @@ class TestClientWithServer
     conf = CONFS.merge(basic_auth: { user: 'test', password: 'no_secret' })
     client = Kybus::Client::RESTClient.new(conf)
     client.get('/api/secret')
-  rescue Kybus::Exceptions::AntFail => _e
+  rescue Kybus::Exceptions::KybusFail => _e
     assert(:auth_failed)
   end
 

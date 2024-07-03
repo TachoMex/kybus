@@ -41,9 +41,9 @@ module Kybus
       # :nocov: #
       def self.configure_grape_exceptions(base)
         base.rescue_from(Grape::Exceptions::Base) do |ex|
-          ant_ex = Kybus::Exceptions::AntFail.new(ex.message)
+          kybus_ex = Kybus::Exceptions::KybusFail.new(ex.message)
           response = Kybus::Server::GrapeDecorator
-                     .handler.call(env, :fail, ant_ex)
+                     .handler.call(env, :fail, kybus_ex)
           error!(response, 400)
         end
       end

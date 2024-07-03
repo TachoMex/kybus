@@ -23,7 +23,7 @@ require_relative 'routes/user'
 class DevelopmentAPI < Grape::API
   include Kybus::Server::GrapeDecorator
 
-  version('v1', using: :header, vendor: :ant_server)
+  version('v1', using: :header, vendor: :kybus_server)
   prefix(:api)
   format(:json)
 

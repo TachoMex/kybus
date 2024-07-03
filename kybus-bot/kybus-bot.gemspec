@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'kybus-bot'
   spec.version       = Kybus::Bot::VERSION
   spec.authors       = ['Gilberto Vargas']
-  spec.email         = ['tachoguitar@gmail.com']
+  spec.email         = ['tachomexgems@gmail.com']
 
   spec.summary       = 'Provides a framework for building bots with ruby'
   spec.description   = 'Provides a framework for building bots with ruby'

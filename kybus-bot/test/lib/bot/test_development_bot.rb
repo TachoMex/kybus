@@ -8,9 +8,9 @@ module Kybus
       include Kybus::Bot::Adapter
 
       def setup
-        path = 'storage/antbot/debug_message__a.json'
+        path = 'storage/kybusbot/debug_message__a.json'
         File.delete(path) if File.file?(path)
-        path = 'storage/antbot/debug_message__b.json'
+        path = 'storage/kybusbot/debug_message__b.json'
         File.delete(path) if File.file?(path)
         conf = CONFIG.dup
         @bot = Kybus::Bot::Base.new(conf)

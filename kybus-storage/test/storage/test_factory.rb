@@ -12,7 +12,7 @@ class TestFactory < Minitest::Test
   # Models a single tuple as a key => value object.
   class Tuple < Kybus::Storage::Datasource::Model
     def run_validations!
-      raise(Kybus::Exceptions::AntFail, 'nil value') unless data[:value]
+      raise(Kybus::Exceptions::KybusFail, 'nil value') unless data[:value]
     end
   end
 

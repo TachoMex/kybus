@@ -125,7 +125,7 @@ module Kybus
       # This adapter is intended to be used on unit tests and development.
       class Debug
         # Exception for stoping the loop of messages
-        class NoMoreMessageException < Kybus::Exceptions::AntError
+        class NoMoreMessageException < Kybus::Exceptions::KybusError
           def initialize
             super('There are no messages left')
           end
@@ -209,7 +209,7 @@ module Kybus
 
         # changes echo config
         def echo=(toogle)
-          @channels.each { |_, channel| channel.echo = toogle }
+          @channels.each_value { |channel| channel.echo = toogle }
         end
       end
 

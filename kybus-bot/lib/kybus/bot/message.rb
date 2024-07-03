@@ -16,7 +16,7 @@ module Kybus
       end
 
       def command
-        raw_message&.split(' ')&.first
+        raw_message&.split&.first
       end
 
       def serialize

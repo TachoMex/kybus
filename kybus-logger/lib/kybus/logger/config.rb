@@ -44,15 +44,15 @@ module Kybus
       def logger
         @logger ||= begin
           log_output = resource('file')
-          if log_output == $stdout
-            logger = ::Logger.new(log_output)
-          else
-            logger = ::Logger.new(
-              log_output,
-              resource('rotate_days'),
-              resource('rotate_size')
-            )
-          end
+          logger = if log_output == $stdout
+                     ::Logger.new(log_output)
+                   else
+                     ::Logger.new(
+                       log_output,
+                       resource('rotate_days'),
+                       resource('rotate_size')
+                     )
+                   end
           $stdout.sync = true if @original_config['stdout']
           logger.sev_threshold = SEVERITIES[resource('severity')]
           logger.datetime_format = resource('date_format')

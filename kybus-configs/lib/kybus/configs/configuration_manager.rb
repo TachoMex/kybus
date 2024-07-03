@@ -48,7 +48,7 @@ module Kybus
       def load_configs!
         load_configs
         validator = ConfigurationValidator.new(@configs, default_placeholder)
-        return self if accept_default_keys || validator.validate!
+        self if accept_default_keys || validator.validate!
       end
 
       # Use this when you require the application to do not start when something
@@ -77,7 +77,9 @@ module Kybus
         if auto_configs['pretty_load']
           configs.pretty_load_configs!
         else
+          # :nocov:
           configs.load_configs!
+          # :nocov:
         end
         configs
       end

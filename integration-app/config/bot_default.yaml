@@ -1,6 +1,6 @@
 bot:
-  name: antbot
-  state_repository: sqlite://storage/antbot.db
+  name: kybusbot
+  state_repository: sqlite://storage/kybusbot.db
   pool_size: 1
   provider:
     name: debug

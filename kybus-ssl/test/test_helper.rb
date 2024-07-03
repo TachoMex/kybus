@@ -105,18 +105,23 @@ CONFIGS = {
           'extendedKeyUsage' => {
             'details' => 'TLS Web Client Authentication, E-mail Protection',
             'critical' => false
+          },
+          'subjectAltName' => {
+            'details' => '$email',
+            'critical' => false
           }
+
         }
       },
       'certificates' => [
         {
           'name' => 'Tacho',
-          'email' => 'tachoguitar@gmail.com',
+          'email' => 'mail@mail.com',
           'serial' => 4
         },
         {
           'name' => 'Tacho Banned',
-          'email' => 'tachoguitar@gmail.com',
+          'email' => 'mail@mail.com',
           'serial' => 5,
           'revoked' => true
         }
@@ -145,17 +150,23 @@ CONFIGS = {
           'authorityKeyIdentifier' => {
             'details' => 'keyid, issuer:always',
             'critical' => false
+          },
+          'subjectAltName' => {
+            'details' => '$dns',
+            'critical' => false
           }
         }
       },
       'certificates' => [
         {
           'name' => 'development.kybus-server.io',
+          'dns' => 'development.kybus-server.io',
           'ip' => '127.0.0.1',
           'serial' => 6
         },
         {
           'name' => '*.kybus-server.io',
+          'dns' => '*.kybus-server.io',
           'serial' => 7
         }
       ]

@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'kybus-cli'
   spec.version       = '0.1.1'
   spec.authors       = ['Gilberto Vargas']
-  spec.email         = ['tachoguitar@gmail.com']
+  spec.email         = ['tachomexgems@gmail.com']
 
   spec.summary       = 'CLI for managing Kybus projects'
   spec.description   = 'A CLI tool to help initialize and manage Kybus projects, supporting various database adapters and configurations.'

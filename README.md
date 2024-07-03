@@ -1,4 +1,4 @@
-# Ruby Ants Framework [![Build Status](https://travis-ci.com/TachoMex/kybus.svg?token=mByHJndryoQGoBVujqw2&branch=develop)](https://travis-ci.com/TachoMex/kybus)
+# Ruby Kybus Framework [![Build Status](https://travis-ci.com/TachoMex/kybus.svg?token=mByHJndryoQGoBVujqw2&branch=develop)](https://travis-ci.com/TachoMex/kybus)
 
 Kybus provides a series of little gems that will help you to solve small problems.
 This gem was inspired by boiler plate code that I was failing on repeating each

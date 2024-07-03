@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'kybus-logger'
   spec.version       = Kybus::Logger::VERSION
   spec.authors       = ['Gilberto Vargas']
-  spec.email         = ['tachoguitar@gmail.com']
+  spec.email         = ['tachomexgems@gmail.com']
 
   spec.summary       = 'Implements a kybus-logger with a format based on ' \
                        'cute_logger'

@@ -8,7 +8,8 @@ module Kybus
 
       def initialize(data)
         data = data.to_h if data.is_a?(SerializedMessage)
-        raise "BadSerializedMessage: nil message" if data.nil?
+        raise 'BadSerializedMessage: nil message' if data.nil?
+
         data = data[:data] if data.is_a?(Hash) && data.key?(:data)
 
         missing_keys = MANDATORY_FIELDS.reject { |k| data.keys.include?(k) }

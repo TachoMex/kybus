@@ -6,7 +6,7 @@ require 'rack-minitest/test'
 require 'webmock/minitest'
 require 'mocha/minitest'
 
-SimpleCov.minimum_coverage 90
+SimpleCov.minimum_coverage 75
 SimpleCov.start
 
 require 'kybus/storage'

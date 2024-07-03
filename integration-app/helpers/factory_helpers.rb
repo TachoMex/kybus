@@ -13,7 +13,7 @@ class DevelopmentAPI < Grape::API
     # Models a single tuple as a key => value object.
     class Tuple < Model
       def run_validations!
-        raise(Kybus::Exceptions::AntFail, 'nil value') unless data[:value]
+        raise(Kybus::Exceptions::KybusFail, 'nil value') unless data[:value]
       end
     end
 

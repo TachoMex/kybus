@@ -91,8 +91,8 @@ module Kybus
         end
       end
 
-      def precommand_hook(&block)
-        @precommand_hook = proc(&block)
+      def precommand_hook(&)
+        @precommand_hook = proc(&)
       end
 
       def fallback(error)

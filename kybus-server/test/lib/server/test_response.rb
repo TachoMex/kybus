@@ -20,7 +20,7 @@ module Kybus
       end
 
       get :fail do
-        process_request { raise(Kybus::Exceptions::AntFail, 'Wrong Value') }
+        process_request { raise(Kybus::Exceptions::KybusFail, 'Wrong Value') }
       end
 
       get :badapp do
@@ -29,7 +29,7 @@ module Kybus
 
       get :error do
         process_request do
-          raise(Kybus::Exceptions::AntError, 'The system crashed')
+          raise(Kybus::Exceptions::KybusError, 'The system crashed')
         end
       end
     end

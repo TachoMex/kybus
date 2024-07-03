@@ -28,11 +28,9 @@ module Kybus
           !!attachment
         end
 
-
         def attachment
           @message.file
         end
-
 
         # Returns the message contents
         def raw_message
@@ -108,21 +106,21 @@ module Kybus
           DiscordMessage.new(raw_message)
         end
 
-        def send_file(channel_name, file, caption = nil)
+        def send_file(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
         end
-        
-        def send_video(channel_name, file, caption = nil)
+
+        def send_video(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
         end
-        
+
         # interface for sending uadio
-        def send_audio(channel_name, file, caption = nil)
+        def send_audio(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
         end
-        
+
         # interface for sending image
-        def send_image(channel_name, file, caption = nil)
+        def send_image(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
         end
       end

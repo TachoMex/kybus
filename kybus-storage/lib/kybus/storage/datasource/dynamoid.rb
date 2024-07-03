@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   module Storage
     module Datasource
@@ -25,7 +27,8 @@ module Kybus
           Class.new do
             include Dynamoid::Document
 
-            table name: conf['table'], key: conf['primary_key'].to_sym, read_capacity: conf['read_capacity'], write_capacity: conf['write_capacity']
+            table name: conf['table'], key: conf['primary_key'].to_sym, read_capacity: conf['read_capacity'],
+                  write_capacity: conf['write_capacity']
 
             # Dynamically add fields based on configuration
             conf['fields'].each do |field, type|
@@ -33,7 +36,7 @@ module Kybus
             end
 
             # Set a constant name for the dynamic class
-            self.class_eval { const_set("DynamicModel#{conf['table'].upcase}", self) }
+            class_eval { const_set("DynamicModel#{conf['table'].upcase}", self) }
           end
         end
 

@@ -140,12 +140,12 @@ module Kybus
       def test_check_metadata_storage
         token = (1..100).to_a.sample
         @bot.register_command('/set_metadata') do
-          metadata[:info] = { token: token, hello: 'world' }
+          metadata[:info] = { token:, hello: 'world' }
         end
 
         @bot.register_command('/validate') do
-          fail 'Invalid Token' if metadata[:info][:token] != token 
-          fail 'Invalid metadatada' if metadata[:info][:hello] != 'world' 
+          raise 'Invalid Token' if metadata[:info][:token] != token
+          raise 'Invalid metadatada' if metadata[:info][:hello] != 'world'
         end
 
         @bot.receives('/set_metadata')

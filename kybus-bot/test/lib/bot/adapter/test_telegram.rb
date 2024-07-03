@@ -67,7 +67,7 @@ module Kybus
                   send_document: 'sendDocument' }
       methods.each do |method, path|
         stub_request(:post, "https://api.telegram.org/bottelegram_token/#{path}")
-          .to_return(status: 200, body: {}.to_json)
+          .to_return(status: 200, body: { ok: true, result: { message_id: 123, date: 123123, chat: { id: 123, type: 'group' }}}.to_json)
 
         adapter.send(method,
                      'debug_message__a',
@@ -76,7 +76,13 @@ module Kybus
     end
 
     def test_send_message
-      stub_api_query(path: 'sendMessage', response: { chat_id: 'user', text: 'Testing' })
+      stub_api_query(path: 'sendMessage', response: { 'ok' => true, 'chat_id' => 'user', 'text' => 'Testing', 'result' => { 'message_id' => 1,
+                                                                                                                            'date' => 1_586_922_532,
+                                                                                                                            'text' => 'hi',
+                                                                                                                            'chat' => {
+                                                                                                                              id: 123,
+                                                                                                                              type: 'group'
+                                                                                                                            } } })
       adapter.send_message('user', 'Testing')
     end
 
@@ -90,7 +96,7 @@ module Kybus
       file = TelegramFile.new(msg.attachment)
       assert(msg.replied_message)
       stub_api_request(:post, 'getFile', body: { 'file_id' => 'abcd123' },
-                                         response: { result: { file_path: 'hello.txt' } })
+                                         response: { result: { file_path: 'hello.txt', file_id: 'abasde', file_unique_id: '123123' } })
       stub_api_request(:get, 'hello.txt', response: 'hello-world', prefix: 'file/')
       assert_equal(file.download, 'hello-world')
     end
@@ -112,7 +118,7 @@ module Kybus
       stub_api_request(:post, 'getUpdates', response:)
       msg = adapter.read_message
       stub_api_request(:post, 'getFile', body: { 'file_id' => 'abcd123' },
-                                         response: { result: { file_name: 'hello.txt' } })
+                                         response: { result: { file_path: 'hello.txt', file_id: 'abcd123', file_unique_id: '12312' } })
 
       file = TelegramFile.new(msg.attachment)
       assert(file.original_name)

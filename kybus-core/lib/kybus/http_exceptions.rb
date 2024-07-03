@@ -8,9 +8,9 @@ module Kybus
     module HTTP
       class << self
         EXCEPTION_TYPES = {
-          success: Kybus::Exceptions::AntSuccess,
-          fail: Kybus::Exceptions::AntFail,
-          error: Kybus::Exceptions::AntError
+          success: Kybus::Exceptions::KybusSuccess,
+          fail: Kybus::Exceptions::KybusFail,
+          error: Kybus::Exceptions::KybusError
         }.freeze
 
         def new_http_exception(class_name, http_code, type)

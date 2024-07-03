@@ -18,8 +18,8 @@ module Kybus
         @hooks[name]
       end
 
-      def register_hook(table, type, &block)
-        for_table(table).register_hook(type, &block)
+      def register_hook(table, type, &)
+        for_table(table).register_hook(type, &)
       end
     end
   end

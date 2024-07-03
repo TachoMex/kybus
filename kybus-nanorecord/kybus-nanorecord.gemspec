@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'kybus-nanorecord'
   spec.version       = Kybus::Nanorecord::VERSION
   spec.authors       = ['Gilberto Vargas']
-  spec.email         = ['tachoguitar@gmail.com']
+  spec.email         = ['tachomexgems@gmail.com']
 
   spec.summary       = 'Implements CRUD from yaml file using active record'
   spec.description   = 'Helps to create CRUD objects from a config'
@@ -20,22 +20,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'activerecord'
   spec.add_runtime_dependency 'kybus-core'
 
-  spec.add_development_dependency 'amazing_print'
-  spec.add_development_dependency 'bcrypt'
-  spec.add_development_dependency 'minitest', '~> 5.11'
-  spec.add_development_dependency 'mocha', '~> 1.8'
-  spec.add_development_dependency 'pry', '~> 0.12'
-  spec.add_development_dependency 'rack-minitest', '~> 0.0'
-  spec.add_development_dependency 'rake', '~> 12.3'
-  spec.add_development_dependency 'rdoc', '~> 6.1'
-  spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'rubocop-minitest'
-  spec.add_development_dependency 'rubocop-performance'
-  spec.add_development_dependency 'rubocop-rake'
-  spec.add_development_dependency 'rubycritic'
-  spec.add_development_dependency 'simplecov', '~> 0.16'
-  spec.add_development_dependency 'sqlite3'
-  spec.add_development_dependency 'webmock', '~> 3.5'
   spec.metadata['rubygems_mfa_required'] = 'true'
   spec.required_ruby_version = '~> 3.1'
 end

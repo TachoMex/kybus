@@ -7,16 +7,19 @@ Gem::Specification.new do |spec|
   spec.name          = 'kybus-ssl'
   spec.version       = Kybus::SSL::VERSION
   spec.authors       = ['Gilberto Vargas']
-  spec.email         = ['tachoguitar@gmail.com']
+  spec.email         = ['tachomexgems@gmail.com']
 
   spec.summary       = 'Kybus SSL tools'
   spec.description   = 'Package for creating self signed certificates for ' \
                        'development purpose'
-  spec.homepage      = 'https://github.com/KueskiEngineering/ruby-kybus-server'
+  spec.homepage      = 'https://github.com/tachomex/kybus'
   spec.license       = 'MIT'
 
   spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
+  spec.executables   = ['kybssl']
+
+  spec.add_runtime_dependency 'optimist', '~> 3.0'
 
   spec.add_development_dependency 'minitest', '~> 5.11'
   spec.add_development_dependency 'pry', '~> 0.12'

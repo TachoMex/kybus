@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 module Kybus
   module Bot
@@ -9,9 +10,7 @@ module Kybus
 
       def redirect(command_name, args = {})
         command = @factory.command(command_name)
-        if command.nil? || command.params_size != args.size
-          raise "Wrong redirect #{command_name}"
-        end
+        raise "Wrong redirect #{command_name}" if command.nil? || command.params_size != args.size
 
         state.command = command
         command.params.zip(args).each do |param, value|
