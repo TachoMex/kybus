@@ -20,7 +20,7 @@ module Kybus
               Rake::TestTask.new do |t|
                 t.libs << 'test'
                 t.warning = false
-                t.pattern = 'test/**/test_*\.rb'
+                t.pattern = 'test/**/test_*.rb'
                 t.warning = false
               end
 

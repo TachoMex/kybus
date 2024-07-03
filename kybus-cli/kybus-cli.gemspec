@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'kybus-cli'
-  spec.version       = '0.1.0'
+  spec.version       = '0.1.1'
   spec.authors       = ['Gilberto Vargas']
   spec.email         = ['tachoguitar@gmail.com']
 
@@ -28,4 +28,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'rake', '~> 13.0'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

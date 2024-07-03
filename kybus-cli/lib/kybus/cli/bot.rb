@@ -48,12 +48,12 @@ module Kybus
 
       desc 'deploy', 'Deploy the bot to AWS'
       def deploy
-        Deployer.new(options).run
+        ::Kybus::CLI::Deployer.new(options).run
       end
 
       desc 'destroy', 'Destroys the provisiones infrastructure in AWS'
       def destroy
-        Deployer.new(options).destroy
+        ::Kybus::CLI::Deployer.new(options).destroy
       end
     end
   end

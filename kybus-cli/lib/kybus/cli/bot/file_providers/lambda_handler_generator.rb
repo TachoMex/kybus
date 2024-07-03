@@ -14,9 +14,6 @@ module Kybus
 
           def make_contents
             <<~AWSLAMBDA
-              load_paths = Dir['./vendor/bundle/ruby/3.3.0/bundler/gems/**/lib']
-              $LOAD_PATH.unshift(*load_paths)
-
               require './main'
 
               def lambda_handler(event:, context:)

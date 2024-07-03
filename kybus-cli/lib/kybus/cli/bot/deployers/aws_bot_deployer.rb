@@ -60,7 +60,8 @@ module Kybus
 
       def initialize(configs)
         configs['account_id'] = account_id
-        super(configs)
+        super
+        @region = @config['region'] || 'us-east-1'
         @role = ::Kybus::AWS::Role.new(configs, function_name, :lambda)
         @dynamo_policy = ::Kybus::AWS::Policy.new(configs, "#{function_name}-dynamo", make_dynamo_policy_document)
         @cloudwatch_policy = ::Kybus::AWS::Policy.new(configs, "#{function_name}-cloudwatch",

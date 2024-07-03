@@ -17,7 +17,7 @@ module Kybus
         end
 
         def initialize(name, configs)
-          @name = name.gsub(/::/, '/')
+          @name = name.gsub('::', '/')
                       .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
                       .gsub(/([a-z\d])([A-Z])/, '\1_\2')
                       .tr('-', '_')
@@ -34,7 +34,7 @@ module Kybus
 
           create_directories
           write_files
-          puts `cd #{@name} && git init . && bundle install && git add . && git commit -m "Initial Commit"`
+          puts `cd #{@name} && git init . && bundle install --path vendor/bundle && git add . && git commit -m "Initial Commit"`
           puts "Project #{@name} initialized with #{@configs[:db_adapter]} adapter."
         end
 

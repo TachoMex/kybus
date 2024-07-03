@@ -5,6 +5,8 @@ require_relative 'deployer_base'
 module Kybus
   class CLI < Thor
     class BotDeployerTelegramConfigurator < BotDeployerBase
+      attr_accessor :url
+
       def initialize(url, config)
         @url = url
         super(config)
