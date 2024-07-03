@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -14,15 +16,15 @@ module Kybus
         private
 
         def dockerfile_content
-          <<-DOCKERFILE
-FROM ruby:3.2.1
+          <<~DOCKERFILE
+            FROM ruby:#{RUBY_VERSION}
 
-WORKDIR /app
-COPY . /app
+            WORKDIR /app
+            COPY . /app
 
-RUN bundle install
+            RUN bundle install
 
-CMD ["ruby", "main.rb"]
+            CMD ["ruby", "main.rb"]
           DOCKERFILE
         end
       end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -8,17 +10,17 @@ module Kybus
         end
 
         def make_contents
-          <<-RUBY
-# frozen_string_literal: true
+          <<~RUBY
+            # frozen_string_literal: true
 
-class #{bot_name_class} < Kybus::Bot::Base
-  def initialize(configs)
-    super(configs)
-    register_command('/hello') do
-      send_message('Hi human')
-    end
-  end
-end
+            class #{bot_name_class} < Kybus::Bot::Base
+              def initialize(configs)
+                super(configs)
+                register_command('/hello') do
+                  send_message('Hi human')
+                end
+              end
+            end
           RUBY
         end
       end

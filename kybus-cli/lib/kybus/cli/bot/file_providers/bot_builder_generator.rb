@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -10,10 +12,10 @@ module Kybus
           end
 
           def make_contents
-            <<-RUBY
-# frozen_string_literal: true
+            <<~RUBY
+              # frozen_string_literal: true
 
-BOT = #{bot_name_class}.new(APP_CONF['bots']['main'])
+              BOT = #{bot_name_class}.new(APP_CONF['bots']['main'])
             RUBY
           end
         end

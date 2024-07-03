@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
       module Config
         class AutoconfigGenerator < FileProvider
-
           autoregister!
 
           def saving_path

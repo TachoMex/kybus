@@ -19,12 +19,12 @@ Gem::Specification.new do |spec|
   spec.executables   = ['kybus']
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'thor', '~> 1.0'
-  spec.add_dependency 'kybus-core'
-  spec.add_dependency 'aws-sdk-lambda'
-  spec.add_dependency 'aws-sdk-iam'
   spec.add_dependency 'aws-sdk-cloudwatchlogs'
+  spec.add_dependency 'aws-sdk-iam'
+  spec.add_dependency 'aws-sdk-lambda'
+  spec.add_dependency 'kybus-core'
   spec.add_dependency 'rubyzip'
+  spec.add_dependency 'thor', '~> 1.0'
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'rake', '~> 13.0'

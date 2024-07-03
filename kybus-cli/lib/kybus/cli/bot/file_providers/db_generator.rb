@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -12,35 +14,35 @@ module Kybus
           def make_contents
             case @config[:db_adapter]
             when 'sequel'
-              <<-RUBY
-# frozen_string_literal: true
+              <<~RUBY
+                # frozen_string_literal: true
 
-require 'sequel'
+                require 'sequel'
 
-DB = Sequel.connect(APP_CONF['database'])
+                DB = Sequel.connect(APP_CONF['database'])
 
-def run_migrations!
-  require 'kybus/bot/migrator'
-  require 'sequel/core'
-  Kybus::Bot::Migrator.run_migrations!(APP_CONF['bots']['main']['state_repository'])
-  Sequel.extension :migration
-  Sequel::Migrator.run(DB, 'models/migrations')
-end
+                def run_migrations!
+                  require 'kybus/bot/migrator'
+                  require 'sequel/core'
+                  Kybus::Bot::Migrator.run_migrations!(APP_CONF['bots']['main']['state_repository'])
+                  Sequel.extension :migration
+                  Sequel::Migrator.run(DB, 'models/migrations')
+                end
               RUBY
             when 'activerecord'
-              <<-RUBY
-# frozen_string_literal: true
+              <<~RUBY
+                # frozen_string_literal: true
 
-require 'active_record'
+                require 'active_record'
 
-ActiveRecord::Base.establish_connection(APP_CONF['database'])
+                ActiveRecord::Base.establish_connection(APP_CONF['database'])
               RUBY
             when 'dynamoid'
-              <<-RUBY
-def run_migrations!
-  require 'kybus/bot/migrator'
-  Kybus::Bot::Migrator.run_migrations!(APP_CONF['bots']['main']['state_repository'])
-end
+              <<~RUBY
+                def run_migrations!
+                  require 'kybus/bot/migrator'
+                  Kybus::Bot::Migrator.run_migrations!(APP_CONF['bots']['main']['state_repository'])
+                end
               RUBY
             end
           end

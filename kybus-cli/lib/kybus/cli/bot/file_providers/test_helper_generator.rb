@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -15,10 +17,10 @@ module Kybus
           private
 
           def test_helper_rb_content
-            content = <<-RUBY
-# frozen_string_literal: true
+            content = <<~RUBY
+              # frozen_string_literal: true
 
-require 'minitest/autorun'
+              require 'minitest/autorun'
             RUBY
             content << "\nrequire 'simplecov'\nSimpleCov.start" if @with_simplecov
             content

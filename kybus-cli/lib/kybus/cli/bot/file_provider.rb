@@ -1,5 +1,6 @@
-module Kybus
+# frozen_string_literal: true
 
+module Kybus
   class CLI < Thor
     class Bot < Thor
       class FileProvider

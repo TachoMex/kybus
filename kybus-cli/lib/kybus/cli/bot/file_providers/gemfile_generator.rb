@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -24,10 +26,10 @@ module Kybus
               group :telegram do
                 gem 'telegram-bot-ruby'
               end
-              group :discord do 
+              group :discord do
                 gem 'discordrb'
               end
-              group :development do 
+              group :development do
                 gem 'sqlite3'
               end
             GEMFILE

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'thor'
 require_relative 'bot/project_generator'
 require_relative 'bot/controller_generator'
@@ -47,6 +49,11 @@ module Kybus
       desc 'deploy', 'Deploy the bot to AWS'
       def deploy
         Deployer.new(options).run
+      end
+
+      desc 'destroy', 'Destroys the provisiones infrastructure in AWS'
+      def destroy
+        Deployer.new(options).destroy
       end
     end
   end

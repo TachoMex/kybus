@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -12,20 +14,20 @@ module Kybus
           private
 
           def make_contents
-            <<-RUBY
-require 'kybus/bot'
-require 'kybus/configs'
+            <<~RUBY
+              require 'kybus/bot'
+              require 'kybus/configs'
 
 
-Dir[File.join(__dir__, './models', '*.rb')].each { |file| require file }
+              Dir[File.join(__dir__, './models', '*.rb')].each { |file| require file }
 
-require_relative '../bot'
+              require_relative '../bot'
 
-CONF_MANAGER = Kybus::Configuration.auto_load!
-APP_CONF = CONF_MANAGER.configs
-require_relative 'db'
+              CONF_MANAGER = Kybus::Configuration.auto_load!
+              APP_CONF = CONF_MANAGER.configs
+              require_relative 'db'
 
-require_relative "bot_builder"
+              require_relative "bot_builder"
             RUBY
           end
         end

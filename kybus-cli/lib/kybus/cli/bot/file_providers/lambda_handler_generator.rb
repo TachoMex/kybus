@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -11,22 +13,25 @@ module Kybus
           private
 
           def make_contents
-            <<-AWSLAMBDA
-require './main'
+            <<~AWSLAMBDA
+              load_paths = Dir['./vendor/bundle/ruby/3.3.0/bundler/gems/**/lib']
+              $LOAD_PATH.unshift(*load_paths)
 
-def lambda_handler(event:, context:)
-  secret_token = ENV['SECRET_TOKEN']
-  header_token = event.dig('headers', 'X-Telegram-Bot-Api-Secret-Token')
+              require './main'
 
-  unless header_token == secret_token
-    return { statusCode: 403, body: JSON.generate('Forbidden') }
-  end
+              def lambda_handler(event:, context:)
+                secret_token = ENV['SECRET_TOKEN']
+                header_token = event.dig('headers', 'x-telegram-bot-api-secret-token')
 
-  body = JSON.parse(event['body'])
+                unless header_token == secret_token
+                  return { statusCode: 403, body: JSON.generate('Forbidden') }
+                end
 
-  BOT.handle_message(body)
-  { statusCode: 200, body: '' }
-end
+                body = JSON.parse(event['body'])
+
+                BOT.handle_message(body)
+                { statusCode: 200, body: '' }
+              end
             AWSLAMBDA
           end
         end

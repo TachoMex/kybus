@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -12,7 +14,7 @@ module Kybus
             content = <<~YAML
               bots:
                 main:
-                  provider: 
+                  provider:
                     name: #{@config[:bot_provider]}
                     token: #{@config[:bot_token]}
                     mode: #{@config[:with_deployment_file] && @config[:cloud_provider] == 'aws' ? 'webhook_lambda' : 'polling'}

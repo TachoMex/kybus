@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kybus
   class CLI < Thor
     class Bot < Thor
@@ -21,7 +23,7 @@ module Kybus
                 main:
                   pool_size: 1
                   inline_args: true
-                  provider: 
+                  provider:#{' '}
                     name: REPLACE_ME
                     token: REPLACE_ME
                     debug: true
@@ -29,10 +31,10 @@ module Kybus
             YAML
 
             if @config[:db_adapter] == 'sequel'
-              content << <<-SEQUEL
-        name: sequel
-        endpoint: 'sqlite://#{bot_name_snake_case}_botmeta.db'
-database: 'sqlite://#{bot_name_snake_case}.db'
+              content << <<~SEQUEL
+                        name: sequel
+                        endpoint: 'sqlite://#{bot_name_snake_case}_botmeta.db'
+                database: 'sqlite://#{bot_name_snake_case}.db'
               SEQUEL
             elsif @config[:db_adapter] == 'dynamoid'
               content << <<-DYNAMOID

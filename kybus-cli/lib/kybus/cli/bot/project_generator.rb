@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../file_writer'
 require_relative 'file_provider'
 require 'kybus/dry/resource_injector'
