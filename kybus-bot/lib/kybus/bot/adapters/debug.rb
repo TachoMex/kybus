@@ -35,14 +35,17 @@ module Kybus
           end
         end
 
+        def self.make_message_id
+          @message_id ||= 0
+          @message_id += 1
+        end
+
         def initialize(text, channel, attachment = nil)
           super()
           @text = text
           @channel = channel
           @attachment = attachment
-          @@message_id ||= 0
-          @@message_id += 1
-          @message_id = @@message_id + 1
+          @message_id = DebugMessage.make_message_id
         end
 
         # Returns the channel id

@@ -18,12 +18,5 @@ Gem::Specification.new do |spec|
   spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'kybus-core', '~> 0.1'
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'mocha'
-  spec.add_development_dependency 'pry', '~> 0.10'
-  spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rdoc'
-  spec.add_development_dependency 'simplecov'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

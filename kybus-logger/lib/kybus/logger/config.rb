@@ -41,17 +41,26 @@ module Kybus
         register('logger', logger)
       end
 
+      def make_stdout_logger
+        ::Logger.new($stdout)
+      end
+
+      def make_file_logger
+        log_output = resource('file')
+        ::Logger.new(
+          log_output,
+          resource('rotate_days'),
+          resource('rotate_size')
+        )
+      end
+
       def logger
         @logger ||= begin
           log_output = resource('file')
           logger = if log_output == $stdout
-                     ::Logger.new(log_output)
+                     make_stdout_logger
                    else
-                     ::Logger.new(
-                       log_output,
-                       resource('rotate_days'),
-                       resource('rotate_size')
-                     )
+                     make_file_logger
                    end
           $stdout.sync = true if @original_config['stdout']
           logger.sev_threshold = SEVERITIES[resource('severity')]

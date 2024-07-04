@@ -12,7 +12,7 @@ class TestLogger < Minitest::Test
   end
 
   def build_logger(conf = {})
-    default_conf = {'stdout' => false, 'file' => 'application.log' }
+    default_conf = { 'stdout' => false, 'file' => 'application.log' }
     LogMethods.global_config = Config.new(default_conf.merge(conf))
   end
 

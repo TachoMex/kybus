@@ -26,6 +26,16 @@ module Kybus
           @file_writer = FileWriter.new(@name)
         end
 
+        def run_commands
+          commands = "cd #{@name} && " \
+                     'git init . && ' \
+                     'bundle install --path vendor/bundle && ' \
+                     'git add . && ' \
+                     'git commit -m "Initial Commit"'
+
+          puts `#{commands}`
+        end
+
         def generate
           if File.directory?(@name)
             puts "Directory exists #{@name}"
@@ -34,7 +44,7 @@ module Kybus
 
           create_directories
           write_files
-          puts `cd #{@name} && git init . && bundle install --path vendor/bundle && git add . && git commit -m "Initial Commit"`
+          run_commands
           puts "Project #{@name} initialized with #{@configs[:db_adapter]} adapter."
         end
 

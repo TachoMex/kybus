@@ -40,14 +40,12 @@ class TestSSLCertificates < Minitest::Test
     Kybus::SSL::Inventory.new(defaults, authorities, clients, servers)
   end
 
-  # rubocop: disable Naming/MethodParameterName
   def assert_parents(ca, cert)
     ca_path = "#{PATH}/#{ca}.crt.pem"
     cert_path = "#{PATH}/#{cert}.crt.pem"
     string = `openssl verify -verbose -CAfile #{ca_path}  #{cert_path}`
     assert_equal(string, "#{cert_path}: OK\n")
   end
-  # rubocop: enable Naming/MethodParameterName
 
   def assert_certificate_parents
     `cd storage/test_pki; cat 1.crt.pem 2.crt.pem > 2_chain.crt.pem`

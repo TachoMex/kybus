@@ -7,7 +7,8 @@ Gem::Specification.new do |spec|
   spec.email         = ['tachomexgems@gmail.com']
 
   spec.summary       = 'CLI for managing Kybus projects'
-  spec.description   = 'A CLI tool to help initialize and manage Kybus projects, supporting various database adapters and configurations.'
+  spec.description   = 'A CLI tool to help initialize and manage Kybus projects, ' \
+                       'supporting various database adapters and configurations.'
   spec.homepage      = 'https://github.com/tachomex/kybus'
   spec.license       = 'MIT'
 
@@ -25,8 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'kybus-core'
   spec.add_dependency 'rubyzip'
   spec.add_dependency 'thor', '~> 1.0'
-
-  spec.add_development_dependency 'bundler', '~> 2.0'
-  spec.add_development_dependency 'rake', '~> 13.0'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

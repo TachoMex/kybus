@@ -4,6 +4,9 @@ require 'forwardable'
 require_relative 'command/command'
 require_relative 'command/command_definition'
 require_relative 'command/execution_context'
+require_relative 'dsl_methods'
+require_relative 'command/command_handler'
+require_relative 'command/parameter_saver'
 
 module Kybus
   module Bot
@@ -11,7 +14,7 @@ module Kybus
       extend Forwardable
 
       include Kybus::Logger
-      attr_reader :dsl, :bot, :execution_context
+      attr_reader :dsl, :bot, :execution_context, :channel_factory, :inline_args, :error
 
       def_delegator :execution_context, :save!, :save_execution_context!
 
@@ -29,79 +32,32 @@ module Kybus
         @dsl = DSLMethods.new(bot.provider, state, bot)
         @inline_args = inline_args
         @precommand_hook = proc {}
+        @parameter_saver = ParameterSaver.new(self)
+        @command_handler = CommandHandler.new(self)
       end
 
-      # Process a single message, this method can be overwriten to enable
-      # more complex implementations of commands. It receives a message object.
+      def precommand_hook(&)
+        if block_given?
+          @precommand_hook = proc(&)
+        else
+          @precommand_hook
+        end
+      end
+
       def process_message(message)
-        @execution_context = ExecutionContest.new(message.channel_id, @channel_factory)
-        save_token!(message)
-        msg = run_command_or_prepare!
+        setup_execution_context(message)
+        @parameter_saver.save_token!(message)
+        msg = @command_handler.run_command_or_prepare!
         save_execution_context!
         msg
       end
 
-      def save_param!(message)
-        execution_context.add_param(message.raw_message)
-        return unless message.has_attachment?
-
-        file = bot.provider.file_builder(message.attachment)
-        execution_context.add_file(file)
-      end
-
-      def search_command_with_inline_arg(message)
-        command, values = @channel_factory.command_with_inline_arg(message.raw_message || '')
-        if command
-          execution_context.command = command
-          values.each do |value|
-            execution_context.next_param = execution_context.next_missing_param
-            execution_context.add_param(value)
-          end
-        else
-          execution_context.command = @channel_factory.default_command
-        end
-      end
-
-      def save_token!(message)
-        execution_context.set_last_message(message.serialize)
-        if execution_context.expecting_command?
-          command = @channel_factory.command(message.command)
-          if @inline_args && !command
-            search_command_with_inline_arg(message)
-          elsif !@inline_args && !command
-            execution_context.command = @channel_factory.default_command
-          else
-            execution_context.command = command
-          end
-        else
-          save_param!(message)
-        end
-      end
-
-      def run_command_or_prepare!
-        if execution_context.ready?
-          @dsl.state = execution_context.state
-          @dsl.instance_eval(&@precommand_hook)
-          msg = run_command!
-          execution_context.clear_command
-          msg
-        else
-          param = execution_context.next_missing_param
-          ask_param(param, execution_context.state.command.params_ask_label(param))
-        end
-      end
-
-      def precommand_hook(&)
-        @precommand_hook = proc(&)
-      end
-
       def fallback(error)
-        catch = @channel_factory.command(error)
+        catch_command = @channel_factory.command(error)
         log_error('Unexpected error', error)
-        execution_context.command = catch if catch
+        execution_context.command = catch_command if catch_command
       end
 
-      # Method for triggering command
       def run_command!
         execution_context.call!(@dsl)
       rescue StandardError => e
@@ -112,27 +68,39 @@ module Kybus
       end
 
       def invoke(command, args)
-        state.command = command
-        command.params.zip(args).each do |param, value|
-          state.store_param(param, value)
-        end
-        run_command_or_prepare!
+        set_state_command(command, args)
+        @command_handler.run_command_or_prepare!
       end
 
       def redirect(command_name, args)
         command = @channel_factory.command(command_name)
-        if command.nil? || command.params_size != args.size
-          raise "Wrong redirect #{command_name}, #{bot.registered_commands}"
-        end
-
+        validate_redirect(command, command_name, args)
         invoke(command, args)
       end
 
-      # Sends a message to get the next parameter from the user
       def ask_param(param, label = nil)
         msg = label || "I need you to tell me #{param}"
         bot.send_message(msg, last_message.channel_id)
         execution_context.next_param = param
+      end
+
+      private
+
+      def setup_execution_context(message)
+        @execution_context = ExecutionContest.new(message.channel_id, @channel_factory)
+      end
+
+      def set_state_command(command, args)
+        state.command = command
+        command.params.zip(args).each do |param, value|
+          state.store_param(param, value)
+        end
+      end
+
+      def validate_redirect(command, command_name, args)
+        return unless command.nil? || command.params_size != args.size
+
+        raise BotError, "Wrong redirect #{command_name}, #{bot.registered_commands}"
       end
     end
   end

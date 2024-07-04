@@ -12,13 +12,12 @@ module Kybus
           require 'sequel'
           conf['table'] ||= conf['schema_name']
           conn = ::Sequel.connect(conf['endpoint'], conf)[conf['table'].to_sym]
-          if conf['schema'].nil?
-            # TODO: decouple use of classes
-            new(conn, conf['primary_key'].to_sym,
-                IDGenerators[:id])
-          else
+          if conf['schema']
             # TODO: This line is very high coupled to kybus-nanoservice
             new(conn, conf['schema']::PRIMARY_KEY, IDGenerators[:id])
+          else
+            # TODO: decouple use of classes
+            new(conn, conf['primary_key'].to_sym, IDGenerators[:id])
           end
         end
 

@@ -9,7 +9,7 @@ class TestPluginHook < Minitest::Test
     Hook.new
   end
 
-  def test_hook
+  def test_hook # rubocop: disable Metrics/AbcSize
     hook = build
     hook.register_hook(:create_table, &:a)
     hook.register_hook(:create_table, &:b)

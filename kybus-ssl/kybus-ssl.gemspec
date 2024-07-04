@@ -21,11 +21,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'optimist', '~> 3.0'
 
-  spec.add_development_dependency 'minitest', '~> 5.11'
-  spec.add_development_dependency 'pry', '~> 0.12'
-  spec.add_development_dependency 'rake', '~> 12.3'
-  spec.add_development_dependency 'rdoc', '~> 6.1'
-  spec.add_development_dependency 'simplecov', '~> 0.16'
-  spec.add_development_dependency 'webmock', '~> 3.5'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

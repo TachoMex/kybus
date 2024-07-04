@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.3
   NewCops: enable
   SuggestExtensions: false
   Exclude:
@@ -31,3 +31,9 @@ Metrics:
 Layout/LineLength:
   Exclude:
     - bin/*
+Naming/MethodParameterName:
+  AllowedNames:
+    - ca
+    - id
+    - to
+    - db

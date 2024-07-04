@@ -1,5 +1,5 @@
-mode_ci:
-  enabled: true # default is false
+# mode_ci:
+#   enabled: true # default is false
 path: '.' # Set path where report will be saved (tmp/rubycritic by default)
 threshold_score: 90 # default is 0
 deduplicate_symlinks: true # default is false

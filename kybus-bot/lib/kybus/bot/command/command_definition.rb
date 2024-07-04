@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'command'
+
 module Kybus
   module Bot
     class CommandDefinition

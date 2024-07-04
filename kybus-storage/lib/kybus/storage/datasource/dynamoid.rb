@@ -7,28 +7,35 @@ module Kybus
       class DynamoidRepository < Repository
         attr_reader :model_class
 
-        def self.from_config(conf)
-          if conf['dynamoid_config']
-            require 'dynamoid'
-            Dynamoid.configure do |config|
-              config.access_key = conf['access_key']
-              config.secret_key = conf['secret_key']
-              config.region = conf['region']
-              config.namespace = conf['namespace']
-              config.endpoint = conf['endpoint'] if conf['endpoint']
+        def self.configure_dynamoid
+          require 'dynamoid'
+          keys = %w[access_key secret_key region namespace endpoint]
+          Dynamoid.configure do |config|
+            keys.each do |key|
+              config.send("#{key}=", conf[key])
             end
           end
+        end
+
+        def self.from_config(conf)
+          configure_dynamoid(conf['dynamoid_config']) if conf['dynamoid_config']
 
           model_class = conf['schema'] || create_dynamic_model(conf)
           new(model_class, conf['primary_key'].to_sym)
+        end
+
+        def table_config(conf)
+          { name: conf['table'],
+            key: conf['primary_key'].to_sym,
+            read_capacity: conf['read_capacity'],
+            write_capacity: conf['write_capacity'] }
         end
 
         def self.create_dynamic_model(conf)
           Class.new do
             include Dynamoid::Document
 
-            table name: conf['table'], key: conf['primary_key'].to_sym, read_capacity: conf['read_capacity'],
-                  write_capacity: conf['write_capacity']
+            table(table_config(conf))
 
             # Dynamically add fields based on configuration
             conf['fields'].each do |field, type|

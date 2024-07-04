@@ -6,12 +6,28 @@ module Kybus
       module Config
         class ConfigGenerator < FileProvider
           autoregister!
+
+          DB_CONFIGS = {
+            'sequel' => <<-SEQUEL.chomp,
+              name: sequel
+              endpoint: 'sqlite://${bot_name_snake_case}_botmeta.db'
+            SEQUEL
+            'dynamoid' => <<-DYNAMOID.chomp
+              name: dynamoid
+              dynamoid_config: true
+              region:  'us-east-1'
+              namespace: '${bot_name_snake_case}'
+              read_capacity: 3
+              write_capacity: 3
+            DYNAMOID
+          }.freeze
+
           def saving_path
             'config/config.yaml'
           end
 
           def make_contents
-            content = <<~YAML
+            <<~YAML + db_config.gsub('${bot_name_snake_case}', bot_name_snake_case)
               bots:
                 main:
                   provider:
@@ -21,22 +37,12 @@ module Kybus
                     debug: true
                   state_repository:
             YAML
+          end
 
-            if @config[:db_adapter] == 'sequel'
-              content << <<-SEQUEL
-        name: sequel
-        endpoint: 'sqlite://#{bot_name_snake_case}_botmeta.db'
-              SEQUEL
-            elsif @config[:db_adapter] == 'dynamoid'
-              content << <<-DYNAMOID
-        name: dynamoid
-        dynamoid_config: true
-        region:  'us-east-1'
-        namespace: '#{bot_name_snake_case}'
-        read_capacity: 3
-        write_capacity: 3
-              DYNAMOID
-            end
+          private
+
+          def db_config
+            DB_CONFIGS[@config[:db_adapter]] || ''
           end
         end
       end

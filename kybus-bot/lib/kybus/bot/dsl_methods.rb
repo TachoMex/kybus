@@ -77,8 +77,8 @@ module Kybus
         state&.command&.name
       end
 
-      def redirect(*args)
-        @bot.redirect(*args)
+      def redirect(*)
+        @bot.redirect(*)
       end
 
       def abort(msg = nil)

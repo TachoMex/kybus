@@ -47,9 +47,13 @@ module Kybus
         end
 
         def attachment
-          (@message.respond_to?(:document) && @message&.document) ||
-            (@message.respond_to?(:photo) && @message.photo&.last) ||
-            (@message.respond_to?(:audio) && @message&.audio)
+          %i[document photo audio].each do |method|
+            next unless @message.respond_to?(method)
+
+            attachment = @message.public_send(method)
+            return method == :photo ? attachment.last : attachment if attachment
+          end
+          nil
         end
 
         def user

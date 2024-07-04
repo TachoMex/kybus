@@ -9,7 +9,7 @@ module Kybus
         @name = name
       end
 
-      def build_class
+      def build_class # rubocop: disable Metrics/MethodLength, Metrics/AbcSize:
         @klass = Class.new(base_controller_class) do
           extend Kybus::DRY::ResourceInjector
 

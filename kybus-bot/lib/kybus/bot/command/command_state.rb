@@ -7,12 +7,7 @@ module Kybus
 
       def initialize(data, command)
         @command = command
-        data = JSON.parse(data, symbolize_names: true) if data.is_a?(String)
-        (data[:params] = JSON.parse(data[:params] || '{}', symbolize_names: true)) if data[:params].is_a?(String)
-        (data[:metadata] = JSON.parse(data[:metadata] || '{}', symbolize_names: true)) if data[:metadata].is_a?(String)
-        (data[:files] = JSON.parse(data[:files] || '{}', symbolize_names: true)) if data[:files].is_a?(String)
-        (data[:last_message] = data[:last_message] && SerializedMessage.from_json(data[:last_message]))
-        @data = data
+        @data = parse_data(data)
       end
 
       def self.from_json(str, commands_provider)
@@ -36,12 +31,11 @@ module Kybus
         command&.ready?(params)
       end
 
-      # validates which is the following parameter required
       def next_missing_param
         command.next_missing_param(params)
       end
 
-      def set_last_message(msg)
+      def last_message=(msg)
         @data[:last_message] = msg
       end
 
@@ -91,12 +85,29 @@ module Kybus
 
       def save!
         backup = @data.clone
+        serialize_data!
+        @data.store
+        @data = backup
+      end
+
+      private
+
+      def parse_data(data)
+        data = JSON.parse(data, symbolize_names: true) if data.is_a?(String)
+        %i[params metadata files].each do |key|
+          data[key] = parse_json(data[key]) if data[key].is_a?(String)
+        end
+        data[:last_message] = SerializedMessage.from_json(data[:last_message]) if data[:last_message]
+        data
+      end
+
+      def parse_json(value)
+        JSON.parse(value || '{}', symbolize_names: true)
+      end
+
+      def serialize_data!
         %i[params files last_message metadata].each do |param|
           @data[param] = @data[param].to_json
-        end
-        @data.store
-        %i[params files last_message metadata].each do |param|
-          @data[param] = backup[param]
         end
       end
     end

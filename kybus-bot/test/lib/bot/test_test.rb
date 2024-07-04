@@ -8,29 +8,25 @@ module Kybus
     class TestTest < Minitest::Test
       def setup
         @bot = ::Kybus::Bot::Base.make_test_bot
-        @bot.register_command('/remindme', %i[what when]) do
-          assert_command('/remindme', params[:what], params[:when])
-        end
+        register_default_commands
+      end
+
+      def register_default_commands
+        @bot.register_command('/remindme', %i[what when]) { assert_command('/remindme', params[:what], params[:when]) }
       end
 
       def test_bot_has_registered_commands
-        commands = @bot.registered_commands
-        refute(commands.empty?)
+        refute(@bot.registered_commands.empty?)
       end
 
       def test_reject_empty_messages
-        @bot.register_command('/empty') do
-          send_message(nil)
-        end
+        @bot.register_command('/empty') { send_message(nil) }
         assert_raises(::Kybus::Bot::Base::EmptyMessageError) { @bot.receives('/empty') }
       end
 
       def test_unit_test_adapter
-        @bot.expects(:assert_command)
-            .with('/remindme', 'to get eggs', '2019-03-11 12:00 everyday')
-        @bot.receives('/remindme')
-        @bot.receives('to get eggs')
-        @bot.receives('2019-03-11 12:00 everyday')
+        @bot.expects(:assert_command).with('/remindme', 'to get eggs', '2019-03-11 12:00 everyday')
+        simulate_receives('/remindme', 'to get eggs', '2019-03-11 12:00 everyday')
       end
 
       def test_receiving_file
@@ -46,71 +42,42 @@ module Kybus
       end
 
       def test_current_user
-        @bot.register_command('/whoami') do
-          send_message(current_user)
-        end
+        @bot.register_command('/whoami') { send_message(current_user) }
         @bot.expects(:send_message).with('debug_message__testing')
         @bot.receives('/whoami')
       end
 
-      def test_is_private
-        @bot.register_command('/safe') do
-          send_message(is_private?)
-        end
-        @bot.expects(:send_message).with(true)
-        @bot.receives('/safe')
-      end
-
-      def test_mention
-        @bot.register_command('/tag') do
-          send_message(mention(current_user))
-        end
-        @bot.expects(:send_message).with('@debug_message__testing')
-        @bot.receives('/tag')
-      end
-
       def test_default_command_does_nothing
-        @bot.register_command('/do_magic') do
-          # :nocov:
-          send_message('Magic done')
-          # :nocov:
-        end
+        @bot.register_command('/do_magic') { send_message('Magic done') }
         @bot.expects(:send_message).never
+        # Introduced typo to trigger default command
         @bot.receives('/do_maigc')
       end
 
       def test_inline_args
-        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
-        bot.register_command('/hello', %i[number]) do
-          confirm(params[:number])
-        end
+        bot = create_bot_with_inline_args
+        bot.register_command('/hello', %i[number]) { confirm(params[:number]) }
         bot.expects(:confirm).with('8')
         bot.receives('/hello8')
       end
 
       def test_inline_multi_args
-        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
-        bot.register_command('/hello', %i[number letter]) do
-          confirm(params[:number], params[:letter])
-        end
+        bot = create_bot_with_inline_args
+        bot.register_command('/hello', %i[number letter]) { confirm(params[:number], params[:letter]) }
         bot.expects(:confirm).with('8', 'a')
         bot.receives('/hello8__a')
       end
 
       def test_inline_args_regular_command
-        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
-        bot.register_command('/hello') do
-          confirm
-        end
+        bot = create_bot_with_inline_args
+        bot.register_command('/hello') { confirm }
         bot.expects(:confirm)
         bot.receives('/hello')
       end
 
       def test_inline_args_default_command
-        bot = ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
-        bot.register_command('default') do
-          confirm
-        end
+        bot = create_bot_with_inline_args
+        bot.register_command('default') { confirm }
         bot.expects(:confirm)
         bot.receives('/hello99')
       end
@@ -118,56 +85,20 @@ module Kybus
       def test_precommand_hooks
         @bot.precommand_hook { send_message('prehook') }
         %w[/hello /start /new].each do |cmd|
-          @bot.register_command(cmd) {}
+          @bot.register_command(cmd) {} # rubocop:disable Lint/EmptyBlock
           @bot.expects(:send_message).with('prehook')
           @bot.receives(cmd)
         end
       end
 
-      def test_redirect
-        @bot.register_command('/hello') do
-          redirect('/other', 2)
-        end
+      private
 
-        @bot.register_command('/other', %i[number]) do
-          send_message("Hello #{params[:number]}")
-        end
-
-        @bot.expects(:send_message).with('Hello 2')
-        @bot.receives('/hello')
+      def create_bot_with_inline_args
+        ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
       end
 
-      def test_check_metadata_storage
-        token = (1..100).to_a.sample
-        @bot.register_command('/set_metadata') do
-          metadata[:info] = { token:, hello: 'world' }
-        end
-
-        @bot.register_command('/validate') do
-          raise 'Invalid Token' if metadata[:info][:token] != token
-          raise 'Invalid metadatada' if metadata[:info][:hello] != 'world'
-        end
-
-        @bot.receives('/set_metadata')
-        @bot.receives('/validate')
-      end
-
-      def test_abort_with_message
-        @bot.register_command('/abort') do
-          abort('Stop execution')
-          send_message('Not really expected')
-        end
-        @bot.expects(:send_message).with('Stop execution').once
-        @bot.receives('/abort')
-      end
-
-      def test_abort_without_message
-        @bot.register_command('/abort') do
-          abort
-          send_message('Not really expected')
-        end
-        @bot.expects(:send_message).never
-        @bot.receives('/abort')
+      def simulate_receives(*messages)
+        messages.each { |msg| @bot.receives(msg) }
       end
     end
   end

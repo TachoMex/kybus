@@ -1,15 +1,7 @@
 # frozen_string_literal: true
 
 require 'digest'
-
-def calculate_md5(file_path)
-  md5 = Digest::MD5.new
-  File.open(file_path, 'rb') do |file|
-    buffer = String.new
-    md5.update(buffer) while file.read(4096, buffer)
-  end
-  md5.hexdigest
-end
+require_relative 'layer_manager'
 
 module Kybus
   module AWS
@@ -19,6 +11,7 @@ module Kybus
       def initialize(configs, name)
         super(configs)
         @name = name
+        @layer_manager = LayerManager.new(lambda_client, function_name)
       end
 
       def lambda_client
@@ -30,120 +23,85 @@ module Kybus
       end
 
       def deploy_lambda!
-        layer_arn_deps = create_or_update_layer('.deps.zip', "#{function_name}-deps")
+        layer_arn_deps = @layer_manager.create_or_update_layer('.deps.zip', "#{function_name}-deps")
 
-        function_exists = begin
-          lambda_client.get_function(function_name:)
-        rescue StandardError
-          false
-        end
-
-        if function_exists
+        if lambda_function_exists?
           update_lambda!(layer_arn_deps)
         else
           create_lambda!(layer_arn_deps)
         end
       end
 
-      def create_layer(zip_file, layer_name, zipfile_hash)
-        response = lambda_client.publish_layer_version({
-                                                         layer_name:,
-                                                         content: {
-                                                           zip_file: File.read(zip_file)
-                                                         },
-                                                         description: zipfile_hash,
-                                                         compatible_runtimes: ['ruby3.3']
-                                                       })
-        puts "Layer '#{layer_name}' created: #{response.layer_version_arn}"
-        response.layer_version_arn
-      end
-
-      def create_or_update_layer(zip_file, layer_name)
-        layer_exists = begin
-          response = lambda_client.list_layer_versions({
-                                                         layer_name:,
-                                                         max_items: 1
-                                                       })
-
-          response.layer_versions.first
-        end
-
-        zipfile_hash = calculate_md5('Gemfile.lock')
-
-        if !layer_exists || layer_exists.description != zipfile_hash
-          create_layer(zip_file, layer_name, zipfile_hash)
-        else
-          puts "Layer unmodified: #{layer_name}"
-          layer_exists.layer_version_arn
-        end
+      def lambda_function_exists?
+        lambda_client.get_function(function_name:)
+        true
+      rescue Aws::Lambda::Errors::ResourceNotFoundException
+        false
       end
 
       def update_lambda!(layer_arn_deps)
-        with_retries(Aws::Lambda::Errors::ResourceConflictException) do
-          lambda_client.update_function_configuration({
-                                                        function_name:,
-                                                        layers: [layer_arn_deps],
-                                                        timeout: @config['timeout'] || 3,
-                                                        environment: {
-                                                          variables: {
-                                                            'SECRET_TOKEN' => @config['secret_token']
-                                                          }
-                                                        }
-                                                      })
-        end
-
-        with_retries(Aws::Lambda::Errors::ResourceConflictException) do
-          lambda_client.update_function_code(function_name:, zip_file: File.read('.kybuscode.zip'))
-        end
+        update_function_configuration(layer_arn_deps)
+        update_function_code
         puts "Lambda function '#{function_name}' updated."
+      end
+
+      def update_function_configuration(layer_arn_deps)
+        with_retries(Aws::Lambda::Errors::ResourceConflictException) do
+          lambda_client.update_function_configuration(
+            function_name:,
+            layers: [layer_arn_deps],
+            timeout: @config['timeout'] || 3,
+            environment: { variables: { 'SECRET_TOKEN' => @config['secret_token'] } }
+          )
+        end
+      end
+
+      def update_function_code
+        with_retries(Aws::Lambda::Errors::ResourceConflictException) do
+          lambda_client.update_function_code(
+            function_name:,
+            zip_file: File.read('.kybuscode.zip')
+          )
+        end
+      end
+
+      def codezip_setting
+        { zip_file: File.read('.kybuscode.zip') }
+      end
+
+      def env_vars_settings
+        { variables: { 'SECRET_TOKEN' => @config['secret_token'] } }
       end
 
       def create_lambda!(layer_arn_deps)
         with_retries(Aws::Lambda::Errors::ResourceConflictException) do
-          lambda_client.create_function({
-                                          function_name:,
-                                          runtime: 'ruby3.3',
-                                          role: "arn:aws:iam::#{account_id}:role/#{function_name}",
-                                          handler: 'handler.lambda_handler',
-                                          layers: [layer_arn_deps],
-                                          code: {
-                                            zip_file: File.read('.kybuscode.zip')
-                                          },
-                                          timeout: @config['timeout'] || 3,
-                                          environment: {
-                                            variables: {
-                                              'SECRET_TOKEN' => @config['secret_token']
-                                            }
-                                          }
-                                        })
+          lambda_client.create_function(
+            function_name:, runtime: 'ruby3.3', role: "arn:aws:iam::#{account_id}:role/#{function_name}",
+            handler: 'handler.lambda_handler', layers: [layer_arn_deps], code: codezip_setting,
+            timeout: @config['timeout'] || 3, environment: env_vars_settings
+          )
           puts "Lambda function '#{function_name}' created."
         end
       end
 
-      def make_public!
-        with_retries(Aws::Lambda::Errors::ResourceConflictException) do
-          response = lambda_client.create_function_url_config({
-                                                                function_name:,
-                                                                auth_type: 'NONE'
-                                                              })
-          puts "Function URL created: #{response.function_url}"
-          @url = response.function_url
+      def create_function_url
+        @url = with_retries(Aws::Lambda::Errors::ResourceConflictException) do
+          lambda_client.create_function_url_config(function_name:, auth_type: 'NONE')
         rescue Aws::Lambda::Errors::ResourceConflictException
-          response = lambda_client.get_function_url_config({
-                                                             function_name:
-                                                           })
-          puts "Function URL exists: #{response.function_url}"
-          @url = response.function_url
-        end
+          lambda_client.get_function_url_config(function_name:)
+        end.url
+        puts "Function URL created: #{@url}"
+      end
 
-        begin
-          response = lambda_client.add_permission({
-                                                    function_name:,
-                                                    statement_id: 'AllowPublicInvoke',
-                                                    action: 'lambda:InvokeFunctionUrl',
-                                                    principal: '*',
-                                                    function_url_auth_type: 'NONE'
-                                                  })
+      def add_public_permission
+        with_retries(Aws::Lambda::Errors::ServiceError) do
+          response = lambda_client.add_permission(
+            function_name:,
+            statement_id: 'AllowPublicInvoke',
+            action: 'lambda:InvokeFunctionUrl',
+            principal: '*',
+            function_url_auth_type: 'NONE'
+          )
           puts "Permission added successfully: #{response}"
         rescue Aws::Lambda::Errors::ServiceError => e
           puts "Error adding permission: #{e.message}"
@@ -152,7 +110,8 @@ module Kybus
 
       def create_or_update!
         deploy_lambda!
-        make_public!
+        create_function_url
+        add_public_permission
       end
 
       def destroy!

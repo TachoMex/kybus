@@ -6,6 +6,19 @@ module Kybus
       module Config
         class ConfigDefaultGenerator < FileProvider
           autoregister!
+
+          DB_CONFIGS = {
+            'sequel' => <<~SEQUEL.chomp,
+              name: sequel
+              endpoint: 'sqlite://${bot_name_snake_case}_botmeta.db'
+              database: 'sqlite://${bot_name_snake_case}.db'
+            SEQUEL
+            'dynamoid' => <<~DYNAMOID.chomp
+              name: json
+              storage: ./storage
+            DYNAMOID
+          }.freeze
+
           def saving_path
             'config/config.default.yaml'
           end
@@ -15,7 +28,7 @@ module Kybus
           end
 
           def make_contents
-            content = <<~YAML
+            <<~YAML + db_config.gsub('${bot_name_snake_case}', bot_name_snake_case)
               logger:
                 stdout: yes
                 severity: debug
@@ -23,25 +36,18 @@ module Kybus
                 main:
                   pool_size: 1
                   inline_args: true
-                  provider:#{' '}
+                  provider:
                     name: REPLACE_ME
                     token: REPLACE_ME
                     debug: true
                   state_repository:
             YAML
+          end
 
-            if @config[:db_adapter] == 'sequel'
-              content << <<~SEQUEL
-                        name: sequel
-                        endpoint: 'sqlite://#{bot_name_snake_case}_botmeta.db'
-                database: 'sqlite://#{bot_name_snake_case}.db'
-              SEQUEL
-            elsif @config[:db_adapter] == 'dynamoid'
-              content << <<-DYNAMOID
-        name: json
-        storage: ./storage
-              DYNAMOID
-            end
+          private
+
+          def db_config
+            DB_CONFIGS[@config[:db_adapter]] || ''
           end
         end
       end
