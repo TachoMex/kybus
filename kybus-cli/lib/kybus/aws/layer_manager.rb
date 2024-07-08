@@ -19,9 +19,9 @@ module Kybus
         @function_name = function_name
       end
 
-      def create_or_update_layer(zip_file, layer_name)
+      def create_or_update_layer(zip_file, layer_name, checksum_file)
         layer_exists = layer_version_exists?(layer_name)
-        zipfile_hash = calculate_md5('Gemfile.lock')
+        zipfile_hash = calculate_md5(checksum_file)
 
         if !layer_exists || layer_exists.description != zipfile_hash
           create_layer(zip_file, layer_name, zipfile_hash)
@@ -47,6 +47,11 @@ module Kybus
         response.layer_versions.first
       rescue Aws::Lambda::Errors::ResourceNotFoundException
         nil
+      end
+
+      def get_layer_arn(layer_name)
+        layer_version = layer_version_exists?(layer_name)
+        layer_version&.layer_version_arn
       end
     end
   end

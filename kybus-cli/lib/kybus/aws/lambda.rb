@@ -2,6 +2,7 @@
 
 require 'digest'
 require_relative 'layer_manager'
+require_relative 'lambda_trigger'
 
 module Kybus
   module AWS
@@ -11,7 +12,10 @@ module Kybus
       def initialize(configs, name)
         super(configs)
         @name = name
+        @layers = configs['layers']
+        @triggers = configs['triggers']
         @layer_manager = LayerManager.new(lambda_client, function_name)
+        @trigger_manager = LambdaTrigger.new(lambda_client, function_name, @triggers)
       end
 
       def lambda_client
@@ -23,12 +27,29 @@ module Kybus
       end
 
       def deploy_lambda!
-        layer_arn_deps = @layer_manager.create_or_update_layer('.deps.zip', "#{function_name}-deps")
+        layer_arns = @layers.map { |layer| handle_layer(layer) }
 
         if lambda_function_exists?
-          update_lambda!(layer_arn_deps)
+          update_lambda!(layer_arns)
         else
-          create_lambda!(layer_arn_deps)
+          create_lambda!(layer_arns)
+        end
+      end
+
+      def handle_layer(layer)
+        puts "Processing layer:\n#{layer.to_yaml}"
+        case layer['type']
+        when 'codezip'
+          raise 'Checksum file required for codezip layer' unless layer['checksumfile']
+
+          @layer_manager.create_or_update_layer(layer['zipfile'], layer['name'], layer['checksumfile'])
+        when 'existing'
+          layer_arn = @layer_manager.get_layer_arn(layer['name'])
+          raise "Layer #{layer['name']} not found" unless layer_arn
+
+          layer_arn
+        else
+          raise "Unknown layer type: #{layer['type']}"
         end
       end
 
@@ -39,17 +60,17 @@ module Kybus
         false
       end
 
-      def update_lambda!(layer_arn_deps)
-        update_function_configuration(layer_arn_deps)
+      def update_lambda!(layer_arns)
+        update_function_configuration(layer_arns)
         update_function_code
         puts "Lambda function '#{function_name}' updated."
       end
 
-      def update_function_configuration(layer_arn_deps)
+      def update_function_configuration(layer_arns)
         with_retries(Aws::Lambda::Errors::ResourceConflictException) do
           lambda_client.update_function_configuration(
             function_name:,
-            layers: [layer_arn_deps],
+            layers: layer_arns,
             timeout: @config['timeout'] || 3,
             environment: { variables: { 'SECRET_TOKEN' => @config['secret_token'] } }
           )
@@ -65,53 +86,26 @@ module Kybus
         end
       end
 
-      def codezip_setting
-        { zip_file: File.read('.kybuscode.zip') }
-      end
-
-      def env_vars_settings
-        { variables: { 'SECRET_TOKEN' => @config['secret_token'] } }
-      end
-
-      def create_lambda!(layer_arn_deps)
+      def create_lambda!(layer_arns)
         with_retries(Aws::Lambda::Errors::ResourceConflictException) do
+          puts "Creating function #{function_name} with role: #{"arn:aws:iam::#{account_id}:role/#{function_name}"}"
           lambda_client.create_function(
-            function_name:, runtime: 'ruby3.3', role: "arn:aws:iam::#{account_id}:role/#{function_name}",
-            handler: 'handler.lambda_handler', layers: [layer_arn_deps], code: codezip_setting,
-            timeout: @config['timeout'] || 3, environment: env_vars_settings
+            function_name:,
+            runtime: 'ruby3.3',
+            role: "arn:aws:iam::#{account_id}:role/#{function_name}",
+            handler: 'handler.lambda_handler',
+            layers: layer_arns,
+            code: { zip_file: File.read('.kybuscode.zip') },
+            timeout: @config['timeout'] || 3,
+            environment: { variables: { 'SECRET_TOKEN' => @config['secret_token'] } }
           )
           puts "Lambda function '#{function_name}' created."
         end
       end
 
-      def create_function_url
-        @url = with_retries(Aws::Lambda::Errors::ResourceConflictException) do
-          lambda_client.create_function_url_config(function_name:, auth_type: 'NONE')
-        rescue Aws::Lambda::Errors::ResourceConflictException
-          lambda_client.get_function_url_config(function_name:)
-        end.url
-        puts "Function URL created: #{@url}"
-      end
-
-      def add_public_permission
-        with_retries(Aws::Lambda::Errors::ServiceError) do
-          response = lambda_client.add_permission(
-            function_name:,
-            statement_id: 'AllowPublicInvoke',
-            action: 'lambda:InvokeFunctionUrl',
-            principal: '*',
-            function_url_auth_type: 'NONE'
-          )
-          puts "Permission added successfully: #{response}"
-        rescue Aws::Lambda::Errors::ServiceError => e
-          puts "Error adding permission: #{e.message}"
-        end
-      end
-
       def create_or_update!
         deploy_lambda!
-        create_function_url
-        add_public_permission
+        @trigger_manager.add_triggers
       end
 
       def destroy!

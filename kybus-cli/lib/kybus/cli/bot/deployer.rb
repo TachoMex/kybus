@@ -15,6 +15,7 @@ require 'zip'
 require 'kybus/aws'
 require_relative 'deployers/telegram_configurator'
 require_relative 'deployers/aws_bot_deployer'
+require_relative 'deployers/aws_bot_job_runner_deployer'
 
 module Kybus
   class CLI < Thor
@@ -27,8 +28,9 @@ module Kybus
       def initialize(options)
         @params = options
         load_kybusdeploy_file!
-        @telegram = ::Kybus::CLI::BotDeployerTelegramConfigurator.new(@url, config_with_options)
+        @telegram = ::Kybus::CLI::BotDeployerTelegramConfigurator.new(nil, config_with_options)
         @lambda = ::Kybus::CLI::AWSBotDeployer.new(config_with_options)
+        @job_executor = ::Kybus::CLI::AWSBotJobRunnerDeployer.new(config_with_options)
       end
 
       def run_migrations!
@@ -52,6 +54,7 @@ module Kybus
 
       def deploy_lambda!
         @lambda.create_or_update!
+        @job_executor.create_or_update!
         @telegram.url = @lambda.url
       end
 

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'lib/kybus/cli'
 Gem::Specification.new do |spec|
   spec.name          = 'kybus-cli'
-  spec.version       = '0.1.1'
+  spec.version       = Kybus::CLI::VERSION
   spec.authors       = ['Gilberto Vargas']
   spec.email         = ['tachomexgems@gmail.com']
 
@@ -23,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk-cloudwatchlogs'
   spec.add_dependency 'aws-sdk-iam'
   spec.add_dependency 'aws-sdk-lambda'
+  spec.add_dependency 'aws-sdk-sqs'
   spec.add_dependency 'kybus-core'
   spec.add_dependency 'rubyzip'
   spec.add_dependency 'thor', '~> 1.0'

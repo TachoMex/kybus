@@ -3,6 +3,8 @@
 module Kybus
   module AWS
     class Resource
+      attr_reader :region
+
       def initialize(config)
         @config = config
         @region = @config['region'] || 'us-east-1'

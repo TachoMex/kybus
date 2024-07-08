@@ -2,7 +2,7 @@
 
 module Kybus
   class CLI < Thor
-    class AWSBotDeployer < BotDeployerBase
+    class AWSBotDeployer < BotDeployerBase # rubocop: disable Metrics/ClassLength
       def initialize(configs)
         configs['account_id'] = account_id
         super
@@ -27,24 +27,51 @@ module Kybus
         @log_group.create_or_update!
         @dynamo_policy.create_or_update!
         @cloudwatch_policy.create_or_update!
+        @queue.create_or_update!
         @role.create_or_update!
         @lambda.create_or_update!
       end
 
       private
 
+      def role_name
+        function_name
+      end
+
       def initialize_aws_resources(configs)
-        @role = ::Kybus::AWS::Role.new(configs, function_name, :lambda)
+        @role = ::Kybus::AWS::Role.new(configs, role_name, :lambda)
         @dynamo_policy = ::Kybus::AWS::Policy.new(configs, "#{function_name}-dynamo", make_dynamo_policy_document)
         @cloudwatch_policy = ::Kybus::AWS::Policy.new(configs, "#{function_name}-cloudwatch",
                                                       make_log_group_policy_document)
         @log_group = ::Kybus::AWS::LogGroup.new(configs, function_name)
-        @lambda = ::Kybus::AWS::Lambda.new(configs, function_name)
+        @queue = Kybus::AWS::Queue.new(configs, function_name) if configs.dig('forker', 'queue')
+        init_lambda(configs)
+      end
+
+      def lambda_config
+        {
+          'triggers' => [{ 'type' => 'url', 'public' => true }],
+          'layers' => [
+            {
+              'type' => 'codezip', 'zipfile' => '.deps.zip',
+              'checksumfile' => 'Gemfile.lock', 'name' => "#{function_name}-deps"
+            }
+          ]
+        }
+      end
+
+      def init_lambda(configs)
+        @lambda = ::Kybus::AWS::Lambda.new(configs.merge(lambda_config), function_name)
+      end
+
+      def assign_sqs_policy
+        @role.add_policy(@queue.make_write_policy) if @queue
       end
 
       def assign_policies_to_role
         @role.add_policy(@dynamo_policy)
         @role.add_policy(@cloudwatch_policy)
+        assign_sqs_policy
       end
 
       def make_dynamo_policy_document
