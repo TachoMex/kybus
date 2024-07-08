@@ -80,7 +80,7 @@ module Kybus
 
       def ask_param(param, label = nil)
         msg = label || "I need you to tell me #{param}"
-        bot.send_message(msg, last_message.channel_id)
+        bot.dsl.send_message(msg, last_message.channel_id)
         execution_context.next_param = param
       end
 
@@ -100,7 +100,7 @@ module Kybus
       def validate_redirect(command, command_name, args)
         return unless command.nil? || command.params_size != args.size
 
-        raise BotError, "Wrong redirect #{command_name}, #{bot.registered_commands}"
+        raise ::Kybus::Bot::Base::BotError, "Wrong redirect #{command_name}, #{bot.registered_commands}"
       end
     end
   end

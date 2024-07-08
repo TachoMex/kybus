@@ -32,7 +32,9 @@ module Kybus
         dsl, state = build_context(details_json)
         dsl.instance_eval(&state.command.block)
       rescue StandardError => e
+        # :nocov:
         log_error('Error in worker', error: e.class, msg: e.message, trace: e.backtrace)
+        # :nocov:
       end
     end
 

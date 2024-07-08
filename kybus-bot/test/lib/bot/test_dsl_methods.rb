@@ -34,6 +34,11 @@ module Kybus
         @bot.receives('/hello')
       end
 
+      def test_wrong_redirect
+        @bot.register_command('/hello') { redirect('/other', 2) }
+        assert_raises(::Kybus::Bot::Base::BotError) { @bot.receives('/hello') }
+      end
+
       def test_check_metadata_storage
         token = (1..100).to_a.sample
         @bot.register_command('/set_metadata') { metadata[:info] = { token:, hello: 'world' } }
@@ -47,7 +52,9 @@ module Kybus
       def test_abort_with_message
         @bot.register_command('/abort') do
           abort('Stop execution')
+          # :nocov:
           send_message('Not really expected') # rubocop:disable Lint/UnreachableCode
+          # :nocov:
         end
         @bot.expects(:send_message).with('Stop execution').once
         @bot.receives('/abort')
@@ -56,17 +63,25 @@ module Kybus
       def test_abort_without_message
         @bot.register_command('/abort') do
           abort
+          # :nocov:
           send_message('Not really expected') # rubocop:disable Lint/UnreachableCode
+          # :nocov:
         end
         @bot.expects(:send_message).never
         @bot.receives('/abort')
       end
 
-      private
-
-      def create_bot_with_inline_args
-        ::Kybus::Bot::Base.make_test_bot('inline_args' => true)
+      def test_command_with_custom_questions
+        @bot.register_command('/ask_name', name: 'what is your name?') do
+          send_message("hello #{params[:name]}")
+        end
+        @bot.expects(:send_message).with('what is your name?', 'debug_message__testing')
+        @bot.receives('/ask_name')
+        @bot.expects(:send_message).with('hello human')
+        @bot.receives('human')
       end
+
+      private
 
       def simulate_receives(*messages)
         messages.each { |msg| @bot.receives(msg) }

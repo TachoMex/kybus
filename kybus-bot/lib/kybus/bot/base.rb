@@ -9,21 +9,15 @@ require_relative 'command_executor'
 require_relative 'command/command_definition'
 require_relative 'command/execution_context'
 require_relative 'command/command_state_factory'
+require_relative 'exceptions'
+require_relative 'forkers/base'
+require_relative 'forkers/thread_forker'
 require 'kybus/logger'
 require 'forwardable'
 
 module Kybus
   module Bot
     class Base
-      class BotError < StandardError; end
-      class AbortError < BotError; end
-
-      class EmptyMessageError < BotError
-        def initialize
-          super('Message is empty')
-        end
-      end
-
       extend Forwardable
       include Kybus::Logger
 
@@ -52,6 +46,7 @@ module Kybus
         @executor = create_executor(configs, command_factory)
         register_default_command
         register_abort_handler
+        build_forker(configs)
         build_pool
       end
 
@@ -91,6 +86,14 @@ module Kybus
         definitions.register_command(klass, params, &)
       end
 
+      def register_job(name, args, &)
+        @forker.register_command(name, args, &)
+      end
+
+      def invoke_job(name, args)
+        @forker.fork(name, args, dsl)
+      end
+
       def rescue_from(klass, &)
         definitions.register_command(klass, [], &)
       end
@@ -127,6 +130,10 @@ module Kybus
           msg = params[:_last_exception]&.message
           send_message(msg) if msg && msg != 'Kybus::Bot::Base::AbortError'
         end
+      end
+
+      def build_forker(configs)
+        @forker = Forkers.from_config(self, configs['forker'])
       end
 
       def build_pool

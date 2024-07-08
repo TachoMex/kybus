@@ -35,9 +35,9 @@ module Kybus
           send_message(file(:file).download)
         end
         @bot.expects(:received).once
-        @bot.expects(:send_message).with("hello-bot\n")
         @bot.receives('/file')
         @bot.receives('hello', 'file.txt')
+        @bot.expects(:send_message).with("hello-bot\n")
         @bot.receives('hello', 'file.txt')
       end
 

@@ -6,7 +6,7 @@ module Kybus
       include Kybus::Logger
 
       attr_accessor :state
-      attr_reader :provider
+      attr_reader :provider, :args
 
       def initialize(provider, state, bot)
         @provider = provider
@@ -83,6 +83,10 @@ module Kybus
 
       def abort(msg = nil)
         raise ::Kybus::Bot::Base::AbortError, msg
+      end
+
+      def fork(command, arguments = {})
+        @bot.invoke_job(command, arguments)
       end
     end
   end
