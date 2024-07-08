@@ -12,12 +12,13 @@ require_relative 'command/command_state_factory'
 require_relative 'exceptions'
 require_relative 'forkers/base'
 require_relative 'forkers/thread_forker'
+require_relative 'forkers/lambda_sqs_forker'
 require 'kybus/logger'
 require 'forwardable'
 
 module Kybus
   module Bot
-    class Base
+    class Base # rubocop: disable Metrics/ClassLength
       extend Forwardable
       include Kybus::Logger
 
