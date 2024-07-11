@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'lib/kybus/cli'
+require_relative 'lib/kybus/cli/version'
 Gem::Specification.new do |spec|
   spec.name          = 'kybus-cli'
-  spec.version       = Kybus::CLI::VERSION
+  spec.version       = KybusCLIVersion
   spec.authors       = ['Gilberto Vargas']
   spec.email         = ['tachomexgems@gmail.com']
 
@@ -27,6 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk-sqs'
   spec.add_dependency 'kybus-core'
   spec.add_dependency 'rubyzip'
-  spec.add_dependency 'thor', '~> 1.0'
+  spec.add_dependency 'thor'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
