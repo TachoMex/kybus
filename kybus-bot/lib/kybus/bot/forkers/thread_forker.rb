@@ -4,13 +4,10 @@ module Kybus
   module Bot
     module Forkers
       class ThreadForker < Base
-        def invoke(command, args, job_definition, dsl)
+        def invoke(command, args, _job_definition, dsl, delay: 0)
           Thread.new do
-            dsl.instance_eval do
-              @args = args
-              log_info('Forking job', command:)
-              instance_eval(&job_definition.block)
-            end
+            sleep(delay) if delay.positive?
+            @bot.handle_job(command, args, dsl.state.channel_id)
           end
         end
       end

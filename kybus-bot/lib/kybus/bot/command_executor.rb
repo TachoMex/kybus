@@ -45,7 +45,7 @@ module Kybus
       end
 
       def process_message(message)
-        setup_execution_context(message)
+        load_state!(message.channel_id)
         @parameter_saver.save_token!(message)
         msg = @command_handler.run_command_or_prepare!
         save_execution_context!
@@ -84,11 +84,16 @@ module Kybus
         execution_context.next_param = param
       end
 
-      private
-
-      def setup_execution_context(message)
-        @execution_context = ExecutionContest.new(message.channel_id, @channel_factory)
+      def load_state!(channel_id)
+        @execution_context = ExecutionContest.new(channel_id, @channel_factory)
+        @dsl.state = @execution_context.state
       end
+
+      def save_state!
+        @dsl.state.save!
+      end
+
+      private
 
       def set_state_command(command, args)
         state.command = command

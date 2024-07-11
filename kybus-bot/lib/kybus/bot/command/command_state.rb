@@ -20,7 +20,7 @@ module Kybus
       end
 
       def to_h
-        { command: command.name, data: @data.to_h.merge(last_message: @data[:last_message]&.to_h) }
+        { command: command&.name, data: @data.to_h.merge(last_message: @data[:last_message]&.to_h) }
       end
 
       def clear_command
@@ -40,6 +40,10 @@ module Kybus
       end
 
       def last_message
+        if @data[:last_message].is_a?(String)
+          @data[:last_message] =
+            SerializedMessage.from_json(parse_json(@data[:last_message]))
+        end
         @data[:last_message]
       end
 
@@ -80,9 +84,11 @@ module Kybus
       end
 
       def metadata
+        @data[:metadata] = parse_json(@data[:metadata]) if @data[:metadata].is_a?(String)
         @data[:metadata] || {}
       end
 
+      include Kybus::Logger
       def save!
         backup = @data.clone
         serialize_data!
@@ -107,7 +113,7 @@ module Kybus
 
       def serialize_data!
         %i[params files last_message metadata].each do |param|
-          @data[param] = @data[param].to_json
+          @data[param] = @data[param].to_json unless @data[param].is_a?(String)
         end
       end
     end

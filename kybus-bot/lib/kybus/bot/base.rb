@@ -44,7 +44,7 @@ module Kybus
         @definitions = Kybus::Bot::CommandDefinition.new
         repository = create_repository(configs)
         command_factory = CommandStateFactory.new(repository, @definitions)
-        @executor = create_executor(configs, command_factory)
+        create_executor(configs, command_factory)
         register_default_command
         register_abort_handler
         build_forker(configs)
@@ -69,6 +69,12 @@ module Kybus
         @executor.process_message(parsed)
       end
 
+      def handle_job(job, args, channel_id)
+        @executor.load_state!(channel_id)
+        @forker.handle_job(job, args)
+        @executor.save_state!
+      end
+
       def run
         pool.each(&:run)
         pool.each(&:await)
@@ -87,12 +93,16 @@ module Kybus
         definitions.register_command(klass, params, &)
       end
 
-      def register_job(name, args, &)
+      def register_job(name, args = {}, &)
         @forker.register_command(name, args, &)
       end
 
       def invoke_job(name, args)
         @forker.fork(name, args, dsl)
+      end
+
+      def invoke_job_with_delay(name, delay, args)
+        @forker.fork(name, args, dsl, delay:)
       end
 
       def rescue_from(klass, &)
@@ -114,12 +124,12 @@ module Kybus
       end
 
       def create_executor(configs, command_factory)
-        if configs['sidekiq']
-          require_relative 'sidekiq_command_executor'
-          Kybus::Bot::SidekiqCommandExecutor.new(self, command_factory, configs)
-        else
-          Kybus::Bot::CommandExecutor.new(self, command_factory, configs['inline_args'])
-        end
+        @executor = if configs['sidekiq']
+                      require_relative 'sidekiq_command_executor'
+                      Kybus::Bot::SidekiqCommandExecutor.new(self, command_factory, configs)
+                    else
+                      Kybus::Bot::CommandExecutor.new(self, command_factory, configs['inline_args'])
+                    end
       end
 
       def register_default_command

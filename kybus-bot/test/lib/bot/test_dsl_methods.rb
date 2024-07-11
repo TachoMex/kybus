@@ -81,6 +81,20 @@ module Kybus
         @bot.receives('human')
       end
 
+      def test_reply
+        @bot.register_command('/reply') { send_message('Hello') }
+        @bot.register_command('default') do
+          if last_message.reply?
+            send_message("You replied #{last_message.raw_message} to my #{last_message.replied_message.raw_message}")
+          else
+            send_message('/help')
+          end
+        end
+        @bot.receives('/reply')
+        @bot.expects(:send_message).with('You replied World to my Hello')
+        @bot.replies('World')
+      end
+
       private
 
       def simulate_receives(*messages)

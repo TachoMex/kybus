@@ -21,3 +21,5 @@ group :development do
   gem 'telegram-bot-ruby'
   gem 'webmock', '~> 3.5'
 end
+
+gem 'deep_clone', '~> 0.0.1'

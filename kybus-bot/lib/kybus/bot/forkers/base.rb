@@ -26,6 +26,8 @@ module Kybus
       end
 
       class Base
+        include Kybus::Logger
+
         def initialize(bot, configs)
           @configs = configs
           @bot = bot
@@ -36,13 +38,21 @@ module Kybus
           @command_definition.register_command(command, arguments, &)
         end
 
-        def fork(command, arguments, dsl)
+        def fork(command, arguments, dsl, delay: 0)
           job_definition = @command_definition[command]
           raise JobNotFound if job_definition.nil?
 
           raise JobNotReady unless job_definition.ready?(arguments)
 
-          invoke(command, arguments, job_definition, dsl)
+          invoke(command, arguments, job_definition, dsl, delay:)
+        end
+
+        def handle_job(command, args)
+          job_definition = @command_definition[command]
+          @bot.dsl.instance_eval do
+            @args = args
+            instance_eval(&job_definition.block)
+          end
         end
       end
     end

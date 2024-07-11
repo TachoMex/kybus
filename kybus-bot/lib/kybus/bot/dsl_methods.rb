@@ -77,6 +77,10 @@ module Kybus
         state&.command&.name
       end
 
+      def save_metadata!
+        state.save!
+      end
+
       def redirect(*)
         @bot.redirect(*)
       end
@@ -87,6 +91,10 @@ module Kybus
 
       def fork(command, arguments = {})
         @bot.invoke_job(command, arguments)
+      end
+
+      def fork_with_delay(command, delay, arguments = {})
+        @bot.invoke_job_with_delay(command, delay, arguments)
       end
     end
   end

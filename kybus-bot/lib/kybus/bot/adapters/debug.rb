@@ -11,6 +11,7 @@ module Kybus
       # Wraps a debugging message inside a class.
       class DebugMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
+        attr_accessor :replied_message
         attr_reader :attachment, :message_id
 
         class DebugFile
@@ -67,7 +68,7 @@ module Kybus
         end
 
         def reply?
-          @reply
+          !!@replied_message
         end
 
         def is_private?
@@ -90,6 +91,8 @@ module Kybus
           @name = name
           @echo = echo
         end
+
+        attr_reader :last_sent_message
 
         # Checks if there are messages open or that has not been answered
         def open?
@@ -120,7 +123,7 @@ module Kybus
         def answer(message, attachment = nil)
           send_data(message, attachment)
           @state = :open
-          DebugMessage.new(message, @name)
+          @last_sent_message = DebugMessage.new(message, @name)
         end
       end
 
@@ -199,10 +202,7 @@ module Kybus
           end
         end
 
-        include Kybus::Logger
-
         def message_builder(msg)
-          log_info('Building message object', msg:, msg_class: msg.class.name)
           msg
         end
 
