@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.executables   = ['kybssl']
 
-  spec.add_runtime_dependency 'optimist', '~> 3.0'
+  spec.add_dependency 'optimist', '~> 3.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

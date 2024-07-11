@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'kybus-core', '~> 0.2'
-  spec.add_runtime_dependency 'kybus-logger', '~> 0.2'
+  spec.add_dependency 'kybus-core', '~> 0.2'
+  spec.add_dependency 'kybus-logger', '~> 0.2'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

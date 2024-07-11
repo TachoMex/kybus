@@ -6,7 +6,7 @@ require_relative 'cli/version'
 
 module Kybus
   class CLI < Thor
-    VERSION = KybusCLIVersion
+    VERSION = KYBUS_CLI_VERSION
     map %w[--version -v] => :__print_version
 
     desc '--version, -v', 'print the version'

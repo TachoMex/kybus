@@ -17,8 +17,8 @@ Gem::Specification.new do |spec|
   spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'activerecord'
-  spec.add_runtime_dependency 'kybus-core'
+  spec.add_dependency 'activerecord'
+  spec.add_dependency 'kybus-core'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
   spec.required_ruby_version = '~> 3.1'

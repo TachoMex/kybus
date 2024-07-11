@@ -3,7 +3,7 @@
 require_relative 'lib/kybus/cli/version'
 Gem::Specification.new do |spec|
   spec.name          = 'kybus-cli'
-  spec.version       = KybusCLIVersion
+  spec.version       = KYBUS_CLI_VERSION
   spec.authors       = ['Gilberto Vargas']
   spec.email         = ['tachomexgems@gmail.com']
 
