@@ -7,7 +7,7 @@ require_relative 'lambda_trigger'
 module Kybus
   module AWS
     class Lambda < Resource
-      attr_reader :url, :name
+      attr_reader :name
 
       def initialize(configs, name)
         super(configs)
@@ -20,6 +20,10 @@ module Kybus
 
       def lambda_client
         @lambda_client ||= Aws::Lambda::Client.new(region: @region)
+      end
+
+      def url
+        @trigger_manager.url
       end
 
       def function_name
@@ -93,7 +97,7 @@ module Kybus
             function_name:,
             runtime: 'ruby3.3',
             role: "arn:aws:iam::#{account_id}:role/#{function_name}",
-            handler: 'handler.lambda_handler',
+            handler: @config['handler'] || 'handler.lambda_handler',
             layers: layer_arns,
             code: { zip_file: File.read('.kybuscode.zip') },
             timeout: @config['timeout'] || 3,

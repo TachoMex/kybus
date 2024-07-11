@@ -3,6 +3,8 @@
 module Kybus
   module AWS
     class LambdaTrigger
+      attr_reader :url
+
       def initialize(lambda_client, function_name, triggers)
         @lambda_client = lambda_client
         @function_name = function_name
@@ -58,9 +60,11 @@ module Kybus
                                                      event_source_arn: queue_arn,
                                                      function_name: @function_name,
                                                      enabled: true,
-                                                     batch_size: 10
+                                                     batch_size: 1
                                                    })
         puts "SQS trigger added to Lambda function '#{@function_name}' for queue '#{queue_arn}'."
+      rescue Aws::Lambda::Errors::ResourceConflictException
+        puts 'SQS Trigger already exists'
       end
     end
   end

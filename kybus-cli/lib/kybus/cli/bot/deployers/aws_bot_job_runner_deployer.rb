@@ -5,9 +5,12 @@ module Kybus
     class AWSBotJobRunnerDeployer < AWSBotDeployer
       def lambda_config
         {
-          'triggers' => [{ 'type' => 'sqs', 'queue_arn' => @queue.arn }], 'layers' => [
-            { 'type' => 'existing', 'name' => "#{function_name}-deps" }
-          ]
+          'triggers' => [{ 'type' => 'sqs', 'queue_arn' => @queue.arn }],
+          'layers' => [
+            { 'type' => 'existing',
+              'name' => "#{function_name}-deps" }
+          ],
+          'handler' => 'handler.sqs_job_handler'
         }
       end
 

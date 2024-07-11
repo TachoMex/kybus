@@ -132,7 +132,7 @@ module Kybus
             'logs:PutLogEvents'
           ],
           Resource: [
-            "arn:aws:logs:#{@region}:#{account_id}:log-group:/aws/lambda/#{function_name}:*"
+            "arn:aws:logs:#{@region}:#{account_id}:log-group:/aws/lambda/#{function_name}*:*"
           ]
         }
       end
