@@ -3,6 +3,7 @@
 require_relative 'configuration'
 require_relative 'certificate'
 require_relative 'revocation_list'
+require 'yaml'
 
 require 'fileutils'
 
@@ -23,10 +24,20 @@ module Kybus
         @servers = SubInventory.new(servers, self)
       end
 
+      def self.load_inventory(path)
+        inventory = YAML.load_file(path)
+        data = inventory['certificate_descriptions']
+        new(data['defaults'], data['authorities'], data['clients'], data['servers'])
+      end
+
       def create_certificates!
         validate_inventories!
         create_directory!
         [@authorities, @clients, @servers].each(&:create_certificates!)
+      end
+
+      def ca_cert_chain(parent)
+        @authorities.ca_cert_chain(parent)
       end
 
       # TODO: Implement validation of inventories
@@ -59,6 +70,18 @@ module Kybus
           )
           Certificate.new(configuration, inventory)
         end
+      end
+
+      def ca_cert_chain(name)
+        chain = []
+        cert = ca(name)
+
+        while cert && cert.ca_name != 'root'
+          puts cert.ca_name
+          chain << cert.cert
+          cert = @certificates.find { |c| c.ca_name == cert.config['parent'] }
+        end
+        chain
       end
 
       def create_certificates!

@@ -11,8 +11,6 @@ module Kybus
       end
 
       def saving_directory(type)
-        path = @config['saving_directory']
-        serial = @config['serial']
         "#{path}/#{serial}.#{type}.pem"
       end
 
@@ -22,6 +20,10 @@ module Kybus
 
       def key_path
         saving_directory('key')
+      end
+
+      def pfx_path
+        "#{path}/#{serial}-#{@config['email'] || @config['name']}.pfx"
       end
 
       def subject_string
@@ -60,6 +62,15 @@ module Kybus
 
       def [](key)
         @config[key]
+      end
+      private
+
+      def path
+        @config['saving_directory']
+      end
+
+      def serial
+        @config['serial']
       end
     end
   end
