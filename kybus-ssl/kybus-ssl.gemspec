@@ -17,7 +17,6 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['lib/**/*.rb']
   spec.require_paths = ['lib']
-  spec.executables   = ['kybssl']
 
   spec.add_dependency 'optimist', '~> 3.0'
 

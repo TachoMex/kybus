@@ -2,6 +2,7 @@
 
 require 'thor'
 require_relative 'cli/bot'
+require_relative 'cli/ssl'
 require_relative 'cli/version'
 
 module Kybus
@@ -16,6 +17,9 @@ module Kybus
 
     desc 'bot SUBCOMMAND ...ARGS', 'Commands for managing bots'
     subcommand 'bot', Kybus::CLI::Bot
+
+    desc 'pki SUBCOMMAND ...ARGS', 'Commands for managing PKI'
+    subcommand 'pki', Kybus::CLI::SSL
 
     def self.exit_on_failure?
       true

@@ -45,6 +45,10 @@ module Kybus
         true
       end
 
+      def update_crl
+        @authorities.update_crl
+      end
+
       def create_directory!
         FileUtils.mkdir_p(@defaults['saving_directory'])
       end
@@ -82,6 +86,9 @@ module Kybus
           cert = @certificates.find { |c| c.ca_name == cert.config['parent'] }
         end
         chain
+      end
+
+      def update_crl
       end
 
       def create_certificates!

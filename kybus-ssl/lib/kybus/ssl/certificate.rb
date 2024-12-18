@@ -21,6 +21,7 @@ module Kybus
       end
 
       def create_key!
+        puts @config.instance_variable_get(:@config)
         @key = OpenSSL::PKey::RSA.new(@config['key_size'])
         @cert = OpenSSL::X509::Certificate.new
         @cert.public_key = @key.public_key
