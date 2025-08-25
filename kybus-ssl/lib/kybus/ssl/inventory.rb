@@ -89,6 +89,7 @@ module Kybus
       end
 
       def update_crl
+        Kybus::SSL::RevocationList.new(self, @parent).update_crl
       end
 
       def create_certificates!
