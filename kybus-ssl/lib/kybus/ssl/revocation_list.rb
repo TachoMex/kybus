@@ -23,7 +23,6 @@ module Kybus
         return puts 'No clients subinventory found, skipping CRL generation' if clients.empty?
 
         parents = clients.map { |c| c.config['parent'] }.compact.uniq
-        
         parents.each do |authority_name|
           authority_crl(authority_name, clients, lifetime)
         end
@@ -53,16 +52,17 @@ module Kybus
           return
         end
 
-        generate_crl(ca_crt, ca_key, crl_path, revoked_serials, lifetime)
+        crl_number = (authority.config['crl_serial_count'] || 1).to_i
+        generate_crl(ca_crt, ca_key, crl_path, revoked_serials, lifetime, crl_number)
       end
 
-      def generate_crl(ca_crt_path, ca_key_path, crl_path, revoked_serials, lifetime)
+      def generate_crl(ca_crt_path, ca_key_path, crl_path, revoked_serials, lifetime, crl_number)
         ca_cert = OpenSSL::X509::Certificate.new(File.read(ca_crt_path))
         ca_key = load_private_key(File.read(ca_key_path))
 
         crl = build_crl_base(ca_cert, lifetime)
         add_revoked_entries(crl, revoked_serials)
-        add_extensions(crl, ca_cert, crl_path)
+        add_extensions(crl, ca_cert, crl_number)
         
         crl.sign(ca_key, OpenSSL::Digest::SHA256.new)
         save_crl(crl, crl_path, revoked_serials.size)
@@ -76,7 +76,6 @@ module Kybus
         now = Time.now.utc
         crl.last_update = now
         crl.next_update = now + (lifetime * 24 * 60 * 60)
-        
         crl
       end
 
@@ -98,8 +97,7 @@ module Kybus
         end
       end
 
-      def add_extensions(crl, ca_cert, crl_path)
-        crl_number = get_next_crl_number(crl_path)
+      def add_extensions(crl, ca_cert, crl_number)
         crl.add_extension(OpenSSL::X509::Extension.new('crlNumber', OpenSSL::ASN1::Integer.new(crl_number).to_der, false))
 
         ski_ext = ca_cert.extensions.find { |ext| ext.oid == 'subjectKeyIdentifier' }
@@ -114,21 +112,6 @@ module Kybus
         FileUtils.mkdir_p(File.dirname(crl_path))
         File.binwrite(crl_path, crl.to_pem)
         puts "Generated CRL at #{crl_path} with #{revoked_count} revoked entries"
-      end
-
-      def get_next_crl_number(crl_path)
-        return 1 unless File.exist?(crl_path)
-
-        existing_crl = OpenSSL::X509::CRL.new(File.read(crl_path))
-        crl_number_ext = existing_crl.extensions.find { |e| e.oid == 'crlNumber' }
-
-        if crl_number_ext
-          OpenSSL::ASN1.decode(crl_number_ext.value_der).value.to_i + 1
-        else
-          1
-        end
-      rescue
-        1
       end
 
       def calculate_ski(ca_cert)
