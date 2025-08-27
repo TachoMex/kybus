@@ -51,8 +51,27 @@ module Kybus
         Kybus::SSL::CLI::AddCertificate.new(options.merge(pki_file: "#{options[:path]}/pki.yaml")).run
       end
 
+      desc 'update-crl', 'Generate the CRL'
+      method_option :path, type: :string, desc: 'PKI root path', required: true
+
       def update_crl
         Kybus::SSL::CLI::UpdateCRL.new(options.merge(pki_file: "#{options[:path]}/pki.yaml")).run
+      end
+
+      desc 'revoke-certificate', 'Mark a client certificate as revoked'
+      method_option :name, type: :string, desc: 'Certificate name', required: true
+      method_option :path, type: :string, desc: 'PKI root path', required: true
+
+      def revoke_certificate
+        Kybus::SSL::CLI::RevokeCertificate.new(options.merge(pki_file: "#{options[:path]}/pki.yaml")).run
+      end
+
+      desc 'unrevoke-certificate', 'Unmark a client certificate as revoked'
+      method_option :name, type: :string, desc: 'Certificate name', required: true
+      method_option :path, type: :string, desc: 'PKI root path', required: true
+
+      def unrevoke_certificate
+        Kybus::SSL::CLI::UnrevokeCertificate.new(options.merge(pki_file: "#{options[:path]}/pki.yaml")).run
       end
 
       desc 'build', 'Builds the certificates listed in the PKI file'

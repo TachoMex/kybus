@@ -41,6 +41,13 @@ module Kybus
           @template['serial_counter'] += 1
         end
 
+        def next_crl_serial(authority_name)
+          authorities = @template['certificate_descriptions']['authorities']['certificates']
+          entry = authorities.find { |a| a['ca'] == authority_name || a['name'] == authority_name }
+          return unless entry
+          entry['crl_serial_count'] = (entry['crl_serial_count'] || 0).to_i + 1
+        end
+
         def pki_file_exist?
           File.file?(@opts[:pki_file])
         end
