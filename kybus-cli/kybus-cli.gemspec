@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'kybus-core'
   spec.add_dependency 'rubyzip'
   spec.add_dependency 'thor'
-  spec.add_dependency 'kybus-ssl'
+  spec.add_dependency 'kybus-ssl', '~> 0.3.1'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
