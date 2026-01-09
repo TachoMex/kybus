@@ -8,7 +8,7 @@ module Kybus
     # :nodoc: #
     module Adapter
       # :nodoc: #
-      # Wraps a debugging message inside a class.
+      # Debug message for test and development adapters.
       class DebugMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
         attr_accessor :replied_message
@@ -80,7 +80,7 @@ module Kybus
         end
       end
 
-      # This class simulates a message chat with a user.
+      # Simulates a message channel for the debug adapter.
       class Channel
         # It is build from
         # an array of raw messages, the name of the channel and the config
@@ -128,7 +128,7 @@ module Kybus
       end
 
       ##
-      # This adapter is intended to be used on unit tests and development.
+      # Debug adapter for tests and local development.
       class Debug
         # Exception for stoping the loop of messages
         class NoMoreMessageException < Kybus::Exceptions::KybusError

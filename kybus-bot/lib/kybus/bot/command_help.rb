@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Command help and hints decorator for Base.
     module CommandHelp
       def self.apply!(klass)
         return if klass < InstanceMethods

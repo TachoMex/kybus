@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Runs commands when ready or requests missing params.
     class CommandHandler
       def initialize(executor)
         @executor = executor

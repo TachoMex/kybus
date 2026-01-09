@@ -197,3 +197,10 @@ Main DSL methods available inside command blocks:
 ## Notes
 - `parse_mode` can be set in provider config when using Telegram.
 - Prefer `send_message` from DSL over direct adapter usage.
+
+## RDoc
+Generate API docs locally:
+```
+bundle exec rake rdoc
+```
+Docs will be generated under `doc/`.

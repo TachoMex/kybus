@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Base bot exceptions for runtime errors.
     class Base
       class BotError < StandardError; end
       class AbortError < BotError; end

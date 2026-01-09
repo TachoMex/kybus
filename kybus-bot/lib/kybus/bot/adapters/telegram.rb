@@ -8,6 +8,7 @@ require_relative 'telegram_message'
 module Kybus
   module Bot
     module Adapter
+      # Telegram adapter for polling and sending messages.
       class Telegram
         include ::Kybus::Logger
 
@@ -19,6 +20,7 @@ module Kybus
           TelegramFile.register(:cli, @client)
         end
 
+        # Blocking read from Telegram long-polling.
         def read_message
           loop do
             @client.listen do |message|
@@ -30,6 +32,7 @@ module Kybus
           end
         end
 
+        # Parse a webhook-style payload into a SerializedMessage.
         def handle_message(body)
           chat_id = body.dig('message', 'chat', 'id')
           message_id = body.dig('message', 'message_id')
@@ -48,6 +51,7 @@ module Kybus
           "[user](tg://user?id=#{id})"
         end
 
+        # Send a text message.
         def send_message(contents, channel_name)
           log_debug('Sending message', channel_name:, message: contents)
           @client.api.send_message(chat_id: channel_name.to_i, text: contents, parse_mode: @config['parse_mode'])

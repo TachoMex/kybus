@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Background job execution adapters (thread, SQS, etc).
     module Forkers
       class JobNotFound < ::Kybus::Bot::Base::BotError; end
       class JobNotReady < ::Kybus::Bot::Base::BotError; end
@@ -25,6 +26,7 @@ module Kybus
         provider.new(bot, configs)
       end
 
+      # Base forkers implement job registration and dispatch.
       class Base
         include Kybus::Logger
 
@@ -34,10 +36,12 @@ module Kybus
           @command_definition = CommandDefinition.new
         end
 
+        # Register a job handler with argument schema.
         def register_command(command, arguments, &)
           @command_definition.register_command(command, arguments, &)
         end
 
+        # Enqueue a job for execution.
         def fork(command, arguments, dsl, delay: 0)
           job_definition = @command_definition[command]
           raise JobNotFound if job_definition.nil?

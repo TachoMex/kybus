@@ -8,7 +8,7 @@ module Kybus
     # :nodoc: #
     module Adapter
       # :nodoc: #
-      # Wraps a debugging message inside a class.
+      # Wraps a Telegram message and exposes Kybus::Bot::Message API.
       class TelegramMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
         def initialize(message)

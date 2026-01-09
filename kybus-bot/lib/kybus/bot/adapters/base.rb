@@ -2,11 +2,11 @@
 
 module Kybus
   module Bot
-    # Implements a factory singleton for building bot adapters
+    # Factory for building bot adapters from config.
     module Adapter
       extend Kybus::DRY::ResourceInjector
 
-      # builds the abstract adapter
+      # Builds the adapter instance for the given config.
       def self.from_config(configs)
         require_relative configs['name']
         resource(configs['name']).new(configs)

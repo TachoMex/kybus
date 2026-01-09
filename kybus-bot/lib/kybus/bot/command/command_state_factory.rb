@@ -5,6 +5,7 @@ require_relative 'inline_command_matcher'
 
 module Kybus
   module Bot
+    # Factory for loading/saving command state from storage.
     class CommandStateFactory
       include Kybus::Storage::Datasource
       attr_reader :factory

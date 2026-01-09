@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Matches commands with inline args (e.g. /cmd1__2).
     class InlineCommandMatcher
       def initialize(definitions)
         @definitions = definitions

@@ -10,6 +10,7 @@ require_relative 'command/parameter_saver'
 
 module Kybus
   module Bot
+    # Runs commands, manages state, and handles param collection.
     class CommandExecutor
       extend Forwardable
 
@@ -44,6 +45,7 @@ module Kybus
         end
       end
 
+      # Process a message through the command pipeline.
       def process_message(message)
         load_state!(message.channel_id)
         @parameter_saver.save_token!(message)
@@ -58,6 +60,7 @@ module Kybus
         execution_context.command = catch_command if catch_command
       end
 
+      # Execute the current command in the DSL context.
       def run_command!
         execution_context.call!(@dsl)
       rescue StandardError => e
@@ -67,28 +70,33 @@ module Kybus
         retry
       end
 
+      # Invoke a command directly with args.
       def invoke(command, args)
         set_state_command(command, args)
         @command_handler.run_command_or_prepare!
       end
 
+      # Redirect execution to another command.
       def redirect(command_name, args)
         command = @channel_factory.command(command_name)
         validate_redirect(command, command_name, args)
         invoke(command, args)
       end
 
+      # Ask for the next missing param.
       def ask_param(param, label = nil)
         msg = label || "I need you to tell me #{param}"
         bot.dsl.send_message(msg, last_message.channel_id)
         execution_context.next_param = param
       end
 
+      # Load state for the channel.
       def load_state!(channel_id)
         @execution_context = ExecutionContest.new(channel_id, @channel_factory)
         @dsl.state = @execution_context.state
       end
 
+      # Persist current state.
       def save_state!
         @dsl.state.save!
       end

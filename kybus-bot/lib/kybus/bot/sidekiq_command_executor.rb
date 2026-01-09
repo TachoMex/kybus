@@ -5,6 +5,7 @@ require_relative 'sidekiq_dsl_methods'
 
 module Kybus
   module Bot
+    # Sidekiq worker for executing command blocks asynchronously.
     class SidekiqWorker
       include Sidekiq::Worker
       extend Kybus::DRY::ResourceInjector
@@ -22,6 +23,7 @@ module Kybus
         SidekiqWorker.resource(:bot)
       end
 
+      # Build DSL context and state from serialized data.
       def build_context(details_json)
         state = CommandState.from_json(details_json, factory)
         log_debug('Loaded message into worker', state: state.to_h)
@@ -38,6 +40,7 @@ module Kybus
       end
     end
 
+    # Command executor that enqueues work into Sidekiq.
     class SidekiqCommandExecutor < CommandExecutor
       def initialize(bot, channel_factory, configs)
         super(bot, channel_factory, configs['inline_args'])
@@ -46,6 +49,7 @@ module Kybus
         SidekiqWorker.register(:bot, bot)
       end
 
+      # Enqueue the command execution and return nil.
       def run_command!
         log_debug(msg: 'Enqueued process to sidekiq', state: state.to_h)
         SidekiqWorker.perform_async(state.to_json)

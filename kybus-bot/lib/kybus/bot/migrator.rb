@@ -2,8 +2,10 @@
 
 module Kybus
   module Bot
+    # Creates or updates bot session storage tables.
     module Migrator
       class << self
+        # Run migrations for the configured repository.
         def run_migrations!(config)
           migrator = migrator_for(config['name'])
           migrator.run_migrations!(config)

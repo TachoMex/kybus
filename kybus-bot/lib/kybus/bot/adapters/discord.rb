@@ -7,7 +7,7 @@ module Kybus
     # :nodoc: #
     module Adapter
       # :nodoc: #
-      # Wraps a debugging message inside a class.
+      # Wraps a Discord message and exposes Kybus::Bot::Message API.
       class DiscordMessage < Kybus::Bot::Message
         # It receives a string with the raw text and the id of the channel
         def initialize(msg)
@@ -59,7 +59,7 @@ module Kybus
       end
 
       ##
-      # This adapter is intended to be used on unit tests and development.
+      # Discord adapter for polling and sending messages.
       class Discord
         include ::Kybus::Logger
 

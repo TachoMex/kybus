@@ -4,12 +4,13 @@ require_relative 'command'
 
 module Kybus
   module Bot
+    # Registry for commands keyed by name/pattern.
     class CommandDefinition
       def initialize
         @commands = {}
       end
 
-      # Stores an operation definition
+      # Stores an operation definition.
       def register_command(name, params, &)
         @commands[name] = Command.new(name, params, &)
       end

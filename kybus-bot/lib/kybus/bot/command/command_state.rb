@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Persisted state for a channel (command, params, files, metadata).
     class CommandState
       attr_reader :command
 
@@ -35,6 +36,7 @@ module Kybus
         command.next_missing_param(params)
       end
 
+      # Store the last message for reply context.
       def last_message=(msg)
         @data[:last_message] = msg
       end
@@ -83,12 +85,14 @@ module Kybus
         @data[:params][param] = value
       end
 
+      # Metadata hash persisted with the state.
       def metadata
         @data[:metadata] = parse_json(@data[:metadata]) if @data[:metadata].is_a?(String)
         @data[:metadata] || {}
       end
 
       include Kybus::Logger
+      # Persist the current state into the repository.
       def save!
         backup = @data.clone
         serialize_data!

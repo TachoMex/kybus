@@ -7,6 +7,7 @@ module Kybus
   module Bot
     # :nodoc: #
     module Adapter
+      # Telegram file wrapper with download helpers.
       class TelegramFile
         extend Kybus::DRY::ResourceInjector
         attr_reader :id

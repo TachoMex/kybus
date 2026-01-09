@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Execution wrapper for a command and its state.
     class ExecutionContest
       include Kybus::Logger
       extend Forwardable
@@ -15,6 +16,7 @@ module Kybus
         state.command.block
       end
 
+      # Execute the command block with a DSL context.
       def call!(context)
         context.state = state
         statement = context.instance_eval(&block)
@@ -28,6 +30,7 @@ module Kybus
       end
 
       # Stores a parameter into the status
+      # Adds a parameter value to the current state.
       def add_param(value)
         param = state.requested_param
         return unless param
@@ -40,6 +43,7 @@ module Kybus
         state.command.nil?
       end
 
+      # Adds an uploaded file to the current state.
       def add_file(file)
         param = state.requested_param
         return unless param

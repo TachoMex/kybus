@@ -16,6 +16,7 @@ module Kybus
       register_forker('nofork', NoForker)
     end
 
+    # Test helper base class with debug adapter.
     class Base
       CONFIG = {
         'name' => 'test',
@@ -34,6 +35,7 @@ module Kybus
         }
       }.freeze
 
+      # Create a test bot with optional config overrides.
       def self.make_test_bot(extra_configs = {})
         conf = CONFIG.merge(extra_configs)
         conf['provider']['channels'] = { conf['channel_id'] => [] } if conf['channel_id']
@@ -42,6 +44,7 @@ module Kybus
         bot
       end
 
+      # Simulate a message being received by the bot.
       def receives(msg, attachments = nil)
         attachments = Adapter::DebugMessage::DebugFile.new(attachments) if attachments
         msg = Adapter::DebugMessage.new(msg, @default_channel_id, attachments)
@@ -53,6 +56,7 @@ module Kybus
         executor.dsl.expects(method)
       end
 
+      # Simulate a reply to the last bot message.
       def replies(msg, attachments = nil)
         reply = @provider.channel(current_channel).last_sent_message
         raise 'NoPreviousMessageToReply' if reply.nil?

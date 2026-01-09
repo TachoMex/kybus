@@ -2,6 +2,7 @@
 
 module Kybus
   module Bot
+    # Matches commands by exact name, regex, or class.
     class RegularCommandMatcher
       def initialize(definitions)
         @definitions = definitions

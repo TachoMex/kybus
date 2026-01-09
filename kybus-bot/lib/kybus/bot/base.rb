@@ -18,6 +18,7 @@ require 'forwardable'
 
 module Kybus
   module Bot
+    # Main bot runtime: command registry, provider IO, and state management.
     class Base # rubocop: disable Metrics/ClassLength
       extend Forwardable
       include Kybus::Logger
@@ -51,11 +52,13 @@ module Kybus
         build_pool
       end
 
+      # Extend DSL methods available inside command blocks.
       def self.helpers(mod = nil, &)
         DSLMethods.include(mod) if mod
         DSLMethods.class_eval(&) if block_given?
       end
 
+      # Enable automatic help and hints injection for commands.
       def self.enable_command_help!
         Kybus::Bot::CommandHelp.apply!(self)
       end
@@ -64,15 +67,18 @@ module Kybus
         DSLMethods.include(*)
       end
 
+      # Returns the DSL context used to execute commands.
       def dsl
         @executor.dsl
       end
 
+      # Process an incoming provider message (webhook mode).
       def handle_message(msg)
         parsed = @provider.handle_message(msg)
         @executor.process_message(parsed)
       end
 
+      # Execute a background job (used by async forkers).
       def handle_job(job, args, channel_id)
         @executor.load_state!(channel_id)
         @forker.handle_job(job, args)
@@ -84,27 +90,33 @@ module Kybus
         pool.each(&:await)
       end
 
+      # Redirect execution to another command with params.
       def redirect(command, *params)
         @executor.redirect(command, params)
       end
 
+      # Send a message through the provider.
       def send_message(contents, channel)
         log_debug('Sending message', contents:, channel:)
         provider.message_builder(@provider.send_message(contents, channel))
       end
 
+      # Register a command and its params.
       def register_command(klass, params = [], &)
         definitions.register_command(klass, params, &)
       end
 
+      # Register a background job handler.
       def register_job(name, args = {}, &)
         @forker.register_command(name, args, &)
       end
 
+      # Enqueue a background job.
       def invoke_job(name, args)
         @forker.fork(name, args, dsl)
       end
 
+      # Enqueue a background job with delay.
       def invoke_job_with_delay(name, delay, args)
         @forker.fork(name, args, dsl, delay:)
       end

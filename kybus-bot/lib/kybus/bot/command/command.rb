@@ -5,6 +5,7 @@ module Kybus
     # Object that wraps a command, it is analogus to a route definition.
     # it currently only gets a param list, but it will be extended to a more
     # complex DSL.
+    # Command definition with params and executable block.
     class Command
       attr_accessor :name
       attr_reader :block, :params
@@ -23,12 +24,12 @@ module Kybus
         end
       end
 
-      # Checks if the params object given contains all the needed values
+      # Checks if the params object given contains all the needed values.
       def ready?(current_params)
         params.all? { |key| current_params.key?(key) }
       end
 
-      # Finds the first empty param from the given parameter
+      # Finds the first missing param from the given parameter set.
       def next_missing_param(current_params)
         params.find { |key| !current_params.key?(key) }.to_s
       end
