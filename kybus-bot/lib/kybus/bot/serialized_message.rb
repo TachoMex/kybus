@@ -23,7 +23,7 @@ module Kybus
       end
 
       def has_attachment?
-        !@data[attachment].nil?
+        !@data[:attachment].nil?
       end
 
       def method_missing(method, *_args) # rubocop:disable Style/MissingRespondToMissing

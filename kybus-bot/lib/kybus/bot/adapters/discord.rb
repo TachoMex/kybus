@@ -21,7 +21,7 @@ module Kybus
         end
 
         def message_id
-          nil
+          @message.id if @message.respond_to?(:id)
         end
 
         def has_attachment?
@@ -46,11 +46,15 @@ module Kybus
         end
 
         def reply?
-          @message.message.reply?
+          return false unless @message.respond_to?(:referenced_message)
+
+          !@message.referenced_message.nil?
         end
 
         def replied_message
-          DiscordMessage.new(@message.message.referenced_message)
+          return unless reply?
+
+          DiscordMessage.new(@message.referenced_message)
         end
       end
 
@@ -121,6 +125,10 @@ module Kybus
 
         # interface for sending image
         def send_image(channel_name, file, _caption = nil)
+          @client.send_file(channel_name, File.open(file, 'r'))
+        end
+
+        def send_document(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
         end
       end

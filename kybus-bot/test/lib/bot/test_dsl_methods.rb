@@ -95,6 +95,20 @@ module Kybus
         @bot.replies('World')
       end
 
+      def test_send_audio_with_caption
+        @bot.register_command('/audio') { send_audio('track.mp3', caption: 'cap') }
+        @bot.receives('/audio')
+        sent = @bot.provider.channel('debug_message__testing').last_sent_message
+        assert_equal('AUDIO: track.mp3', sent.raw_message)
+      end
+
+      def test_send_document_with_caption
+        @bot.register_command('/doc') { send_document('file.pdf', caption: 'cap') }
+        @bot.receives('/doc')
+        sent = @bot.provider.channel('debug_message__testing').last_sent_message
+        assert_equal('DOC: file.pdf', sent.raw_message)
+      end
+
       private
 
       def simulate_receives(*messages)

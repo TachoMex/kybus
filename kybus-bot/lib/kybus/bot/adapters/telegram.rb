@@ -57,22 +57,30 @@ module Kybus
 
         def send_video(channel_name, video_url, comment = nil)
           file = Faraday::FilePart.new(video_url, 'video/mp4')
-          @client.api.send_video(chat_id: channel_name, video: file, caption: comment)
+          @client.api.send_video(chat_id: channel_name, video: file, caption: comment, parse_mode: @config['parse_mode'])
+        rescue ::Telegram::Bot::Exceptions::ResponseError => e
+          nil if e.error_code == '403'
         end
 
-        def send_audio(channel_name, audio_url)
+        def send_audio(channel_name, audio_url, comment = nil)
           file = Faraday::FilePart.new(audio_url, 'audio/mp3')
-          @client.api.send_audio(chat_id: channel_name, audio: file)
+          @client.api.send_audio(chat_id: channel_name, audio: file, caption: comment, parse_mode: @config['parse_mode'])
+        rescue ::Telegram::Bot::Exceptions::ResponseError => e
+          nil if e.error_code == '403'
         end
 
         def send_image(channel_name, image_url, comment = nil)
           file = Faraday::FilePart.new(image_url, 'image/jpeg')
-          @client.api.send_photo(chat_id: channel_name, photo: file, caption: comment)
+          @client.api.send_photo(chat_id: channel_name, photo: file, caption: comment, parse_mode: @config['parse_mode'])
+        rescue ::Telegram::Bot::Exceptions::ResponseError => e
+          nil if e.error_code == '403'
         end
 
-        def send_document(channel_name, image_url)
+        def send_document(channel_name, image_url, comment = nil)
           file = Faraday::FilePart.new(image_url, 'application/octet-stream')
-          @client.api.send_document(chat_id: channel_name, document: file)
+          @client.api.send_document(chat_id: channel_name, document: file, caption: comment, parse_mode: @config['parse_mode'])
+        rescue ::Telegram::Bot::Exceptions::ResponseError => e
+          nil if e.error_code == '403'
         end
 
         def message_builder(raw_message)

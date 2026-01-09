@@ -56,6 +56,10 @@ module Kybus
         DSLMethods.class_eval(&) if block_given?
       end
 
+      def self.enable_command_help!
+        Kybus::Bot::CommandHelp.apply!(self)
+      end
+
       def extend(*)
         DSLMethods.include(*)
       end

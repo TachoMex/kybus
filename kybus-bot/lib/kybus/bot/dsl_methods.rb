@@ -28,12 +28,12 @@ module Kybus
         provider.send_video(channel || current_channel, content, caption)
       end
 
-      def send_audio(content, channel = nil)
-        provider.send_audio(channel || current_channel, content)
+      def send_audio(content, channel = nil, caption: nil)
+        provider.send_audio(channel || current_channel, content, caption)
       end
 
-      def send_document(content, channel = nil)
-        provider.send_document(channel || current_channel, content)
+      def send_document(content, channel = nil, caption: nil)
+        provider.send_document(channel || current_channel, content, caption)
       end
 
       def params

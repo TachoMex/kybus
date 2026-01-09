@@ -46,6 +46,12 @@ module Kybus
         DSLMethods.any_instance.expects(:assert_command).with(:done)
         @bot.receives('/redirect')
       end
+
+      def test_sidekiq_enqueues_job
+        @bot.register_command('/ping') { send_message('pong') }
+        SidekiqWorker.expects(:perform_async).with(kind_of(String)).returns(nil)
+        @bot.receives('/ping')
+      end
     end
   end
 end

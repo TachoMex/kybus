@@ -76,6 +76,78 @@ module Kybus
       adapter.send_message('user', 'Testing')
     end
 
+    def test_send_media_with_parse_mode_and_caption
+      adapter_with_mode = Kybus::Bot::Adapter.from_config('name' => 'telegram', 'token' => TELEGRAM_TOKEN,
+                                                          'parse_mode' => 'MarkdownV2')
+      ::Telegram::Bot::Api.any_instance.expects(:send_video).with do |request|
+        assert_equal('debug_message__a', request[:chat_id])
+        assert_equal('cap', request[:caption])
+        assert_equal('MarkdownV2', request[:parse_mode])
+        assert(request[:video].is_a?(Faraday::FilePart))
+      end
+      ::Telegram::Bot::Api.any_instance.expects(:send_audio).with do |request|
+        assert_equal('debug_message__a', request[:chat_id])
+        assert_equal('cap', request[:caption])
+        assert_equal('MarkdownV2', request[:parse_mode])
+        assert(request[:audio].is_a?(Faraday::FilePart))
+      end
+      ::Telegram::Bot::Api.any_instance.expects(:send_photo).with do |request|
+        assert_equal('debug_message__a', request[:chat_id])
+        assert_equal('cap', request[:caption])
+        assert_equal('MarkdownV2', request[:parse_mode])
+        assert(request[:photo].is_a?(Faraday::FilePart))
+      end
+      ::Telegram::Bot::Api.any_instance.expects(:send_document).with do |request|
+        assert_equal('debug_message__a', request[:chat_id])
+        assert_equal('cap', request[:caption])
+        assert_equal('MarkdownV2', request[:parse_mode])
+        assert(request[:document].is_a?(Faraday::FilePart))
+      end
+
+      adapter_with_mode.send_video('debug_message__a', 'Gemfile', 'cap')
+      adapter_with_mode.send_audio('debug_message__a', 'Gemfile', 'cap')
+      adapter_with_mode.send_image('debug_message__a', 'Gemfile', 'cap')
+      adapter_with_mode.send_document('debug_message__a', 'Gemfile', 'cap')
+    end
+
+    def test_send_media_ignores_403
+      error = build_response_error(403)
+      ::Telegram::Bot::Api.any_instance.expects(:send_video).raises(error)
+      ::Telegram::Bot::Api.any_instance.expects(:send_audio).raises(error)
+      ::Telegram::Bot::Api.any_instance.expects(:send_photo).raises(error)
+      ::Telegram::Bot::Api.any_instance.expects(:send_document).raises(error)
+
+      assert_nil(adapter.send_video('debug_message__a', 'Gemfile', 'cap'))
+      assert_nil(adapter.send_audio('debug_message__a', 'Gemfile', 'cap'))
+      assert_nil(adapter.send_image('debug_message__a', 'Gemfile', 'cap'))
+      assert_nil(adapter.send_document('debug_message__a', 'Gemfile', 'cap'))
+    end
+
+    def test_handle_message_parses_reply_and_attachment
+      payload = {
+        'message' => {
+          'chat' => { 'id' => 123, 'type' => 'private' },
+          'message_id' => 10,
+          'from' => { 'username' => 'u' },
+          'text' => '/hi',
+          'reply_to_message' => {
+            'chat' => { 'id' => 123, 'type' => 'private' },
+            'message_id' => 9,
+            'from' => { 'username' => 'u2' },
+            'text' => 'prev'
+          },
+          'photo' => PHOTO_JSON
+        }
+      }
+
+      msg = adapter.handle_message(payload)
+      assert_equal('/hi', msg.raw_message)
+      assert_equal(123, msg.channel_id)
+      assert_equal(true, msg.is_private?)
+      assert(msg.reply?)
+      assert(msg.has_attachment?)
+    end
+
     def test_receive_file
       response = default_response(unwrap_default_response(default_response), PHOTO_JSON)
       stub_api_request(:post, 'getUpdates', response:)
@@ -133,6 +205,12 @@ module Kybus
       stub_api_request(:post, 'getUpdates', response:)
       message = adapter.read_message
       assert_equal('[user](tg://user?id=1)', adapter.mention(message.user))
+    end
+
+    def build_response_error(code)
+      env = Struct.new(:url).new(URI('http://example.test'))
+      response = Struct.new(:body, :status, :env).new({ error_code: code }.to_json, code, env)
+      ::Telegram::Bot::Exceptions::ResponseError.new(response:)
     end
   end
 end

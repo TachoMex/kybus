@@ -179,7 +179,7 @@ module Kybus
         end
 
         # interface for sending uadio
-        def send_audio(channel_name, audio_url)
+        def send_audio(channel_name, audio_url, _caption = nil)
           channel(channel_name).answer("AUDIO: #{audio_url}")
         end
 
@@ -189,7 +189,7 @@ module Kybus
         end
 
         # interface for sending image
-        def send_document(channel_name, doc_url)
+        def send_document(channel_name, doc_url, _caption = nil)
           channel(channel_name).answer("DOC: #{doc_url}")
         end
 
