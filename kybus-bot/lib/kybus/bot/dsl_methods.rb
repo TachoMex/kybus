@@ -97,6 +97,11 @@ module Kybus
         state.save!
       end
 
+      # Access the owning bot instance.
+      def bot
+        @bot
+      end
+
       # Redirect to another command.
       def redirect(*)
         @bot.redirect(*)

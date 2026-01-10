@@ -130,6 +130,7 @@ module Kybus
       ##
       # Debug adapter for tests and local development.
       class Debug
+        include Kybus::Logger
         # Exception for stoping the loop of messages
         class NoMoreMessageException < Kybus::Exceptions::KybusError
           def initialize
@@ -171,26 +172,36 @@ module Kybus
         # interface for sending messages
         def send_message(contents, channel_name, attachment = nil)
           channel(channel_name).answer(contents, attachment)
+        rescue StandardError => e
+          log_error('Debug send_message failed', error: e.class, msg: e.message)
         end
 
         # interface for sending video
         def send_video(channel_name, video_url, _caption = nil)
           channel(channel_name).answer("VIDEO: #{video_url}")
+        rescue StandardError => e
+          log_error('Debug send_video failed', error: e.class, msg: e.message)
         end
 
         # interface for sending uadio
         def send_audio(channel_name, audio_url, _caption = nil)
           channel(channel_name).answer("AUDIO: #{audio_url}")
+        rescue StandardError => e
+          log_error('Debug send_audio failed', error: e.class, msg: e.message)
         end
 
         # interface for sending image
         def send_image(channel_name, image_url, _caption = nil)
           channel(channel_name).answer("IMG: #{image_url}")
+        rescue StandardError => e
+          log_error('Debug send_image failed', error: e.class, msg: e.message)
         end
 
         # interface for sending image
         def send_document(channel_name, doc_url, _caption = nil)
           channel(channel_name).answer("DOC: #{doc_url}")
+        rescue StandardError => e
+          log_error('Debug send_document failed', error: e.class, msg: e.message)
         end
 
         def file_builder(data)

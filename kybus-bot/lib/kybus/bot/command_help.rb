@@ -82,7 +82,9 @@ module Kybus
 
           @help_registering = true
           register_command('/help') do
-            send_message(@bot.help_overview)
+            overview = @bot.help_overview
+            commands = @command_help.keys.sort
+            @bot.ux.render_help_overview(self, text: overview, commands: commands)
           end
         ensure
           @help_registering = false
@@ -96,7 +98,8 @@ module Kybus
           help_command = help_command_for(command)
           @help_registering = true
           register_command(help_command) do
-            send_message(@bot.help_for_command(command))
+            detail = @bot.help_for_command(command)
+            @bot.ux.render_help_command(self, text: detail)
           end
         ensure
           @help_registering = false

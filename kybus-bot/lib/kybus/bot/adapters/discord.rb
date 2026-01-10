@@ -73,7 +73,7 @@ module Kybus
         def initialize(configs)
           @config = configs
           @client = Discordrb::Bot.new(token: @config['token'])
-          @pool = []
+          @pool = Queue.new
           @client.message do |msg|
             @pool << msg
           end
@@ -86,13 +86,14 @@ module Kybus
 
         # Interface for receiving message
         def read_message
-          # take the first message from the first open message,
           loop do
-            break unless @pool.empty?
-
-            sleep(0.1)
+            begin
+              msg = @pool.pop(true)
+              return @last_message = DiscordMessage.new(msg)
+            rescue ThreadError
+              sleep(0.1)
+            end
           end
-          @last_message = DiscordMessage.new(@pool.shift)
         end
 
         # interface for sending messages
@@ -104,6 +105,8 @@ module Kybus
           else
             @client.user(channel_name).pm(contents)
           end
+        rescue StandardError => e
+          log_error('Discord send_message failed', error: e.class, msg: e.message)
         end
 
         def message_builder(raw_message)
@@ -112,24 +115,34 @@ module Kybus
 
         def send_file(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
+        rescue StandardError => e
+          log_error('Discord send_file failed', error: e.class, msg: e.message)
         end
 
         def send_video(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
+        rescue StandardError => e
+          log_error('Discord send_video failed', error: e.class, msg: e.message)
         end
 
         # interface for sending uadio
         def send_audio(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
+        rescue StandardError => e
+          log_error('Discord send_audio failed', error: e.class, msg: e.message)
         end
 
         # interface for sending image
         def send_image(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
+        rescue StandardError => e
+          log_error('Discord send_image failed', error: e.class, msg: e.message)
         end
 
         def send_document(channel_name, file, _caption = nil)
           @client.send_file(channel_name, File.open(file, 'r'))
+        rescue StandardError => e
+          log_error('Discord send_document failed', error: e.class, msg: e.message)
         end
       end
 

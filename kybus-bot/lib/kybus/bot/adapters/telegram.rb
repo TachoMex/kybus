@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'telegram/bot'
+require 'timeout'
 require 'faraday'
 require_relative 'telegram_file'
 require_relative 'telegram_message'
@@ -23,17 +24,32 @@ module Kybus
         # Blocking read from Telegram long-polling.
         def read_message
           loop do
-            @client.listen do |message|
-              log_info('Received message', message: message.to_h, from: message.from.to_h)
-              return @last_message = TelegramMessage.new(message)
+            Timeout.timeout(30) do
+              @client.listen do |message|
+                if message.respond_to?(:data) && message.respond_to?(:message)
+                  return @last_message = serialize_callback_query(message)
+                end
+                log_info('Received message', message: message.to_h, from: message.from.to_h)
+                return @last_message = TelegramMessage.new(message)
+              end
             end
           rescue ::Telegram::Bot::Exceptions::ResponseError => e
             log_error('An error occurred while calling to Telegram API', e)
+            sleep(5)
+          rescue Timeout::Error
+            log_error('Telegram read timeout, retrying')
+            sleep(2)
+          rescue StandardError => e
+            log_error('Error while reading Telegram message', error: e.class, msg: e.message)
+            sleep(5)
           end
         end
 
         # Parse a webhook-style payload into a SerializedMessage.
         def handle_message(body)
+          if body['callback_query']
+            return serialize_callback_payload(body['callback_query'])
+          end
           chat_id = body.dig('message', 'chat', 'id')
           message_id = body.dig('message', 'message_id')
           user = extract_user(body.dig('message', 'from'))
@@ -55,6 +71,23 @@ module Kybus
         def send_message(contents, channel_name)
           log_debug('Sending message', channel_name:, message: contents)
           @client.api.send_message(chat_id: channel_name.to_i, text: contents, parse_mode: @config['parse_mode'])
+        rescue ::Telegram::Bot::Exceptions::ResponseError => e
+          nil if e.error_code == '403'
+        end
+
+        # Send a text message with reply markup.
+        def send_message_with_markup(contents, channel_name, reply_markup: nil)
+          log_debug('Sending message', channel_name:, message: contents)
+          @client.api.send_message(chat_id: channel_name.to_i, text: contents, parse_mode: @config['parse_mode'],
+                                   reply_markup: reply_markup)
+        rescue ::Telegram::Bot::Exceptions::ResponseError => e
+          nil if e.error_code == '403'
+        end
+
+        # Edit an existing message.
+        def edit_message_text(channel_name, message_id, contents, reply_markup: nil)
+          @client.api.edit_message_text(chat_id: channel_name.to_i, message_id: message_id, text: contents,
+                                        parse_mode: @config['parse_mode'], reply_markup: reply_markup)
         rescue ::Telegram::Bot::Exceptions::ResponseError => e
           nil if e.error_code == '403'
         end
@@ -98,7 +131,18 @@ module Kybus
         private
 
         def extract_user(from)
-          from['username'] || from['first_name']
+          return if from.nil?
+
+          if from.respond_to?(:username) || from.respond_to?(:first_name)
+            username = from.respond_to?(:username) ? from.username : nil
+            return username if username && !username.to_s.empty?
+
+            return from.first_name if from.respond_to?(:first_name)
+          end
+
+          return from[:username] || from[:first_name] if from.respond_to?(:[])
+
+          nil
         end
 
         def extract_attachment(message)
@@ -122,6 +166,37 @@ module Kybus
             raw_message: replied_message['text'],
             is_private?: replied_message.dig('chat', 'type') == 'private'
           ).serialize
+        end
+
+        def serialize_callback_query(callback)
+          msg = callback.message
+          SerializedMessage.new(
+            provider: 'telegram',
+            channel_id: msg.chat.id,
+            message_id: msg.message_id,
+            user: extract_user(callback.from),
+            replied_message: nil,
+            raw_message: callback.data,
+            is_private?: msg.chat.type == 'private',
+            callback: true,
+            attachment: nil
+          )
+        end
+
+        def serialize_callback_payload(callback)
+          msg = callback['message'] || {}
+          chat = msg['chat'] || {}
+          SerializedMessage.new(
+            provider: 'telegram',
+            channel_id: chat['id'],
+            message_id: msg['message_id'],
+            user: extract_user(callback['from'] || {}),
+            replied_message: nil,
+            raw_message: callback['data'],
+            is_private?: chat['type'] == 'private',
+            callback: true,
+            attachment: nil
+          )
         end
       end
 

@@ -101,6 +101,35 @@ module Kybus
         provider.message_builder(@provider.send_message(contents, channel))
       end
 
+      # Register a paginated query command with enhanced UX rendering.
+      def define_paginated_query(command, params: [], hint: nil, per_page: 10, &block)
+        register_command(command, params, hint: hint) do
+          @bot.run_paginated_query(self, command, params, per_page, &block)
+        end
+      end
+
+      # Render a paginated response using the active UX renderer.
+      def run_paginated_query(dsl, command, params, per_page, &block)
+        args = Array(params).map { |param| dsl.params[param] }
+        last_arg = args.last
+        value, page = split_value_page(last_arg || dsl.last_message.raw_message)
+        args[-1] = value if args.any?
+
+        result = block.call(dsl, *args, page, per_page)
+        total_pages = result[:total_pages] || 1
+        text = result[:text] || [result[:header], result[:body], result[:nav]].compact.join("\n")
+        key = result[:key] || "#{command}:#{args.compact.join(':')}"
+        prev_cmd = result[:prev_cmd] || (page > 1 ? build_paginated_command(command, args, page - 1) : nil)
+        next_cmd = result[:next_cmd] || (page < total_pages ? build_paginated_command(command, args, page + 1) : nil)
+
+        ux.render_paginated(dsl, key:, text:, prev_cmd:, next_cmd:)
+      end
+
+      # Returns the UX renderer for the current provider.
+      def ux
+        @ux ||= Kybus::Bot::UX.for(provider)
+      end
+
       # Register a command and its params.
       def register_command(klass, params = [], &)
         definitions.register_command(klass, params, &)
@@ -137,6 +166,20 @@ module Kybus
         repository_config = configs['state_repository'].merge('primary_key' => 'channel_id', 'table' => 'bot_sessions')
         repository_config.merge!('fields' => DYNAMOID_FIELDS) if repository_config['name'] == 'dynamoid'
         Kybus::Storage::Repository.from_config(nil, repository_config, {})
+      end
+
+      def split_value_page(raw)
+        token = raw.to_s
+        value, page_str = token.split(/__|\s+/, 2)
+        page = page_str.to_i
+        page = 1 if page <= 0
+        [value, page]
+      end
+
+      def build_paginated_command(command, args, page)
+        base = command.to_s
+        base += args.first.to_s if args.any? && !args.first.to_s.empty?
+        "#{base}__#{page}"
       end
 
       def create_executor(configs, command_factory)

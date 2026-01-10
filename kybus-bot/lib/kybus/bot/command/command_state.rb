@@ -88,7 +88,7 @@ module Kybus
       # Metadata hash persisted with the state.
       def metadata
         @data[:metadata] = parse_json(@data[:metadata]) if @data[:metadata].is_a?(String)
-        @data[:metadata] || {}
+        @data[:metadata] ||= {}
       end
 
       include Kybus::Logger
